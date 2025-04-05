@@ -1,17 +1,6 @@
-
-
-
-
-import { useState, useEffect } from "react";
-import "../global.css";
 // import trackIcon from '../public/track_icon.png'
 
-
-
-
 // let trackedWindows = {
-
-
 
 
 //   "test 1": {
@@ -36,104 +25,68 @@ import "../global.css";
 //   },
 //   }
 
-
-
-
-
-
-
-
-
-
+import { useState, useEffect } from "react";
+import "../global.css";
 
 
 export const Popup = () => {
 
-  const [allWindowNames, setAllWindowNames] = useState<string[]>([]);
+
   const [windowTracked, setWindowTracked] = useState(false)
-  const [savedWindowName, setSavedWindowName] = useState('')
+  const [windowName, setWindowName] = useState('')
 
 
   useEffect(()=>{
     chrome.windows.getCurrent((window)=>{
-      chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseTrackedWindows)=>{
-        // @ts-ignore
-        for (let [key, trackedWindow] of Object.entries(responseTrackedWindows)) {
+      chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData)=>{
+
+        for (let trackedWindow of Object.values(responseExtensionData.trackedWindows)) {
           // @ts-ignore
           if (trackedWindow.windowId === window.id && trackedWindow.isOpen === true) {
             setWindowTracked(true)
-            console.log(trackedWindow)
             // @ts-ignore
-            setSavedWindowName(trackedWindow.windowName)
+            setWindowName(trackedWindow.windowName)
             break
           }
         }
       })
     })
-
-
-    chrome.runtime.sendMessage({signal: 'windowNameDataForPopup'},(responseAllWindowNames)=>{
-      setAllWindowNames(responseAllWindowNames)
-    })
   },[])
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
   async function onTrackButtonClick() {
 
 
+    chrome.runtime.sendMessage({signal: 'dataForPopup'}, async (responseExtensionData)=>{
 
-
-    if (windowTracked === false) {
-      if (savedWindowName.trim() === '') {
-        alert("Name the window")
-        return
+      if (windowTracked === false) {
+        if (windowName.trim() === '') {
+          alert("Name the window")
+          return
+        }
+        // @ts-ignore
+        if (responseExtensionData.allWindowNames.includes(windowName.trim()) === true) {
+          alert('Window with that name already exists')
+          return
+        }
       }
-      if (allWindowNames.includes(savedWindowName.trim()) === true) {
-        alert('Window with that name already exists')
-        return
-      }
-    }
+  
 
-
-
-
-    const windowId = (await chrome.windows.getCurrent()).id
-
-
-
-
-    chrome.runtime.sendMessage({
-
-
-
-
-      signal: "trackButtonClicked",
-      trackWindow: !windowTracked,
-      currentWindowId: windowId,
-      windowName: savedWindowName.trim()
-    
-        }, (resposne)=>{
-      setWindowTracked(resposne)
+      const windowId = (await chrome.windows.getCurrent()).id
+  
+      chrome.runtime.sendMessage({
+  
+        signal: "trackButtonClicked",
+        trackWindow: !windowTracked,
+        currentWindowId: windowId,
+        windowName: windowName.trim()
+      
+          }, (resposne)=>{
+        setWindowTracked(resposne)
+      })
     })
   }
-
-
-
-
 
 
 
@@ -143,17 +96,6 @@ export const Popup = () => {
     chrome.tabs.create({url:optionsUrl})
     chrome.runtime.sendMessage({signal: "savedWindowPage"})
   }
-
-
-
-
-
-
-
-
-
-
-
 
   return (
     <div className="h-full w-full bg-gray-400 relative p-0">
@@ -171,7 +113,7 @@ export const Popup = () => {
 
 
 
-        <input type="text" value={savedWindowName} onChange={(e)=>setSavedWindowName(e.target.value)} placeholder="type window name..."/>
+        <input type="text" value={windowName} onChange={(e)=>setWindowName(e.target.value)} placeholder="type window name..."/>
         <button className=" bg-[#808081] rounded-md p-1 text-[14px] hover:bg-[#6b6b6c] text-[#2f2f2f]
         "
 
@@ -194,15 +136,6 @@ export const Popup = () => {
 
 
 
-
     </div>
   );
 };
-
-
-
-
-
-
-
-

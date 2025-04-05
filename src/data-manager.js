@@ -51,8 +51,6 @@ export function saveExtensionDataToLocal() {
         else {
             console.log("=========== Data was saved to local storage ===========")
             console.log(extensionData)
-            console.log("=========== Data was saved to local storage ===========")
-
         }
     })
  }

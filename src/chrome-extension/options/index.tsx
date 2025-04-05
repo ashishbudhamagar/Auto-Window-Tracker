@@ -8,17 +8,16 @@ const Options = () => {
   const [trackedWindows, setTrackedWindows] = useState<Record<string, Array<any>>>({});
 
   useEffect(()=>{
+    chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData)=>{
+      setTrackedWindows(responseExtensionData.trackedWindows)
+    })
+
     // @ts-ignore
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.signal !== 'changeOptions') return
       setTrackedWindows(message.trackedWindows)
     })
-    
-    chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseTrackedWindows)=>{
-      setTrackedWindows(responseTrackedWindows)
-    })
   },[])
-
 
 
 
@@ -44,8 +43,6 @@ const Options = () => {
   }
 
 
-
-
   return (
     <div className="h-[80%] w-[100%]">
 
@@ -67,8 +64,6 @@ const Options = () => {
             >{ele.windowName}</button>
           ))
         }
-
-
 
 
       </div>
