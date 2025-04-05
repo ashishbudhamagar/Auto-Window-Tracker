@@ -1,98 +1,21 @@
 import { onExtensionInstalled, extensionData, saveExtensionDataToLocal } from "./data-manager"
 
 
-
-
-
-
-
-
-
-
-
-
 async function main() {
-try {
+    try {
+        
+        await onExtensionInstalled()
 
+        console.log("================Start=================")
 
-
-
-  await onExtensionInstalled()
-
-
-
-
-  console.log("================Start=================")
-  console.log(extensionData)
-  console.log("================Start=================")
-
-
-
-
-
-
-
-
-
-
-
-
-  handMessagesSent()
-  setupWindowListeners()
-
-
-
-
-  chrome.windows.onRemoved.addListener((windowId)=>{
-
-
-   for (let [name, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-      
-       console.log(trackedWindow.isOpen === true, trackedWindow.windowId === windowId)
-
-
-       if (trackedWindow.isOpen === true && trackedWindow.windowId === windowId) {
-
-
-           console.log(extensionData.trackedWindows[`${name}`])
-           extensionData.trackedWindows[`${name}`].isOpen = false
-           console.log(extensionData.trackedWindows[`${name}`])
-
-
-       }
-   }
-
-
-
-
-
-
-   saveExtensionDataToLocal()
-   updateOptionsPage()
-  })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- } catch (error) {
-  console.warn(error)
+        handleMessageReceived()
+        setupWindowListeners()
+        handleWindowClosed()
+    }
+    catch (error) {
+        console.warn(error)
+    }
 }
-}
-
-
-
 
 main()
 
@@ -102,101 +25,33 @@ main()
 
 
 
+function handleMessageReceived() {
+        
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
+        if (message.signal === 'trackButtonClicked') {
 
-
-
-
-function handMessagesSent() {
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-
-
-
-
-  if (message.signal === 'trackButtonClicked') {
-
-
-
-
-    if (message.trackWindow === true) {
-
-
-
-
-      chrome.tabs.query({windowId: message.currentWindowId}, (allTabs)=>{
-
-
-
-
-        const usefulTabsData = allTabs.map((ele)=>{
-          return {
-            'id': ele.id,
-            'groupId': ele.groupId,
-            'url': ele.url
-          }
-        })
-
-
-
-
-        extensionData.allWindowNames.push(message.windowName)
-        extensionData.trackedWindows[message.windowName] =
-        {
-          windowId: message.currentWindowId,
-          color: 'white',
-          isOpen: true,
-          tabs: usefulTabsData,
-          windowName: message.windowName
+            if (message.trackWindow === true) {
+                handleWindowTrack(message.currentWindowId, message.windowName, sendResponse)
+                return true
+            }
+            else {
+                handleWIndowUntracked(message.currentWindowId, sendResponse)
+            }
         }
-
-
-
-
-        sendResponse(true)
-        updateOptionsPage()
-
-
-        console.log("============ Window Tracked: True ==============")
-        console.log(extensionData.trackedWindows)
-        console.log(extensionData.allWindowNames)
-      })
-
-
-      return true
-    }
-    else {
-
-
-
-
-      for (let [key, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-        if (trackedWindow.windowId === message.currentWindowId && trackedWindow.isOpen) {
-          extensionData.allWindowNames = extensionData.allWindowNames.filter(ele=>ele !== trackedWindow.windowName)
-          delete extensionData.trackedWindows[key]
-          break
+        else if (message.signal === 'windowNameDataForPopup') {
+            sendResponse(extensionData.allWindowNames)
         }
-      }
-
-
-      sendResponse(false)
-      updateOptionsPage()
-    
-      console.log("============ Window Tracked: False ==============")
-      console.log(extensionData.trackedWindows)
-      console.log(extensionData.allWindowNames)
-    }
-  }
-  else if (message.signal === 'windowNameDataForPopup') {
-    console.log(extensionData.allWindowNames)
-    sendResponse(extensionData.allWindowNames)
-  }
-  else if ( message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
-    sendResponse(extensionData.trackedWindows)
-  }
-  else if (message.signal === 'untrackWindow') {
-    delete extensionData.trackedWindows[`${message.windowName}`]
-  }
-})
+        else if ( message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
+            sendResponse(extensionData.trackedWindows)
+        }
+        else if (message.signal === 'untrackWindow') {
+            delete extensionData.trackedWindows[`${message.windowName}`]
+        }
+        else if (message.signal === 'openSavedWindow') {
+            handleSavedWindowOpen(message.openedWindowDetails)
+        }
+    })
 }
 
 
@@ -208,80 +63,162 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 function setupWindowListeners() {
 
+    chrome.tabs.onRemoved.addListener((tabId, removeInfo)=> {
+        if (removeInfo.isWindowClosing === false) {
+            reQueryAllTabsToSave(removeInfo.windowId)
+        }
+    })
+
+    chrome.tabs.onMoved.addListener((tabId, moveInfo)=>{
+        reQueryAllTabsToSave(moveInfo.windowId)
+    })
+
+    chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
+        if (updateInfo.url) {
+            reQueryAllTabsToSave(tab.windowId)
+        }
+    })
 
 
+    function reQueryAllTabsToSave(windowId) {
 
-  chrome.tabs.onRemoved.addListener((tabId, removeInfo)=> {
+        for (let [name,trackedWindow] of Object.entries(extensionData.trackedWindows)) {
 
+            if (trackedWindow.windowId === windowId && trackedWindow.isOpen === true) {
+            
+                chrome.tabs.query({windowId: windowId}, (allTabs)=>{
+                    extensionData.trackedWindows[name].tabs = allTabs.map((ele)=>{
+                        return {
+                        'id': ele.id,
+                        'groupId': ele.groupId,
+                        'url': ele.url
+                        }
+                    })
+                })
 
-       if (removeInfo.isWindowClosing === false) {
-           reQueryAllTabsToSave(removeInfo.windowId)
-       }
-  })
-
-
-
-
-  chrome.tabs.onMoved.addListener((tabId, moveInfo)=>{
-    reQueryAllTabsToSave(moveInfo.windowId)
-  })
-
-
-
-
-  chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
-      if (updateInfo.url) {
-        reQueryAllTabsToSave(tab.windowId)
-      }
-  })
-
-
-
-
-
-
-
-
-  function reQueryAllTabsToSave(windowId) {
-
-
-
-
-    for (let [name,trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-
-
-
-
-      if (trackedWindow.windowId === windowId && trackedWindow.isOpen === true) {
-      
-        chrome.tabs.query({windowId: windowId}, (allTabs)=>{
-          extensionData.trackedWindows[name].tabs = allTabs.map((ele)=>{
-            return {
-              'id': ele.id,
-              'groupId': ele.groupId,
-              'url': ele.url
+                console.log("============ Tab Re-queried ==============")
+                console.log(extensionData.trackedWindows)
+                break
             }
-          })
-        })
-
-
-
-
-        console.log("============ Tab Re-queried ==============")
-        console.log(extensionData.trackedWindows)
-        break
-      }
+        }
     }
-  }
 }
 
 
 
 
 function updateOptionsPage() {
-   chrome.tabs.query({url: "chrome-extension://dmfagjhkmiadcampfieimmbalddlaglc/options.html"},(tab)=>{
-       if (tab.length !== 0) {
-           chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
-       }
-   })
+    chrome.tabs.query({url: "chrome-extension://nfhnplnmgoblehoadbjmkiadacjafcgj/options.html"},(tab)=>{
+        if (tab.length !== 0) {
+            chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
+        }
+    })
+}
+
+
+function handleWindowClosed() {
+    chrome.windows.onRemoved.addListener((windowId)=>{
+
+        for (let [name, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
+
+            if (trackedWindow.isOpen === true && trackedWindow.windowId === windowId) {
+
+                extensionData.trackedWindows[`${name}`].isOpen = false
+
+
+                saveExtensionDataToLocal()
+                updateOptionsPage() 
+            }
+        }
+    })
+}
+
+function handleSavedWindowOpen(openedWindowDetails) {
+
+    const windowDetails = openedWindowDetails
+
+    chrome.windows.create({url: windowDetails.tabs.map(ele=>ele.url)},(newWindow)=>{
+
+        let groupedTabsId = []
+        let groupIndex = -1
+        let lastGroupId = -1
+
+        windowDetails.tabs.forEach((ele, index)=>{
+        
+            if (ele.groupId !== -1) {
+                if (lastGroupId !== ele.groupId) {
+                    groupIndex++
+                    groupedTabsId[groupIndex] = []
+                }
+                groupedTabsId[groupIndex].push(newWindow.tabs[index].id)
+                lastGroupId = ele.groupId
+            }
+        })
+
+        for (let i = 0; i < groupedTabsId.length; i++) {
+            chrome.tabs.group({tabIds: groupedTabsId[i]}, (groupId)=>{
+                chrome.tabGroups.update(groupId,{
+                    title: windowDetails.groupedTabsInfo[i].title,
+                    color: windowDetails.groupedTabsInfo[i].color,
+                    collapsed: windowDetails.groupedTabsInfo[i].collapsed
+                })
+            })
+        }
+    })
+}
+
+
+function handleWindowTrack(currentWindowId, windowName, sendResponse) {
+    chrome.tabs.query({windowId: currentWindowId}, (allTabs)=>{
+        chrome.tabGroups.query({windowId: currentWindowId}, (groups) => {
+
+            const usefulTabsData = allTabs.map((ele)=>{
+                return {
+                    'id': ele.id,
+                    'groupId': ele.groupId,
+                    'url': ele.url
+                }
+            })
+
+            extensionData.allWindowNames.push(windowName)
+
+            extensionData.trackedWindows[windowName] =
+            {
+                windowId: currentWindowId,
+                color: 'white',
+                isOpen: true,
+                tabs: usefulTabsData,
+                windowName: windowName,
+                groupedTabsInfo: groups
+            }
+            
+            sendResponse(true)
+            updateOptionsPage()
+            
+
+            console.log("============ Window Tracked: True ==============")
+            console.log(extensionData.trackedWindows)
+            console.log(extensionData.allWindowNames)
+
+        })
+        
+    })
+}
+
+
+function handleWIndowUntracked(currentWindowId, sendResponse) {
+
+    for (let [key, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
+        if (trackedWindow.windowId === currentWindowId && trackedWindow.isOpen) {
+            extensionData.allWindowNames = extensionData.allWindowNames.filter(ele=>ele !== trackedWindow.windowName)
+            delete extensionData.trackedWindows[key]
+
+            sendResponse(false)
+            updateOptionsPage()
+            console.log("============ Window Tracked: False ==============")
+            console.log(extensionData.trackedWindows)
+            console.log(extensionData.allWindowNames)
+            break
+        }
+    }
 }

@@ -1,19 +1,15 @@
-
-
 const starterExtensionData = {
     trackedWindows: {},
     allWindowNames: [],
     user: "Ash",
     moreData: 123123,
- }
+}
+
+
+export let extensionData = null
  
- 
- export let extensionData = null
- 
- 
- 
- 
- export function onExtensionInstalled() {
+
+export function onExtensionInstalled() {
     return new Promise((resolve, reject)=>{
         chrome.runtime.onInstalled.addListener((details)=>{
             if (chrome.runtime.lastError) {
@@ -27,8 +23,8 @@ const starterExtensionData = {
                     })
                 }
                 else if (details.reason === 'update' || details.reason === 'chrome_update') {
- 
- 
+
+
                     chrome.storage.local.clear()
                     chrome.storage.local.set( { extensionData: starterExtensionData}, ()=>{
                         extensionData = starterExtensionData
@@ -45,18 +41,18 @@ const starterExtensionData = {
             }
         })
     })
- }
- 
- 
- 
- 
- export function saveExtensionDataToLocal() {
+}
+
+export function saveExtensionDataToLocal() {
     chrome.storage.local.set({extensionData: extensionData}, ()=>{
         if (chrome.runtime.lastError) {
             console.warn(chrome.runtime.lastError)
         }
         else {
-            console.log("Data was saved to local storage: ", extensionData)
+            console.log("=========== Data was saved to local storage ===========")
+            console.log(extensionData)
+            console.log("=========== Data was saved to local storage ===========")
+
         }
     })
  }
