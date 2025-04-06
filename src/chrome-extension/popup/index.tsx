@@ -27,6 +27,7 @@
 
 import { useState, useEffect } from "react";
 import "../global.css";
+import { IconWindows, IconBookmark } from "../icons/icons";
 
 
 export const Popup = () => {
@@ -36,30 +37,22 @@ export const Popup = () => {
   const [windowName, setWindowName] = useState('')
 
 
-  useEffect(()=>{
-    chrome.windows.getCurrent((window)=>{
-      chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData)=>{
+  // useEffect(()=>{
+  //   chrome.windows.getCurrent((window)=>{
+  //     chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData)=>{
 
-        if (!responseExtensionData || !responseExtensionData.trackedWindows) {
-          console.warn("No trackedWindows received.", responseExtensionData);
-          return;
-        }
-
-        console.log("Data was found", responseExtensionData)
-        
-
-        for (let trackedWindow of Object.values(responseExtensionData.trackedWindows)) {
-          // @ts-ignore
-          if (trackedWindow.windowId === window.id && trackedWindow.isOpen === true) {
-            setWindowTracked(true)
-            // @ts-ignore
-            setWindowName(trackedWindow.windowName)
-            break
-          }
-        }
-      })
-    })
-  },[])
+  //       for (let trackedWindow of Object.values(responseExtensionData.trackedWindows)) {
+  //         // @ts-ignore
+  //         if (trackedWindow.windowId === window.id && trackedWindow.isOpen === true) {
+  //           setWindowTracked(true)
+  //           // @ts-ignore
+  //           setWindowName(trackedWindow.windowName)
+  //           return
+  //         }
+  //       }
+  //     })
+  //   })
+  // },[])
 
 
 
@@ -106,41 +99,44 @@ export const Popup = () => {
   }
 
   return (
-    <div className="h-full w-full bg-gray-400 relative p-0">
 
 
+    <div className="h-auto w-[320px]">
 
+      <div className="p-5 bg-gray-50">
+        <div className="flex flex-row justify-between items-center">
+          <h1 className="text-md font-medium text-gray-800">Auto Window Tracker</h1>
 
-      <div className="absolute -translate-x-[50%] -translate-y-[50%] left-[50%] top-[50%] flex flex-col items-center justify-center">
+          <button className="bg-gray-50 text-gray-600">
+          <IconWindows className="h-5 w-5"/>
+          </button>
+        </div>
 
-
-
-
-        <img  alt="Track Icon" className="w-10 mb-2" />
-
-
-
-
-        <input type="text" value={windowName} onChange={(e)=>setWindowName(e.target.value)} placeholder="type window name..."/>
-        <button className=" bg-[#808081] rounded-md p-1 text-[14px] hover:bg-[#6b6b6c] text-[#2f2f2f]
-        "
-
-
-
-
-        onClick={onTrackButtonClick}
-      
-        >{windowTracked ? "Untrack" : "Track"}</button>
       </div>
 
+      <div className="h-[1.5px] w-full bg-gray-300"></div>
+
+      <div className="p-5">
+        <h1 className="text-[14px] font-medium mb-1 text-gray-600">Window Name</h1>
+
+        <input type="text" className="border-2 rounded-md w-full placeholder:text-[12px] px-4 py-1 my-1 " placeholder="Enter window name..."></input>
+
+        <button className="font-medium bg-blue-500 text-white text-[12px] px-10 w-full py-2 rounded-md mt-3
+          hover:bg-blue-600 flex items-center justify-center
+        "
+        
+        
+        
+        >
+          <IconBookmark className="w-4 h-4 mr-2"/>
+          <p>Track Window</p></button>
 
 
 
-      <button id="track-button" className="absolute right-0 bottom-0 bg-[#808081] rounded-br-md rounded-tl-md text-[12px] p-[3px] text-[#2f2f2f]
-        hover:bg-[#6b6b6c]
-      "
-      onClick={onWindowsButtonClick}
-      >Windows</button>
+      </div>
+
+      <div className="h-[1.5px] w-full bg-gray-200"></div>
+      <p className="font-medium text-[11px] text-gray-400 text-center p-3">Auto track your tabs and windows easily</p>
 
 
 

@@ -17,13 +17,17 @@ chrome.runtime.onInstalled.addListener((details)=>{
       chrome.storage.local.clear()
       chrome.storage.local.set({extensionData: starterExtensionDataStructure})
       extensionData = starterExtensionDataStructure
+
+      chrome.notifications.create({
+         type: 'basic',
+         iconUrl: 'icon128.png',
+         title: details.reason === 'install' ? 'Tab Tracker Installed!' : 'Tab Tracker Updated!',
+         message: details.reason === 'install' 
+           ? 'Thank you for installing Tab Tracker! Click the extension icon to get started.' 
+           : 'Tab Tracker has been updated with new features and improvements.'
+      });
       
    }
-})
-
-chrome.storage.local.get('extensionData', (result) => {
-
-   extensionData = result.extensionData
 })
 
 
@@ -101,20 +105,6 @@ chrome.windows.onRemoved.addListener((windowId)=>{
 })
 
 
-
-function checkAndSetData(forward, ...args) {
-
-   if (extensionData) {
-      forward(...args)
-   }
-   else {
-      chrome.storage.local.get('extensionData', (result) => {
-         console.log("Data was not found thus now set", result.extensionData)
-         extensionData = result.extensionData
-         forward(...args)
-      })
-   }
-}
 
 
 function reQueryAllTabsToSave(windowId) {
@@ -256,5 +246,21 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
          console.log(extensionData.allWindowNames)
          return
       }
+   }
+}
+
+
+
+function checkAndSetData(forward, ...args) {
+
+   if (extensionData) {
+      forward(...args)
+   }
+   else {
+      chrome.storage.local.get('extensionData', (result) => {
+         console.log("Data was not found thus now set", result.extensionData)
+         extensionData = result.extensionData
+         forward(...args)
+      })
    }
 }

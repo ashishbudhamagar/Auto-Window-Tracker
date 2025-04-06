@@ -5,7 +5,7 @@ import "./chrome-extension/global.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <div className="bg-white w-[200px] h-[200px]">
+    <div className="bg-white w-auto h-auto rounded-xl">
       <Popup />
     </div>
   </StrictMode>
