@@ -19,8 +19,6 @@ const Options = () => {
     })
   },[])
 
-
-
   function onSavedWindowClicked(isOpen: boolean, windowName: string) {
     if (isOpen === true) {
       alert("Cannot open opened window")

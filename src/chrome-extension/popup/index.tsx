@@ -40,6 +40,14 @@ export const Popup = () => {
     chrome.windows.getCurrent((window)=>{
       chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData)=>{
 
+        if (!responseExtensionData || !responseExtensionData.trackedWindows) {
+          console.warn("No trackedWindows received.", responseExtensionData);
+          return;
+        }
+
+        console.log("Data was found", responseExtensionData)
+        
+
         for (let trackedWindow of Object.values(responseExtensionData.trackedWindows)) {
           // @ts-ignore
           if (trackedWindow.windowId === window.id && trackedWindow.isOpen === true) {
