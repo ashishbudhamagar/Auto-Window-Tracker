@@ -8,7 +8,7 @@ const starterExtensionDataStructure = {
 }
 
 let extensionData = null
-const debounceSaveData = debounce(saveExtensionData, 1000)
+const debounceSaveData = debounce(saveExtensionData, 20000)
 
 
 chrome.runtime.onInstalled.addListener((details)=>{
@@ -16,17 +16,7 @@ chrome.runtime.onInstalled.addListener((details)=>{
 
       chrome.storage.local.clear()
       chrome.storage.local.set({extensionData: starterExtensionDataStructure})
-      extensionData = starterExtensionDataStructure
-
-      chrome.notifications.create({
-         type: 'basic',
-         iconUrl: 'icon128.png',
-         title: details.reason === 'install' ? 'Tab Tracker Installed!' : 'Tab Tracker Updated!',
-         message: details.reason === 'install' 
-           ? 'Thank you for installing Tab Tracker! Click the extension icon to get started.' 
-           : 'Tab Tracker has been updated with new features and improvements.'
-      });
-      
+      extensionData = starterExtensionDataStructure      
    }
 })
 
@@ -62,7 +52,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       } else if (message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
          sendResponse(extensionData)
       } else if (message.signal === 'untrackWindowFromOptions') {
-         handleWindowUntrack(message.currentWindowId, sendResponse)
+         delete extensionData.trackedWindows[`${message.windowName}`]
+         saveExtensionData(extensionData)
       } else if (message.signal === 'openSavedWindow') {
          handleSavedWindowOpen(message.openedWindowDetails)
       }
@@ -90,14 +81,14 @@ chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
 
 chrome.windows.onRemoved.addListener((windowId)=>{
 
-   checkAndSetData(forward, windowId)
+   checkAndGetData(forward, windowId)
 
-   function forward() {
+   function forward(windowId) {
       for (let [name, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
          if (trackedWindow.isOpen === true && trackedWindow.windowId === windowId) {
-   
+
             extensionData.trackedWindows[`${name}`].isOpen = false
-            saveExtensionData()
+            saveExtensionData(extensionData)
             updateOptionsPage() 
          }
       }
@@ -109,9 +100,10 @@ chrome.windows.onRemoved.addListener((windowId)=>{
 
 function reQueryAllTabsToSave(windowId) {
 
-   checkAndSetData(forward, windowId)
+   checkAndGetData(forward, windowId)
 
-   function forward() {
+   function forward(windowId) {
+
       for (let [name,trackedWindow] of Object.entries(extensionData.trackedWindows)) {
 
          if (trackedWindow.windowId === windowId && trackedWindow.isOpen === true) {
@@ -121,7 +113,9 @@ function reQueryAllTabsToSave(windowId) {
                      return {
                      'id': ele.id,
                      'groupId': ele.groupId,
-                     'url': ele.url
+                     'url': ele.url,
+                     'favIconUrl': ele.favIconUrl,
+                     'title': ele.title
                      }
                   })
    
@@ -196,11 +190,14 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
    chrome.tabs.query({windowId: currentWindowId}, (allTabs)=>{
       chrome.tabGroups.query({windowId: currentWindowId}, (groups) => {
 
+         console.log(allTabs)
          const usefulTabsData = allTabs.map((ele)=>{
                return {
                   'id': ele.id,
                   'groupId': ele.groupId,
-                  'url': ele.url
+                  'url': ele.url,
+                  'favIconUrl': ele.favIconUrl,
+                  'title': ele.title
                }
          })
 
@@ -234,7 +231,8 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
 function handleWindowUntrack(currentWindowId, sendResponse) {
 
    for (let [key, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-      if (trackedWindow.windowId === currentWindowId && trackedWindow.isOpen) {
+      if (trackedWindow.windowId === currentWindowId && trackedWindow.isOpen === true) {
+
          extensionData.allWindowNames = extensionData.allWindowNames.filter(ele=>ele !== trackedWindow.windowName)
          delete extensionData.trackedWindows[key]
 
@@ -250,8 +248,7 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
 }
 
 
-
-function checkAndSetData(forward, ...args) {
+function checkAndGetData(forward, ...args) {
 
    if (extensionData) {
       forward(...args)
