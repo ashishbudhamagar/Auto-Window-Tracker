@@ -3,123 +3,380 @@ import "../global.css";
 import { IconBookmark, IconX, IconExternal } from "../icons/icons";
 
 const trackedWindows = {
-  abc123: {
-    windowName: "Dev + Research",
-    windowId: 101001,
-    color: "white",
+  win15tabs: {
+    windowName: "Big Research Window",
+    windowId: 102000,
+    color: "teal",
     isOpen: true,
     groupedTabsInfo: [],
     tabs: [
       {
-        id: 201001,
+        id: 400000,
         groupId: -1,
-        url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
-        favIconUrl: "https://developer.mozilla.org/favicon.ico",
-        title: "JavaScript | MDN"
+        url: "https://www.reddit.com/",
+        favIconUrl: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png",
+        title: "Reddit - Dive into anything"
       },
       {
-        id: 201002,
+        id: 400001,
         groupId: -1,
-        url: "https://react.dev/learn",
-        favIconUrl: "https://react.dev/favicon.ico",
-        title: "React – Learn React"
+        url: "https://news.ycombinator.com/",
+        favIconUrl: "https://news.ycombinator.com/favicon.ico",
+        title: "Hacker News"
       },
       {
-        id: 201003,
+        id: 400002,
+        groupId: -1,
+        url: "https://www.youtube.com/watch?v=abc123",
+        favIconUrl: "https://www.youtube.com/favicon.ico",
+        title: "YouTube Video"
+      },
+      {
+        id: 400003,
+        groupId: -1,
+        url: "https://www.google.com/",
+        favIconUrl: "https://www.google.com/favicon.ico",
+        title: "Google"
+      },
+      {
+        id: 400004,
+        groupId: -1,
+        url: "https://www.nytimes.com/",
+        favIconUrl: "https://www.nytimes.com/favicon.ico",
+        title: "The New York Times"
+      },
+      {
+        id: 400005,
         groupId: -1,
         url: "https://chat.openai.com/",
         favIconUrl: "https://chat.openai.com/favicon.ico",
         title: "ChatGPT"
       },
       {
-        id: 201004,
+        id: 400006,
         groupId: -1,
-        url: "https://github.com/ashishbudhamagar",
-        favIconUrl: "https://github.githubassets.com/favicons/favicon.svg",
-        title: "ashishbudhamagar (GitHub)"
+        url: "https://chat.openai.com/",
+        favIconUrl: "https://chat.openai.com/favicon.ico",
+        title: "ChatGPT"
       },
       {
-        id: 201005,
+        id: 400007,
         groupId: -1,
-        url: "https://stackoverflow.com/questions",
-        favIconUrl: "https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico",
-        title: "Newest Questions - Stack Overflow"
+        url: "https://news.ycombinator.com/",
+        favIconUrl: "https://news.ycombinator.com/favicon.ico",
+        title: "Hacker News"
       },
       {
-        id: 201006,
+        id: 400008,
         groupId: -1,
-        url: "chrome://extensions/",
-        favIconUrl: "",
-        title: "Extensions"
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
       },
       {
-        id: 201007,
+        id: 400009,
         groupId: -1,
-        url: "https://claude.ai/chat/12345678",
-        favIconUrl: "https://claude.ai/favicon.ico",
-        title: "Claude – Chat Interface"
+        url: "https://www.google.com/",
+        favIconUrl: "https://www.google.com/favicon.ico",
+        title: "Google"
       },
       {
-        id: 201008,
+        id: 400010,
         groupId: -1,
-        url: "https://notion.so/",
-        favIconUrl: "https://www.notion.so/images/favicon.ico",
-        title: "Notion – All-in-one workspace"
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
+      },
+      {
+        id: 400011,
+        groupId: -1,
+        url: "https://chat.openai.com/",
+        favIconUrl: "https://chat.openai.com/favicon.ico",
+        title: "ChatGPT"
+      },
+      {
+        id: 400012,
+        groupId: -1,
+        url: "https://www.reddit.com/",
+        favIconUrl: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png",
+        title: "Reddit - Dive into anything"
+      },
+      {
+        id: 400013,
+        groupId: -1,
+        url: "https://www.reddit.com/",
+        favIconUrl: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png",
+        title: "Reddit - Dive into anything"
+      },
+      {
+        id: 400014,
+        groupId: -1,
+        url: "https://twitter.com/",
+        favIconUrl: "https://abs.twimg.com/favicons/twitter.ico",
+        title: "Twitter"
+      },
+      {
+        id: 300000,
+        groupId: -1,
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
+      },
+      {
+        id: 300001,
+        groupId: -1,
+        url: "https://news.ycombinator.com/",
+        favIconUrl: "https://news.ycombinator.com/favicon.ico",
+        title: "Hacker News"
+      },
+      {
+        id: 300002,
+        groupId: -1,
+        url: "https://www.google.com/",
+        favIconUrl: "https://www.google.com/favicon.ico",
+        title: "Google"
+      },
+      {
+        id: 300003,
+        groupId: -1,
+        url: "https://codepen.io/",
+        favIconUrl: "https://codepen.io/favicon.ico",
+        title: "CodePen"
+      },
+      {
+        id: 300000,
+        groupId: -1,
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
+      },
+      {
+        id: 300001,
+        groupId: -1,
+        url: "https://news.ycombinator.com/",
+        favIconUrl: "https://news.ycombinator.com/favicon.ico",
+        title: "Hacker News"
+      },
+      {
+        id: 300002,
+        groupId: -1,
+        url: "https://www.google.com/",
+        favIconUrl: "https://www.google.com/favicon.ico",
+        title: "Google"
+      },
+      {
+        id: 300003,
+        groupId: -1,
+        url: "https://codepen.io/",
+        favIconUrl: "https://codepen.io/favicon.ico",
+        title: "CodePen"
+      },
+      {
+        id: 300000,
+        groupId: -1,
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
+      },
+      {
+        id: 300001,
+        groupId: -1,
+        url: "https://news.ycombinator.com/",
+        favIconUrl: "https://news.ycombinator.com/favicon.ico",
+        title: "Hacker News"
+      },
+      {
+        id: 300002,
+        groupId: -1,
+        url: "https://www.google.com/",
+        favIconUrl: "https://www.google.com/favicon.ico",
+        title: "Google"
+      },
+      {
+        id: 300003,
+        groupId: -1,
+        url: "https://codepen.io/",
+        favIconUrl: "https://codepen.io/favicon.ico",
+        title: "CodePen"
       }
     ]
   },
-
-  xyz789: {
-    windowName: "Media + Tools",
-    windowId: 101002,
+  win1: {
+    windowName: "Docs + Tools",
+    windowId: 101003,
+    color: "white",
+    isOpen: true,
+    groupedTabsInfo: [],
+    tabs: [
+      {
+        id: 300000,
+        groupId: -1,
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
+      },
+      {
+        id: 300001,
+        groupId: -1,
+        url: "https://news.ycombinator.com/",
+        favIconUrl: "https://news.ycombinator.com/favicon.ico",
+        title: "Hacker News"
+      },
+      {
+        id: 300002,
+        groupId: -1,
+        url: "https://www.google.com/",
+        favIconUrl: "https://www.google.com/favicon.ico",
+        title: "Google"
+      },
+      {
+        id: 300003,
+        groupId: -1,
+        url: "https://codepen.io/",
+        favIconUrl: "https://codepen.io/favicon.ico",
+        title: "CodePen"
+      }
+    ]
+  },
+  win2: {
+    windowName: "News",
+    windowId: 101004,
     color: "green",
     isOpen: false,
     groupedTabsInfo: [],
     tabs: [
       {
-        id: 202001,
+        id: 300100,
         groupId: -1,
-        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        favIconUrl: "https://www.youtube.com/s/desktop/bfe4b043/img/logos/favicon_32x32.png",
-        title: "Rick Astley - Never Gonna Give You Up"
+        url: "https://www.nytimes.com/",
+        favIconUrl: "https://www.nytimes.com/favicon.ico",
+        title: "The New York Times"
       },
       {
-        id: 202002,
+        id: 300101,
         groupId: -1,
-        url: "https://open.spotify.com/",
-        favIconUrl: "https://open.spotifycdn.com/cdn/images/favicon32.8e66b099.png",
-        title: "Spotify"
+        url: "https://twitter.com/",
+        favIconUrl: "https://abs.twimg.com/favicons/twitter.ico",
+        title: "Twitter"
+      }
+    ]
+  },
+  win3: {
+    windowName: "Social Media",
+    windowId: 101005,
+    color: "blue",
+    isOpen: true,
+    groupedTabsInfo: [],
+    tabs: [
+      {
+        id: 300200,
+        groupId: -1,
+        url: "https://reddit.com/",
+        favIconUrl: "https://www.redditstatic.com/favicon.ico",
+        title: "Reddit"
       },
       {
-        id: 202003,
+        id: 300201,
         groupId: -1,
-        url: "https://calendar.google.com/",
-        favIconUrl: "https://calendar.google.com/googlecalendar/images/favicons_2020q4/calendar_8.ico",
-        title: "Google Calendar"
-      },
+        url: "https://chat.openai.com/",
+        favIconUrl: "https://chat.openai.com/favicon.ico",
+        title: "ChatGPT"
+      }
+    ]
+  },
+  win4: {
+    windowName: "Design Projects",
+    windowId: 101006,
+    color: "yellow",
+    isOpen: true,
+    groupedTabsInfo: [],
+    tabs: [
       {
-        id: 202004,
-        groupId: -1,
-        url: "https://mail.google.com/",
-        favIconUrl: "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",
-        title: "Gmail"
-      },
-      {
-        id: 202005,
+        id: 300300,
         groupId: -1,
         url: "https://figma.com/",
-        favIconUrl: "https://static.figma.com/app/icon/1/favicon.ico",
+        favIconUrl: "https://static.figma.com/favicon.ico",
         title: "Figma"
       },
       {
-        id: 202006,
+        id: 300301,
         groupId: -1,
-        url: "http://localhost:5173/options-local.html",
-        favIconUrl: "http://localhost:5173/src/chrome-extension/public/32.png",
-        title: "App"
+        url: "https://github.com/",
+        favIconUrl: "https://github.githubassets.com/favicons/favicon.svg",
+        title: "GitHub"
       }
     ]
-  }
+  },
+  win5: {
+    windowName: "Coding Resources",
+    windowId: 101007,
+    color: "purple",
+    isOpen: true,
+    groupedTabsInfo: [],
+    tabs: [
+      {
+        id: 300400,
+        groupId: -1,
+        url: "https://stackoverflow.com/",
+        favIconUrl: "https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico",
+        title: "Stack Overflow"
+      },
+      {
+        id: 300401,
+        groupId: -1,
+        url: "https://developer.mozilla.org/",
+        favIconUrl: "https://developer.mozilla.org/favicon.ico",
+        title: "MDN Web Docs"
+      }
+    ]
+  },
+  win6: {
+    windowName: "Entertainment",
+    windowId: 101008,
+    color: "gray",
+    isOpen: false,
+    groupedTabsInfo: [],
+    tabs: [
+      {
+        id: 300500,
+        groupId: -1,
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        favIconUrl: "https://www.youtube.com/favicon.ico",
+        title: "Rick Astley - Never Gonna Give You Up"
+      },
+      {
+        id: 300501,
+        groupId: -1,
+        url: "https://netflix.com/",
+        favIconUrl: "https://assets.nflxext.com/us/icons/nficon2016.ico",
+        title: "Netflix"
+      }
+    ]
+  },
+  win7: {
+    windowName: "University Dashboard",
+    windowId: 101009,
+    color: "orange",
+    isOpen: true,
+    groupedTabsInfo: [],
+    tabs: [
+      {
+        id: 300600,
+        groupId: -1,
+        url: "https://northeastern.instructure.com/",
+        favIconUrl: "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico",
+        title: "Canvas"
+      },
+      {
+        id: 300601,
+        groupId: -1,
+        url: "https://outlook.office.com/mail/",
+        favIconUrl: "https://res.cdn.office.net/assets/mail/favicon.ico",
+        title: "Outlook Mail"
+      }
+    ]
+  },
+  
 };
 
 
@@ -180,7 +437,7 @@ const Options = () => {
           </div>
 
           <div className="flex items-center justify-center">
-            <p className="font-medium text-gray-500">Saved Windows: 4 (Opened: 2)</p>
+            <p className="font-medium text-gray-500">Tracked Windows: {Object.keys(trackedWindows).length} (Opened: {Object.values(trackedWindows).filter(ele=> ele.isOpen).length})</p>
           </div>
 
         </div>
@@ -224,14 +481,15 @@ const Options = () => {
             Object.values(trackedWindows).map((window : any)=>(
 
 
-              <div className="bg-white h-[18rem] w-full rounded-lg p-7 border-l-[5px] border-green-500 flex flex-col justify-between
+              <div className={`bg-white h-[20rem] w-full rounded-lg px-7 py-5 border-l-[5px] flex flex-col justify-between
                 hover:-translate-y-1 hover:shadow-[7px_7px_5px_rgba(0,0,0,0.3)] transition-all shadow-md
-              ">
+                ${window.isOpen ? "border-green-500 " : "border-blue-500 "}
+              `}>
 
                 <div>
                   <div className="flex justify-between">
                     <h1 className="text-2xl">{window.windowName}</h1>
-                    <p className="bg-green-200 rounded-2xl px-3 pt-[1px] pb-[4px] text-center text-green-700">{window.isOpen ? "Open" : "Saved"}</p>
+                    <p className={` rounded-2xl px-3 py-1  flex items-center  ${window.isOpen ? " bg-green-200 text-green-700" : "bg-blue-200 text-blue-700"}`}>{window.isOpen ? "Open" : "Saved"}</p>
                   </div>
 
                   <div className="mt-2 mb-4">
@@ -246,30 +504,45 @@ const Options = () => {
                   <div className="flex flex-col">
                     {
                         // @ts-ignore
-                        window.tabs.slice(0,3).map((tab)=>(
-                          <div className="">
+                        window.tabs.slice(0,4).map((tab)=>(
+                          <a href={tab.url} className="hover:text-blue-700 hover:underline" target="_blank">
                             {
-                              <div className="flex items-center space-x-2 space-y-1">
-                                <img src={tab.favIconUrl} className="w-5 h-5"/>
+                              <div className="flex items-center space-x-2">
+                                <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 rounded-md"/>
                                 <p>{tab.title}</p>
                               
                               </div>
                             }
-                            </div>
+                            </a>
                         ))
                       }
+
+                      <div className="flex mt-3 items-center text-gray-500 flex-wrap h-8">
+                        {
+                          // @ts-ignore
+                          window.tabs.slice(4,17).map((tab)=>(
+                            <a href={tab.url} target="_blank" >
+                              <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 mr-[2px] rounded-md hover:h-7 hover:w-7 transition-all" />
+
+                            </a>
+                          ))
+                        }
+                        {window.tabs.length > 17 ? `...${window.tabs.length - 17}+` : ""}
+                      </div>
                   </div>
 
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between ">
                   <button className="flex bg-red-50 rounded-md py-1 px-3 items-center space-x-1 hover:bg-red-200">
                     <IconX className="h-[18px] w-[18px] text-red-400"/>
                     <p className="text-red-400 font-medium">Untrack</p>
                     </button>
-                  <button className="flex items-center py-1 px-3 bg-gray-100 rounded-md space-x-1">
-                    <IconExternal className="text-gray-400 h-[20px] w-[20px]"/>
-                    <p className="text-gray-400 font-medium">{window.isOpen ? "Already Open" : "Open Window"}</p>
+                  <button className={`flex items-center py-1 px-3  rounded-md space-x-1 ${window.isOpen ? "bg-green-100" : "bg-blue-200"}
+                    ${window.isOpen ? "hover:cursor-not-allowed" : "hover:bg-blue-300"}
+                  `}>
+                    <IconExternal className={` h-[20px] w-[20px] ${window.isOpen ? "text-green-600" : "text-blue-500"}`}/>
+                    <p className={` font-medium ${window.isOpen ? "text-green-600" : "text-blue-500"}`}>{window.isOpen ? "Already Open" : "Open Window"}</p>
                   </button>
 
                 </div>
