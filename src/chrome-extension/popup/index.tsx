@@ -25,15 +25,15 @@ export const Popup = () => {
         }
       })
     })
-  },[])
+    },[])
 
 
   async function onTrackButtonClick() {
     chrome.runtime.sendMessage({signal: 'dataForPopup'}, async (responseExtensionData)=>{
 
+
       if (windowTracked === false) {
         if (windowName.trim() === '') {
-          console.log(1,windowName, windowName.trim())
           setError('Name the window')
           return
         }

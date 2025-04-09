@@ -4,7 +4,6 @@ import { debounce, saveExtensionData, } from "./data-manager"
 const starterExtensionDataStructure = {
    trackedWindows: {},
    allWindowNames: [],
-   user: "Ash",
    optionsPageSort: 'Name: ASC'
 }
 
@@ -46,16 +45,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
          
          if (message.trackWindow === true) {
             handleWindowTrack(message.currentWindowId, message.windowName, sendResponse)
-         } else {
+         }
+         else {
             handleWindowUntrack(message.currentWindowId, sendResponse)
          }
 
-      } else if (message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
+      }
+      else if (message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
          sendResponse(extensionData)
-      } else if (message.signal === 'untrackWindowFromOptions') {
-         delete extensionData.trackedWindows[`${message.windowName}`]
-         saveExtensionData(extensionData)
-      } else if (message.signal === 'openSavedWindow') {
+      }
+      else if (message.signal === 'untrackWindowFromOptions') {
+
+         checkAndGetData((windowName)=>{
+
+
+            delete extensionData.trackedWindows[`${windowName}`]
+            extensionData.allWindowNames = extensionData.allWindowNames.filter(ele=> ele !== windowName)
+            saveExtensionData(extensionData)
+            updateOptionsPage()
+            // chrome.runtime.sendMessage({signal: 'freshData', allWindowNames: extensionData.allWindowNames})
+
+         }, message.windowName)
+      }
+      else if (message.signal === 'openSavedWindow') {
          handleSavedWindowOpen(message.openedWindowDetails)
       }
    }
@@ -80,6 +92,14 @@ chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
 })
 
 
+chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
+   if (detachInfo.oldPosition) {
+      reQueryAllTabsToSave(detachInfo.oldWindowId)
+   }
+})
+
+
+
 chrome.windows.onRemoved.addListener((windowId)=>{
 
    checkAndGetData(forward, windowId)
@@ -90,7 +110,7 @@ chrome.windows.onRemoved.addListener((windowId)=>{
 
             extensionData.trackedWindows[`${name}`].isOpen = false
             saveExtensionData(extensionData)
-            updateOptionsPage() 
+            updateOptionsPage()
          }
       }
    }
@@ -119,9 +139,9 @@ function reQueryAllTabsToSave(windowId) {
                      'title': ele.title
                      }
                   })
-   
+
+                  updateOptionsPage()                  
                   debounceSaveData(extensionData)
-                  
                   console.log("============ Tab Re-queried ==============")
                   console.log(extensionData.trackedWindows[name].tabs)
                })
@@ -191,7 +211,6 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
    chrome.tabs.query({windowId: currentWindowId}, (allTabs)=>{
       chrome.tabGroups.query({windowId: currentWindowId}, (groups) => {
 
-         console.log(allTabs)
          const usefulTabsData = allTabs.map((ele)=>{
                return {
                   'id': ele.id,
