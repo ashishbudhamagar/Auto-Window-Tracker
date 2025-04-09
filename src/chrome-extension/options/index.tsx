@@ -1,8 +1,32 @@
-// import { useEffect, useState } from "react";
+// @ts-nocheck
+
+import { useEffect, useState, useRef } from "react";
 import "../global.css";
 import { IconBookmark, IconX, IconExternal } from "../icons/icons";
-
 const trackedWindows = {
+  win0: {
+    windowName: "Entertainment",
+    windowId: 101008,
+    color: "gray",
+    isOpen: false,
+    groupedTabsInfo: [],
+    tabs: [
+      {
+        id: 300500,
+        groupId: -1,
+        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        favIconUrl: "https://www.youtube.com/favicon.ico",
+        title: "Rick Astley - Never Gonna Give You Up"
+      },
+      {
+        id: 300501,
+        groupId: -1,
+        url: "https://netflix.com/",
+        favIconUrl: "https://assets.nflxext.com/us/icons/nficon2016.ico",
+        title: "Netflix"
+      }
+    ]
+  },
   win15tabs: {
     windowName: "Big Research Window",
     windowId: 102000,
@@ -330,29 +354,7 @@ const trackedWindows = {
       }
     ]
   },
-  win6: {
-    windowName: "Entertainment",
-    windowId: 101008,
-    color: "gray",
-    isOpen: false,
-    groupedTabsInfo: [],
-    tabs: [
-      {
-        id: 300500,
-        groupId: -1,
-        url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        favIconUrl: "https://www.youtube.com/favicon.ico",
-        title: "Rick Astley - Never Gonna Give You Up"
-      },
-      {
-        id: 300501,
-        groupId: -1,
-        url: "https://netflix.com/",
-        favIconUrl: "https://assets.nflxext.com/us/icons/nficon2016.ico",
-        title: "Netflix"
-      }
-    ]
-  },
+
   win7: {
     windowName: "University Dashboard",
     windowId: 101009,
@@ -379,22 +381,75 @@ const trackedWindows = {
   
 };
 
+const sortingOptions = ['Name: ASC', 'Name: DES', 'Status: Open', 'Status: Saved']
+
+
+
 
 const Options = () => {
 
-  // const [trackedWindows, setTrackedWindows] = useState<Record<string, Array<any>>>({});
+  document.body.style.zoom = '90%'
 
-  // useEffect(()=>{
-  //   chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData)=>{
-  //     setTrackedWindows(responseExtensionData.trackedWindows)
-  //   })
+  const [currentSort, setCurrentSort] = useState('');
+  const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('')
+  const inputRef = useRef(null);
 
-  //   // @ts-ignore
-  //   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  //     if (message.signal !== 'changeOptions') return
-  //     setTrackedWindows(message.trackedWindows)
-  //   })
-  // },[])
+
+  useEffect(()=>{
+
+    chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData)=>{
+      // setArrayOfTrackedWindowValues(Object.values(responseExtensionData.trackedWindows))
+      setArrayOfTrackedWindowValues(Object.values(trackedWindows))
+      setCurrentSort(responseExtensionData.optionsPageSort)
+    })
+
+    // @ts-ignore
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.signal !== 'changeOptions') return
+      setArrayOfTrackedWindowValues(Object.values(message.trackedWindows))
+    })
+  },[])
+
+
+  useEffect(()=>{
+    if (currentSort === '') return
+
+    switch (currentSort) {
+
+      // case sortingOptions[0]:
+      case 'Name: ASC':
+
+        const nameSortAsc = [...arrayOfTrackedWindowValues].sort((a,b) => a.windowName.localeCompare(b.windowName))
+        setArrayOfTrackedWindowValues(nameSortAsc)
+        break
+
+      case 'Name: DES':
+
+        const nameSortDes = [...arrayOfTrackedWindowValues].sort((a,b) => b.windowName.localeCompare(a.windowName))
+        setArrayOfTrackedWindowValues(nameSortDes)
+        break
+      
+      case 'Status: Open':
+        const nameSortOpen = [...arrayOfTrackedWindowValues].sort((a,b) => b.isOpen - a.isOpen)
+        setArrayOfTrackedWindowValues(nameSortOpen)
+        break
+
+      case 'Status: Saved':
+        const nameSortSaved = [...arrayOfTrackedWindowValues].sort((a,b) => a.isOpen - b.isOpen)
+        setArrayOfTrackedWindowValues(nameSortSaved)
+        break
+      default:
+        console.warn("No valid sort")
+        break
+    }
+  },[currentSort])
+
+
+
+
+
+
 
   // function onSavedWindowClicked(isOpen: boolean, windowName: string) {
   //   if (isOpen === true) {
@@ -421,12 +476,14 @@ const Options = () => {
   //   chrome.runtime.sendMessage({signal: 'untrackWindowFromOptions', windowName: windowName})
   // }
 
+  if (currentSort === '') return
+
   return (
     <div className="min-h-screen w-auto bg-gray-100">
 
       <header className=" bg-white shadow-md">
         <div className="flex justify-between py-6 items-center
-          max-w-[93rem] mx-auto px-5 md:px-20
+          max-w-[93rem] mx-auto px-5 md:px-40
         ">
 
           <div className="">
@@ -437,18 +494,20 @@ const Options = () => {
           </div>
 
           <div className="flex items-center justify-center">
-            <p className="font-medium text-gray-500">Tracked Windows: {Object.keys(trackedWindows).length} (Opened: {Object.values(trackedWindows).filter(ele=> ele.isOpen).length})</p>
+            <p className="font-medium text-gray-500">Tracked Windows: {arrayOfTrackedWindowValues.length} (Opened: {arrayOfTrackedWindowValues.filter(ele=> ele.isOpen).length})</p>
           </div>
 
         </div>
       </header>
 
 
-      <main className="mt-10 mx-auto px-4 md:px-10 lg:px-20 transition-all duration-500 max-w-[93rem]">
+
+
+      <main className="mt-10 mx-auto px-4 md:px-40 transition-all duration-500 max-w-[93rem]">
 
         <div className="bg-white w-full h-auto flex py-5 items-center justify-center rounded-lg mb-8 shadow-md flex-col md:flex-row">
 
-          <div className="flex-[4] mr-5 w-full">
+          <div className="flex-[4] mr-5 w-full" onClick={(e)=>inputRef.current?.focus()}>
 
             <div className="flex max-w-[35rem] p-3 rounded-md border-2 border-gray-300 ml-5 justify-center items-center space-x-2
               focus-within:border-gray-400 hover:border-gray-400  transition-colors duration-200
@@ -456,18 +515,25 @@ const Options = () => {
               <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <input type="text" placeholder="Search saved windows..."
+              <input type="text" placeholder="Search windows..." ref={inputRef}
                 className=" w-full focus:outline-none ext-gray-600"
               />
             </div>
 
           </div>
 
-          <div className="flex-1 flex justify-center items-center">
-            <label htmlFor="sort" className="mr-1">Sort by :</label>
-            <select id="sort" className="hover:bg-gray-200 p-2 rounded-md transition-colors duration-300">
-              <option value="name">Name</option>
-              <option value="status">Status</option>
+          <div className="flex-1 flex justify-center items-center mr-5">
+            <label htmlFor="sort" className="mr-1 whitespace-nowrap">Sort by :</label>
+            <select id="sort" className="hover:bg-gray-200 p-2 rounded-md transition-colors duration-300"
+
+            value={currentSort}
+            onChange={(e)=>setCurrentSort(e.target.value)}
+            >
+              {
+                sortingOptions.map((ele, index)=>(
+                  <option value={ele} key={index}>{ele}</option>
+                ))
+              }
             </select>
 
           </div>
@@ -478,13 +544,13 @@ const Options = () => {
 
           {
             // @ts-ignore
-            Object.values(trackedWindows).map((window : any)=>(
+            arrayOfTrackedWindowValues.map((window : any, index)=>(
 
 
-              <div className={`bg-white h-[20rem] w-full rounded-lg px-7 py-5 border-l-[5px] flex flex-col justify-between
+              <div className={`bg-white h-[17rem] w-full rounded-lg px-7 py-5 border-l-[5px] flex flex-col justify-between
                 hover:-translate-y-1 hover:shadow-[7px_7px_5px_rgba(0,0,0,0.3)] transition-all shadow-md
                 ${window.isOpen ? "border-green-500 " : "border-blue-500 "}
-              `}>
+              `} key={index}>
 
                 <div>
                   <div className="flex justify-between">
@@ -492,24 +558,24 @@ const Options = () => {
                     <p className={` rounded-2xl px-3 py-1  flex items-center  ${window.isOpen ? " bg-green-200 text-green-700" : "bg-blue-200 text-blue-700"}`}>{window.isOpen ? "Open" : "Saved"}</p>
                   </div>
 
-                  <div className="mt-2 mb-4">
+                  <div className="mt-2 mb-3">
                     <div className="flex space-x-3 items-center">
-                      <div className="border-2 h-1 w-1 py-[5px] px-[8px] mt-[2px] rounded-md border-gray-300"></div>
-                      <p className="text-gray-500">{
+                      <div className="border-2 h-1 w-1 py-[5px] px-[8px] mt-[2px] rounded-md border-gray-400"></div>
+                      <p className="text-gray-600">{
                           window.tabs.length === 0 ? "0 tabs" : window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`
                         }</p>
                     </div>
                   </div>
                 
-                  <div className="flex flex-col">
+                  <div className="flex flex-col space-y-[2px]">
                     {
                         // @ts-ignore
-                        window.tabs.slice(0,4).map((tab)=>(
-                          <a href={tab.url} className="hover:text-blue-700 hover:underline" target="_blank">
+                        window.tabs.slice(0,4).map((tab, index)=>(
+                          <a href={tab.url} className="hover:text-blue-700 hover:underline" target="_blank" key={index}>
                             {
                               <div className="flex items-center space-x-2">
                                 <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 rounded-md"/>
-                                <p>{tab.title}</p>
+                                <p className="truncate">{tab.title}</p>
                               
                               </div>
                             }
@@ -517,17 +583,16 @@ const Options = () => {
                         ))
                       }
 
-                      <div className="flex mt-3 items-center text-gray-500 flex-wrap h-8">
+                      <div className="flex mt-2 items-center text-gray-500 flex-wrap h-8">
                         {
                           // @ts-ignore
-                          window.tabs.slice(4,17).map((tab)=>(
-                            <a href={tab.url} target="_blank" >
-                              <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 mr-[2px] rounded-md hover:h-7 hover:w-7 transition-all" />
-
+                          window.tabs.slice(4,15).map((tab, index)=>(
+                            <a href={tab.url} target="_blank" key={index}>
+                              <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 mr-[3px] rounded-md hover:h-7 hover:w-7 transition-all" />
                             </a>
                           ))
                         }
-                        {window.tabs.length > 17 ? `...${window.tabs.length - 17}+` : ""}
+                        {window.tabs.length > 15 ? `...${window.tabs.length - 15}+` : ""}
                       </div>
                   </div>
 

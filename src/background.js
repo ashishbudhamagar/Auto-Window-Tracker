@@ -4,7 +4,8 @@ import { debounce, saveExtensionData, } from "./data-manager"
 const starterExtensionDataStructure = {
    trackedWindows: {},
    allWindowNames: [],
-   user: "Ash"
+   user: "Ash",
+   optionsPageSort: 'Name: ASC'
 }
 
 let extensionData = null
@@ -205,12 +206,12 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
 
          extensionData.trackedWindows[windowName] =
          {
-               windowId: currentWindowId,
-               color: 'white',
-               isOpen: true,
-               tabs: usefulTabsData,
-               windowName: windowName,
-               groupedTabsInfo: groups
+               'windowId': currentWindowId,
+               'color': 'white',
+               'isOpen': true,
+               'tabs': usefulTabsData,
+               'windowName': windowName,
+               'groupedTabsInfo': groups
          }
          
          saveExtensionData(extensionData)
