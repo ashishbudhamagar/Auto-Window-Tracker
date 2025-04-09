@@ -63,7 +63,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             extensionData.allWindowNames = extensionData.allWindowNames.filter(ele=> ele !== windowName)
             saveExtensionData(extensionData)
             updateOptionsPage()
-            // chrome.runtime.sendMessage({signal: 'freshData', allWindowNames: extensionData.allWindowNames})
 
          }, message.windowName)
       }
@@ -156,11 +155,11 @@ function reQueryAllTabsToSave(windowId) {
 
 
 function updateOptionsPage() {
-    chrome.tabs.query({url: "chrome-extension://nfhnplnmgoblehoadbjmkiadacjafcgj/options.html"},(tab)=>{
-        if (tab.length !== 0) {
+   chrome.tabs.query({url: "chrome-extension://nfhnplnmgoblehoadbjmkiadacjafcgj/options.html"},(tab)=>{
+      if (tab.length !== 0) {
             chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
-        }
-    })
+      }
+   })
 }
 
 

@@ -456,6 +456,7 @@ const Options = () => {
   function onSearchType(e) {
     const searched = (e.target.value).trim()
     setSearchQuery(e.target.value)
+
     searched === "" ?
       setArrayOfTrackedWindowValues(copyArrayOfWin)
       :
