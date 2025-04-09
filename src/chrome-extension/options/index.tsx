@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef } from "react";
 import "../global.css";
 import { IconBookmark, IconX, IconExternal } from "../icons/icons";
+import noimage from '../icons/no-image.jpg';
+
 const trackedWindows = {
   win0: {
     windowName: "Entertainment",
@@ -384,14 +386,14 @@ const trackedWindows = {
 const sortingOptions = ['Name: ASC', 'Name: DES', 'Status: Open', 'Status: Saved']
 
 
-
-
 const Options = () => {
 
   document.body.style.zoom = '90%'
 
   const [currentSort, setCurrentSort] = useState('');
   const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState([]);
+  const [copyArrayOfWin, setCopyArrayOfWin] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState('')
   const inputRef = useRef(null);
 
@@ -400,14 +402,19 @@ const Options = () => {
 
     chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData)=>{
       // setArrayOfTrackedWindowValues(Object.values(responseExtensionData.trackedWindows))
+      // setCopyArrayOfWin(Object.values(responseExtensionData.trackedWindows))
+
       setArrayOfTrackedWindowValues(Object.values(trackedWindows))
+      setCopyArrayOfWin(Object.values(trackedWindows))
       setCurrentSort(responseExtensionData.optionsPageSort)
     })
 
     // @ts-ignore
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message.signal !== 'changeOptions') return
+      
       setArrayOfTrackedWindowValues(Object.values(message.trackedWindows))
+      setCopyArrayOfWin(Object.values(message.trackedWindows))
     })
   },[])
 
@@ -422,22 +429,26 @@ const Options = () => {
 
         const nameSortAsc = [...arrayOfTrackedWindowValues].sort((a,b) => a.windowName.localeCompare(b.windowName))
         setArrayOfTrackedWindowValues(nameSortAsc)
+        setCopyArrayOfWin(nameSortAsc)
         break
 
       case 'Name: DES':
 
         const nameSortDes = [...arrayOfTrackedWindowValues].sort((a,b) => b.windowName.localeCompare(a.windowName))
         setArrayOfTrackedWindowValues(nameSortDes)
+        setCopyArrayOfWin(nameSortDes)
         break
       
       case 'Status: Open':
         const nameSortOpen = [...arrayOfTrackedWindowValues].sort((a,b) => b.isOpen - a.isOpen)
         setArrayOfTrackedWindowValues(nameSortOpen)
+        setCopyArrayOfWin(nameSortOpen)
         break
 
       case 'Status: Saved':
         const nameSortSaved = [...arrayOfTrackedWindowValues].sort((a,b) => a.isOpen - b.isOpen)
         setArrayOfTrackedWindowValues(nameSortSaved)
+        setCopyArrayOfWin(nameSortSaved)
         break
       default:
         console.warn("No valid sort")
@@ -447,7 +458,15 @@ const Options = () => {
 
 
 
+  function onSearchType(e) {
+    const searched = e.target.value
+    setSearchQuery(searched)
 
+    searched.trim() === "" ? 
+      setArrayOfTrackedWindowValues(copyArrayOfWin)
+      :
+      setArrayOfTrackedWindowValues(copyArrayOfWin.filter(ele=> ele.windowName.toLowerCase().startsWith(searched.toLowerCase())))
+  }
 
 
 
@@ -516,6 +535,8 @@ const Options = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input type="text" placeholder="Search windows..." ref={inputRef}
+                onChange={onSearchType}
+                value={searchQuery}
                 className=" w-full focus:outline-none ext-gray-600"
               />
             </div>
@@ -574,7 +595,10 @@ const Options = () => {
                           <a href={tab.url} className="hover:text-blue-700 hover:underline" target="_blank" key={index}>
                             {
                               <div className="flex items-center space-x-2">
-                                <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 rounded-md"/>
+                                <img src={tab.favIconUrl} alt="Website Icon" className="w-5 h-5 rounded-md" onError={(e)=>{
+                                  e.currentTarget.onerror = null
+                                  e.currentTarget.src=noimage
+                                }}/>
                                 <p className="truncate">{tab.title}</p>
                               
                               </div>
