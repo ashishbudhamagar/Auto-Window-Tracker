@@ -664,57 +664,74 @@ const Options = () => {
 
 
 
-        <div className="gap-6 flex">
+        <div className="gap-6 flex max-h-[700px] bg-green-200">
 
           <div className="bg-white h-[1000px] p-5 space-y-3 rounded-xl shadow-xl lg:w-72">
 
             {
               trackedWindows.map((window,index)=>(
                 
-                <button key={index} className={`w-full hover:bg-gray-200 hover:cursor-pointer min-w-36 p-5 max-w-80 
-                  break-words rounded-md border-l-[5px]  border-b-[5px] border-b-gray-300
+                <button key={index} className={`w-full  hover:cursor-pointer min-w-36 p-5 max-w-80 
+                  break-words rounded-md border-l-[5px]  border-b-[5px] border-b-gray-300 
                   flex  flex-col  items-start
 
                   ${window.isOpen ? 'border-l-green-400' : 'border-l-blue-400'}
+                  ${index === layoutWindowChosen ? 'bg-gray-300 border-l-[20px] border-b-0' : 'hover:bg-gray-200'}
+                  transition-all duration-[0.5s]
+
+                  
                   `}
                   onClick={()=>setLayoutWindowChosen(index)}
                   >
                     <p className="text-xl font-medium text-gray-800">{window.windowName}</p>
                     <p className="text-gray-600">{window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`}</p>
+                    
                 </button>
               ))
             }
 
           </div>
-          <div className="bg-white shadow-lg w-[1000px] min-h-[100px] rounded-xl p-5 space-y-1">
 
-            <div className="border-l-4 border-l-green-500 bg-gray-50 p-5 flex justify-between rounded-md mb-5 shadow-md">
-              <div>
-                <p className="text-2xl font-medium">{trackedWindows[layoutWindowChosen].windowName}</p>
-                <p className="text-gray-500 ">{trackedWindows[layoutWindowChosen].tabs.length === 1 ? '1 tab' : `${trackedWindows[layoutWindowChosen].tabs.length} tabs`}</p>
-              </div>
-              <div className="flex space-x-4">
-                <button className="bg-gray-300 px-3 py-1 rounded-md">Open Window</button>
-                <button className="bg-gray-300 px-3 py-1 rounded-md">Untrack</button>
 
-              </div>
-            </div>
+          <div className="bg-white shadow-lg w-[1000px] h-full rounded-xl p-5 space-y-1 ">
 
-            {
-              // @ts-ignore
-              trackedWindows[layoutWindowChosen].tabs.map((tab)=>(
-                <div className=" px-5 py-2 flex space-x-5 items-center rounded-md hover:bg-gray-200 border-b-4 border-b-gray-100
-                  border-l-4 border-l-gray-300
-                ">
-                  <img src={tab.favIconUrl} alt="Website Icon" className="w-10 h-10 rounded-md" />
-                  <div className="flex flex-col">
-                    <p className="font-medium text-lg">{tab.title}</p>
-                    <p>{tab.url}</p>
-                  </div>
-                  
+            <div className={`border-l-[5px] border-l-green-500 bg-gray-50 p-5 flex justify-between rounded-md mb-5 shadow-md
+              
+              ${trackedWindows[layoutWindowChosen].isOpen ? 'border-l-green-400' : 'border-l-blue-400'}
+              `}>
+                <div>
+                  <p className="text-2xl font-medium">{trackedWindows[layoutWindowChosen].windowName}</p>
+                  <p className="text-gray-500 ">{trackedWindows[layoutWindowChosen].tabs.length === 1 ? '1 tab' : `${trackedWindows[layoutWindowChosen].tabs.length} tabs`}</p>
                 </div>
-              ))
-            }
+                <div className="flex space-x-4">
+                  <button className="bg-gray-300 px-3 py-1 rounded-md">Open Window</button>
+                  <button className="bg-gray-300 px-3 py-1 rounded-md">Untrack</button>
+
+                </div>
+              </div>
+
+
+              <div className="overflow-y-auto h-[600px]">
+              {
+                // @ts-ignore
+                trackedWindows[layoutWindowChosen].tabs.map((tab)=>(
+                  <div className=" px-5 py-2 flex space-x-5 items-center rounded-md border-b-4 border-b-gray-100
+                    border-l-4 relative h-auto group hover:pl-10 transition-all duration-500
+                  ">
+                    <img src={tab.favIconUrl} alt="Website Icon" className="w-10 h-10 rounded-md z-10" />
+                    <div className="flex flex-col z-10">
+                      <p className="font-medium text-lg z-10">{tab.title}</p>
+                      <p>{tab.url}</p>
+                    </div>
+
+                    <div className="absolute h-full bg-gray-200 -left-6 w-0 transition-all group-hover:w-full z-0 rounded-md duration-300"></div>
+                    
+                  </div>
+                ))
+              }
+              </div>
+
+
 
           </div>
 
