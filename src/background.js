@@ -1,4 +1,5 @@
 import { debounce, saveExtensionData, } from "./data-manager"
+try {
 
 
 const starterExtensionDataStructure = {
@@ -8,7 +9,7 @@ const starterExtensionDataStructure = {
 }
 
 let extensionData = null
-const debounceSaveData = debounce(saveExtensionData, 20000)
+const debounceSaveData = debounce(saveExtensionData, 25000)
 
 
 chrome.runtime.onInstalled.addListener((details)=>{
@@ -109,7 +110,6 @@ chrome.windows.onRemoved.addListener((windowId)=>{
 
             extensionData.trackedWindows[`${name}`].isOpen = false
             saveExtensionData(extensionData)
-            updateOptionsPage()
          }
       }
    }
@@ -157,7 +157,9 @@ function reQueryAllTabsToSave(windowId) {
 function updateOptionsPage() {
    chrome.tabs.query({url: "chrome-extension://nfhnplnmgoblehoadbjmkiadacjafcgj/options.html"},(tab)=>{
       if (tab.length !== 0) {
-            chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
+            setTimeout(()=>{
+               chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
+            },500)
       }
    })
 }
@@ -279,4 +281,8 @@ function checkAndGetData(forward, ...args) {
          forward(...args)
       })
    }
+}
+
+} catch (error) {
+ console.warn("=========ERROR=====:", error)  
 }
