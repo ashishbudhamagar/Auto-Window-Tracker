@@ -117,7 +117,7 @@ export const Popup = () => {
       </div>
 
       <div className="h-[1px] w-full bg-gray-200"></div>
-      <p className="font-medium text-[11px] text-gray-400 text-center px-3 py-3">{windowTracked ? "Window is being automatically tracked" : "Auto track your tabs and windows easily"}</p>
+      <p className="font-medium text-[11px] text-gray-400 text-center px-3 py-3 mb-1">{windowTracked ? "Window is being automatically tracked" : "Window is not tracked"}</p>
 
     </div>
   );

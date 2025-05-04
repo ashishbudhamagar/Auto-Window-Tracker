@@ -1,4 +1,6 @@
 import { debounce, saveExtensionData, } from "./data-manager"
+
+
 try {
 
 
@@ -100,6 +102,22 @@ chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
 
 
 
+function checkAndGetData(forward, ...args) {
+
+   if (extensionData) {
+      forward(...args)
+   }
+   else {
+      chrome.storage.local.get('extensionData', (result) => {
+         console.log("Data was not found thus now set", result.extensionData)
+         extensionData = result.extensionData
+         forward(...args)
+      })
+   }
+}
+
+
+
 chrome.windows.onRemoved.addListener((windowId)=>{
 
    checkAndGetData(forward, windowId)
@@ -159,7 +177,7 @@ function updateOptionsPage() {
       if (tab.length !== 0) {
             setTimeout(()=>{
                chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
-            },500)
+            },150)
       }
    })
 }
@@ -168,16 +186,15 @@ function updateOptionsPage() {
 
 function handleSavedWindowOpen(openedWindowDetails) {
 
-   const windowDetails = openedWindowDetails
-
-   chrome.windows.create({url: windowDetails.tabs.map(ele=>ele.url)},(newWindow)=>{
+   
+   chrome.windows.create({url: openedWindowDetails.tabs.map(ele=>ele.url)},(newWindow)=>{
       setTimeout(()=>{
 
          let groupedTabsId = []
          let groupIndex = -1
          let lastGroupId = -1
 
-         windowDetails.tabs.forEach((ele, index)=>{
+         openedWindowDetails.tabs.forEach((ele, index)=>{
          
                if (ele.groupId !== -1) {
                   if (lastGroupId !== ele.groupId) {
@@ -192,18 +209,18 @@ function handleSavedWindowOpen(openedWindowDetails) {
          for (let i = 0; i < groupedTabsId.length; i++) {
                chrome.tabs.group({tabIds: groupedTabsId[i]}, (groupId)=>{
                   chrome.tabGroups.update(groupId,{
-                     title: windowDetails.groupedTabsInfo[i].title,
-                     color: windowDetails.groupedTabsInfo[i].color,
-                     collapsed: windowDetails.groupedTabsInfo[i].collapsed
+                     title: openedWindowDetails.groupedTabsInfo[i].title,
+                     color: openedWindowDetails.groupedTabsInfo[i].color,
+                     collapsed: openedWindowDetails.groupedTabsInfo[i].collapsed
                   })
                })
          }
 
-         extensionData.trackedWindows[windowDetails.windowName].isOpen = true
-         extensionData.trackedWindows[windowDetails.windowName].windowId = newWindow.id
+         extensionData.trackedWindows[openedWindowDetails.windowName].isOpen = true
+         extensionData.trackedWindows[openedWindowDetails.windowName].windowId = newWindow.id
          saveExtensionData(extensionData)
 
-      },600)
+      },500)
    })
 }
 
@@ -269,19 +286,10 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
 }
 
 
-function checkAndGetData(forward, ...args) {
 
-   if (extensionData) {
-      forward(...args)
-   }
-   else {
-      chrome.storage.local.get('extensionData', (result) => {
-         console.log("Data was not found thus now set", result.extensionData)
-         extensionData = result.extensionData
-         forward(...args)
-      })
-   }
-}
+
+
+
 
 } catch (error) {
  console.warn("=========ERROR=====:", error)  
