@@ -17,7 +17,7 @@ export default function VerticalLayout(
 
    return (
 
-      <div className="gap-6 flex h-[650px]" >
+      <div className="gap-6 flex h-[650px]  p-10 " >
 
          <div className="bg-white h-[500px] p-5 space-y-3 rounded-xl shadow-xl lg:w-72">
             <div className="overflow-y-scroll w-full h-full flex flex-col space-y-3 ">
@@ -42,11 +42,14 @@ export default function VerticalLayout(
                            ${index === activeWindow ?  "bg-gray-400" : "bg-gray-300"}
                         `}
                         />
-                        <p className="text-xl font-medium text-gray-600">{window.windowName}</p>
-                        <p className="text-gray-500">
-                           {
-                           window.tabs.length === 0 ? "0 tabs" : window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`
-                        }</p>
+                        <p className="text-xl font-medium text-gray-600 mb-1">{window.windowName}</p>
+                        <div className="flex flex-row space-x-1">
+                           <div className="border-2 h-1 w-1 py-[5px] px-[8px] mt-[2px] rounded-md border-gray-400"></div>
+                           <p className="text-gray-500">
+                              {
+                              window.tabs.length === 0 ? "0 tabs" : window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`
+                           }</p>
+                        </div>
                         
                      </button>
                   ))
@@ -57,7 +60,9 @@ export default function VerticalLayout(
 
 
 
-         <div className="bg-white shadow-lg w-[1000px] h-full rounded-xl p-5 space-y-1 flex flex-col">
+         <div className=" shadow-2xl h-full rounded-xl p-5 space-y-1 flex flex-col 
+            flex-grow  min-w-96
+         ">
 
             <div className={`border-l-[5px]  bg-gray-50 py-2 px-6 flex justify-between rounded-md mb-5 shadow-md               
                ${arrayOfTrackedWindowValues[activeWindow].isOpen ? 'border-l-green-400' : 'border-l-blue-400'}
@@ -97,37 +102,35 @@ export default function VerticalLayout(
 
 
 
-            <div className="overflow-y-auto" key={activeWindow}>
+            <div className="overflow-y-auto " key={activeWindow}>
                {
                // @ts-ignore
                arrayOfTrackedWindowValues[activeWindow].tabs.map((tab,index)=>(
+
                   <a href={tab.url} target="_blank"
-                  className={` px-5 py-2 flex space-x-5 items-center rounded-md border-b-4 border-b-gray-100
-                     border-l-4 relative group hover:pl-10 transition-all duration-500 
-                     hover:cursor-pointer group
-                     
-                  `}
+                     className={` px-5 py-2 flex space-x-5 items-center rounded-md border-b-4 border-b-gray-200
+                        border-l-4 relative group hover:pl-10 transition-all duration-500 
+                        hover:cursor-pointer group border-l-gray-200 
+                        
+                     `}
 
-                  style={{
-                     animation: `expandHeight 0.5s ease-out ${index * 0.07}s forwards`,
-                     opacity: 0,
-                     maxHeight: 0,
-                  }}
+                     style={{
+                        animation: `expandHeight 0.5s ease-out ${index * 0.07}s forwards`,
+                        opacity: 0,
+                        maxHeight: 0,
+                     }}
 
 
-                  key={index}>
-                     <div  className="z-10 flex items-center space-x-6 group"  >
+                     key={index}>
 
-                     <img src={tab.favIconUrl} alt="Website Icon" className="w-10 h-10 rounded-md z-10" />
-                     <div className="flex flex-col z-10">
-                        <p className="font-medium text-lg z-10">{tab.title}</p>
-                        <p className="group-hover:text-blue-700 group-hover:underline underline-offset-4">{tab.url}</p>
-                     </div>
+                        <img src={tab.favIconUrl} alt="Website Icon" className="w-10 h-10 rounded-md z-10" />
 
-                     </div>
+                           <div className="flex flex-col z-10 flex-1 min-w-0">
+                              <p className="font-medium text-lg z-10 truncate">{tab.title}</p>
+                              <p className="group-hover:text-blue-700 group-hover:underline underline-offset-4 truncate ">{tab.url}</p>
+                           </div>
 
-                     <div className="absolute h-full bg-gray-200 -left-6 w-0 transition-all group-hover:w-full z-0 rounded-md duration-300"></div>
-                     
+                        <div className="absolute h-full bg-gray-200 -left-6 w-0 transition-all group-hover:w-full z-0 rounded-md duration-300"></div>
                   </a>
                ))
                }

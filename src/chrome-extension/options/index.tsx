@@ -1,6 +1,8 @@
+// @ts-nocheck
+
 import { useEffect, useState, useRef } from "react";
 import "../global.css";
-import { IconBookmark, IconX, IconExternal, IconWindows } from "../icons/icons";
+import { IconBookmark, IconX, IconExternal, IconWindows, IconDarkMode, IconLightMode } from "../icons/icons";
 
 import CardLayout from "./CardLayout";
 import VerticalLayout from "./VerticalLayout";
@@ -545,131 +547,131 @@ const asd = Object.values({
 
 const Options = () => {
 
-  document.documentElement.style.zoom = "85%";
   document.documentElement.style.backgroundColor = "#f3f4f6";
-
-  
-
+  document.documentElement.style.zoom = "85%";
   
   const [currentSort, setCurrentSort] = useState(sortingOptions[0]);
   const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState([]);
   const [copyArrayOfWin, setCopyArrayOfWin] = useState([]);
   const [searchQuery, setSearchQuery] = useState('')
+  const [layout, setLayout] = useState('card')
+  const [theme, setTheme] = useState(null)
+  
   const inputRef = useRef(null);
   
-  const [layout, setLayout] = useState('card')
   
-  
-
 
   useEffect(()=>{
+    // chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData)=>{
 
-    chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData)=>{
-
-
-      setArrayOfTrackedWindowValues(Object.values(responseExtensionData.trackedWindows))
+    //   setArrayOfTrackedWindowValues(Object.values(responseExtensionData.trackedWindows))
+    //   setCopyArrayOfWin(Object.values(responseExtensionData.trackedWindows))
+    //   setCurrentSort(responseExtensionData.optionsPageSort)
+    //   setTheme(responseExtensionData.themeMode)
+    // })
+    
+    // // @ts-ignore
+    // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       
-      console.log(responseExtensionData.trackedWindows)
-      console.log(Object.values(responseExtensionData.trackedWindows))
-
-
-      setCopyArrayOfWin(Object.values(responseExtensionData.trackedWindows))
-      setCurrentSort(responseExtensionData.optionsPageSort)
-    })
-
-    // @ts-ignore
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      if (message.signal !== 'changeOptions') return
+    //   if (message.signal !== 'changeOptions') return
       
-      setArrayOfTrackedWindowValues(Object.values(message.trackedWindows))
-      setCopyArrayOfWin(Object.values(message.trackedWindows))
-    })
+    //   setArrayOfTrackedWindowValues(Object.values(message.trackedWindows))
+    //   setCopyArrayOfWin(Object.values(message.trackedWindows))
+    // })
+
   },[])
 
 
 
   useEffect(()=>{
-    if (currentSort === '') return
+    // if (currentSort === '') return
 
-    switch (currentSort) {
+    // switch (currentSort) {
 
-      // case sortingOptions[0]:
-      case 'Name: ASC':
+    //   // case sortingOptions[0]:
+    //   case 'Name: ASC':
 
-        // @ts-ignore
-        const nameSortAsc = [...arrayOfTrackedWindowValues].sort((a,b) => a.windowName.localeCompare(b.windowName))
-        setArrayOfTrackedWindowValues(nameSortAsc)
-        break
+    //     // @ts-ignore
+    //     const nameSortAsc = [...arrayOfTrackedWindowValues].sort((a,b) => a.windowName.localeCompare(b.windowName))
+    //     setArrayOfTrackedWindowValues(nameSortAsc)
+    //     break
 
-      case 'Name: DES':
-        // @ts-ignore
+    //   case 'Name: DES':
+    //     // @ts-ignore
 
-        const nameSortDes = [...arrayOfTrackedWindowValues].sort((a,b) => b.windowName.localeCompare(a.windowName))
-        setArrayOfTrackedWindowValues(nameSortDes)
-        break
+    //     const nameSortDes = [...arrayOfTrackedWindowValues].sort((a,b) => b.windowName.localeCompare(a.windowName))
+    //     setArrayOfTrackedWindowValues(nameSortDes)
+    //     break
       
-      case 'Status: Open':
-        // @ts-ignore
-        const nameSortOpen = [...arrayOfTrackedWindowValues].sort((a,b) => b.isOpen - a.isOpen)
-        setArrayOfTrackedWindowValues(nameSortOpen)
-        break
+    //   case 'Status: Open':
+    //     // @ts-ignore
+    //     const nameSortOpen = [...arrayOfTrackedWindowValues].sort((a,b) => b.isOpen - a.isOpen)
+    //     setArrayOfTrackedWindowValues(nameSortOpen)
+    //     break
 
-      case 'Status: Saved':
-        // @ts-ignore
-        const nameSortSaved = [...arrayOfTrackedWindowValues].sort((a,b) => a.isOpen - b.isOpen)
-        setArrayOfTrackedWindowValues(nameSortSaved)
-        break
-      default:
-        console.warn("No valid sort")
-        break
-    }
+    //   case 'Status: Saved':
+    //     // @ts-ignore
+    //     const nameSortSaved = [...arrayOfTrackedWindowValues].sort((a,b) => a.isOpen - b.isOpen)
+    //     setArrayOfTrackedWindowValues(nameSortSaved)
+    //     break
+    //   default:
+    //     console.warn("No valid sort")
+    //     break
+    // }
   },[currentSort])
+
+
+  function onThemeChange() {
+    // chrome.runtime.sendMessage({signal: 'changeTheme'}, (themeMode)=>{
+    //   setTheme(themeMode)
+    // })
+  }
 
 
 
   function onSearchType(text : string) {
-    const searched = text.trim()
-    setSearchQuery(text)
 
-    searched === "" ?
-      setArrayOfTrackedWindowValues(copyArrayOfWin)
-      :
-      // @ts-ignore
-      setArrayOfTrackedWindowValues(copyArrayOfWin.filter(ele=> ele.windowName.toLowerCase().startsWith(searched.toLowerCase())))
-      
+    // const searched = text.trim()
+    // setSearchQuery(text)
+
+    // searched === "" ?
+    //   setArrayOfTrackedWindowValues(copyArrayOfWin)
+    //   :
+    //   // @ts-ignore
+    //   setArrayOfTrackedWindowValues(copyArrayOfWin.filter(ele=> ele.windowName.toLowerCase().startsWith(searched.toLowerCase())))
   }
 
 
   function onUntrackWindowClick(windowName : string) {
-    chrome.runtime.sendMessage({signal: 'untrackWindowFromOptions', windowName: windowName})
+    // chrome.runtime.sendMessage({signal: 'untrackWindowFromOptions', windowName: windowName})
   }
 
   function onOpenSavedWindowClick(isOpen: boolean, windowName: string) {
-    if (isOpen === true) {
-      alert("Cannot open opened window")
-      return
-    }
+    // if (isOpen === true) {
+    //   alert("Cannot open opened window")
+    //   return
+    // }
 
-    let openedWindowDetails = null
-    for (let trackedWindow of arrayOfTrackedWindowValues) {
-      // @ts-ignore
-      if (trackedWindow.windowName === windowName) {
-        openedWindowDetails = trackedWindow
-        break
-      }
-    }
-    if (!openedWindowDetails) {
-      alert('Saved window not found')
-    }
+    // let openedWindowDetails = null
+    // for (let trackedWindow of arrayOfTrackedWindowValues) {
+    //   // @ts-ignore
+    //   if (trackedWindow.windowName === windowName) {
+    //     openedWindowDetails = trackedWindow
+    //     break
+    //   }
+    // }
+    // if (!openedWindowDetails) {
+    //   alert('Saved window not found')
+    // }
 
-    chrome.runtime.sendMessage({signal: 'openSavedWindow', openedWindowDetails: openedWindowDetails})
+    // chrome.runtime.sendMessage({signal: 'openSavedWindow', openedWindowDetails: openedWindowDetails})
   }
 
 
 
 
 
-  if (currentSort === '') return
+  if (currentSort === null || theme === null) return
 
   return (
     <div className="h-full w-auto">
@@ -679,19 +681,36 @@ const Options = () => {
           max-w-[93rem] mx-auto px-5 md:px-40
         ">
 
-          <div className="">
+          <div>
             <h1 className="flex items-center justify-center space-x-3">
               <IconBookmark className="h-8 w-8 text-blue-400"/>
               <p className="font-semibold text-[25px]">Auto Window Tracker</p>
             </h1>
           </div>
 
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center ">
 
             <p className="font-medium text-gray-500">Tracked Windows: {
             // @ts-ignore
             arrayOfTrackedWindowValues.length} (Opened: {arrayOfTrackedWindowValues.filter(ele=> ele.isOpen).length})</p>
+
+            <button className="hover:bg-gray-200 p-1 rounded-md ml-6"
+              onClick={onThemeChange}
+            >
+
+              {
+                theme === "light" ?
+                <IconLightMode className="h-7 w-7 text-blue-400"/> : null
+              }
+              {
+                theme === "dark" ?
+                <IconDarkMode className="h-7 w-7 text-blue-400"/> : null
+              }
+              
+            </button>
           </div>
+
+
 
         </div>
       </header>
@@ -716,6 +735,8 @@ const Options = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input type="text" placeholder="Search windows..." ref={inputRef}
+
+                value={searchQuery}
                 onChange={(e)=>onSearchType(e.target.value)}
                 className=" w-full focus:outline-none ext-gray-600"
               />
@@ -793,13 +814,7 @@ const Options = () => {
             }/>
           )
 
-
-
-
-        }
-
-
-        
+        }        
       </main>
     </div>
   )

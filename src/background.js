@@ -7,11 +7,13 @@ try {
 const starterExtensionDataStructure = {
    trackedWindows: {},
    allWindowNames: [],
-   optionsPageSort: 'Name: ASC'
+   optionsPageSort: 'Name: ASC',
+   themeMode: 'dark'
 }
 
 let extensionData = null
 const debounceSaveData = debounce(saveExtensionData, 25000)
+
 
 
 chrome.runtime.onInstalled.addListener((details)=>{
@@ -71,6 +73,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       else if (message.signal === 'openSavedWindow') {
          handleSavedWindowOpen(message.openedWindowDetails)
+      }
+      else if (message.signal === 'changeTheme') {
+         if (extensionData.themeMode === 'light') {
+            document.documentElement.classList.add('dark');
+            extensionData.themeMode = 'dark'
+            sendResponse('dark')
+
+         }
+         if (extensionData.themeMode === 'dark') {
+            document.documentElement.classList.remove('dark');
+            extensionData.themeMode = 'light'
+            sendResponse('light')
+         }
+
       }
    }
 })
