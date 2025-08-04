@@ -14,6 +14,7 @@
 html {
   background-color: transparent;
   position: relative;
+  height: auto;
 }
 
 @keyframes expandHeight {

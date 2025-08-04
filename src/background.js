@@ -8,7 +8,7 @@ const starterExtensionDataStructure = {
    trackedWindows: {},
    allWindowNames: [],
    optionsPageSort: 'Name: ASC',
-   themeMode: 'dark'
+   themeMode: 'light'
 }
 
 let extensionData = null
@@ -28,68 +28,65 @@ chrome.runtime.onInstalled.addListener((details)=>{
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-
-   if (extensionData) {
+  // If extensionData is not loaded, load it asynchronously and process the message after
+  if (!extensionData) {
+    chrome.storage.local.get('extensionData', (result) => {
+      console.log("Data was not found thus now set", result.extensionData)
+      extensionData = result.extensionData || structuredClone(starterExtensionDataStructure)
       processMessages(message, sendResponse)
-      return true
-   }
-   else {
-      chrome.storage.local.get('extensionData', (result) => {
+    });
+    return true; // async response
+  }
 
-         console.log("Data was not found thus now set", result.extensionData)
-         extensionData = result.extensionData || structuredClone(starterExtensionDataStructure)
-         processMessages(message, sendResponse)
-      })
+  // Otherwise, process the message synchronously or asynchronously as needed
+  return processMessages(message, sendResponse);
 
-      return true
-   }
-   
-   function processMessages(message, sendResponse) {
-
-      if (message.signal === 'trackButtonClicked') {
-         
-         if (message.trackWindow === true) {
-            handleWindowTrack(message.currentWindowId, message.windowName, sendResponse)
-         }
-         else {
-            handleWindowUntrack(message.currentWindowId, sendResponse)
-         }
-
+  function processMessages(message, sendResponse) {
+    if (message.signal === 'trackButtonClicked') {
+      // handleWindowTrack and handleWindowUntrack are async and call sendResponse
+      if (message.trackWindow === true) {
+        handleWindowTrack(message.currentWindowId, message.windowName, sendResponse);
+      } else {
+        handleWindowUntrack(message.currentWindowId, sendResponse);
       }
-      else if (message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
-         sendResponse(extensionData)
+      return true; // async
+    }
+    else if (message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
+      sendResponse(extensionData);
+      return false; // sync
+    }
+    else if (message.signal === 'untrackWindowFromOptions') {
+      // checkAndGetData is async but does not use sendResponse, so do not return true
+      checkAndGetData((windowName) => {
+        delete extensionData.trackedWindows[`${windowName}`];
+        extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== windowName);
+        saveExtensionData(extensionData);
+        updateOptionsPage();
+      }, message.windowName);
+      return false;
+    }
+    else if (message.signal === 'openSavedWindow') {
+      handleSavedWindowOpen(message.openedWindowDetails);
+      return false;
+    }
+    else if (message.signal === 'changeTheme') {
+      let theme = null;
+      if (extensionData.themeMode === 'light') {
+        extensionData.themeMode = 'dark';
+        console.log("Theme changed to: ", extensionData.themeMode);
+        theme = 'dark';
+      } else if (extensionData.themeMode === 'dark') {
+        extensionData.themeMode = 'light';
+        console.log("Theme changed to: ", extensionData.themeMode);
+        theme = 'light';
       }
-      else if (message.signal === 'untrackWindowFromOptions') {
-
-         checkAndGetData((windowName)=>{
-
-
-            delete extensionData.trackedWindows[`${windowName}`]
-            extensionData.allWindowNames = extensionData.allWindowNames.filter(ele=> ele !== windowName)
-            saveExtensionData(extensionData)
-            updateOptionsPage()
-
-         }, message.windowName)
-      }
-      else if (message.signal === 'openSavedWindow') {
-         handleSavedWindowOpen(message.openedWindowDetails)
-      }
-      else if (message.signal === 'changeTheme') {
-         if (extensionData.themeMode === 'light') {
-            document.documentElement.classList.add('dark');
-            extensionData.themeMode = 'dark'
-            sendResponse('dark')
-
-         }
-         if (extensionData.themeMode === 'dark') {
-            document.documentElement.classList.remove('dark');
-            extensionData.themeMode = 'light'
-            sendResponse('light')
-         }
-
-      }
-   }
-})
+      sendResponse(theme);
+      return false;
+    }
+    // fallback: do not return true
+    return false;
+  }
+});
 
 
 
@@ -308,5 +305,5 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
 
 
 } catch (error) {
- console.warn("=========ERROR=====:", error)  
+ console.warn("========= background.js ERROR =====:", error)  
 }

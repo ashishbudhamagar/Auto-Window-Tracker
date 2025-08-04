@@ -1,6 +1,5 @@
 // @ts-nocheck
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import "../global.css";
 import { IconWindows, IconBookmark } from "../icons/icons";
 
@@ -14,77 +13,80 @@ export const Popup = () => {
   const [showSavedWindowButtonTooltip, setShowSavedWindowButtonTooltip] = useState(false)
   const tooltipRef = useRef(null)
 
-
-  document.documentElement.classList.add('dark');
-
-
-
+  const [themeIsSet, setThemeIsSet] = useState(false)
 
 
 
   useEffect(()=>{
-    // chrome.windows.getCurrent((window)=>{
-    //   chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData)=>{
+    chrome.windows.getCurrent((window)=>{
+      chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData)=>{
 
 
-    //     if (responseExtensionData.themeMode === 'light') {
-    //       document.documentElement.classList.remove('dark');
-    //     }
-    //     if (responseExtensionData.themeMode === 'dark') {
-    //       document.documentElement.classList.add('dark');
-    //     }
+        
+        if (responseExtensionData.themeMode === 'dark') {
+
+          if (!document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.add('dark');
+          }
+
+        } else {
+          if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+
+        setThemeIsSet(true)
 
 
-
-    //     for (let trackedWindow of Object.values(responseExtensionData.trackedWindows)) {
-    //       // @ts-ignore
-    //       if (trackedWindow.windowId === window.id && trackedWindow.isOpen === true) {
-    //         setWindowTracked(true)
-    //         // @ts-ignore
-    //         setWindowName(trackedWindow.windowName)
-    //         return
-    //       }
-    //     }
-    //   })
-    // })
+        for (let trackedWindow of Object.values(responseExtensionData.trackedWindows)) {
+          // @ts-ignore
+          if (trackedWindow.windowId === window.id && trackedWindow.isOpen === true) {
+            setWindowTracked(true)
+            // @ts-ignore
+            setWindowName(trackedWindow.windowName)
+            return
+          }
+        }
+      })
+    })
     },[])
 
 
   async function onTrackButtonClick() {
-    // chrome.runtime.sendMessage({signal: 'dataForPopup'}, async (responseExtensionData)=>{
+    chrome.runtime.sendMessage({signal: 'dataForPopup'}, async (responseExtensionData)=>{
 
-    //   if (windowTracked === false) {
-    //     if (windowName.trim() === '') {
-    //       setError('Name the window')
-    //       return
-    //     }
-    //     // @ts-ignore
-    //     if (responseExtensionData.allWindowNames.includes(windowName.trim()) === true) {
-    //       setError('Window with the name already exists')
-    //       return
-    //     }
-    //   }
+      if (windowTracked === false) {
+        if (windowName.trim() === '') {
+          setError('Name the window')
+          return
+        }
+
+        if (responseExtensionData.allWindowNames.includes(windowName.trim()) === true) {
+          setError('Window with the name already exists')
+          return
+        }
+      }
       
-    //   setError('')
-    //   const windowId = (await chrome.windows.getCurrent()).id
+      setError('')
+      const windowId = (await chrome.windows.getCurrent()).id
   
-    //   chrome.runtime.sendMessage({
+      chrome.runtime.sendMessage({
   
-    //     signal: "trackButtonClicked",
-    //     trackWindow: !windowTracked,
-    //     currentWindowId: windowId,
-    //     windowName: windowName.trim()
+        signal: "trackButtonClicked",
+        trackWindow: !windowTracked,
+        currentWindowId: windowId,
+        windowName: windowName.trim()
       
-    //       }, (resposne)=>{
-    //     setWindowTracked(resposne)
-    //   })
-    // })
+          }, (resposne)=>{
+        setWindowTracked(resposne)
+      })
+    })
   }
 
   function onShowTrackedWindowMouseEnter() {
     tooltipRef.current = setTimeout(()=>{
       setShowSavedWindowButtonTooltip(true)
-    },500)
+    },400)
   }
 
   function onShowTrackedWindowMouseLeave() {
@@ -94,13 +96,23 @@ export const Popup = () => {
 
 
   function onShowTrackedWindowClick() {
-    // const optionsUrl = chrome.runtime.getURL('options.html')
-    // chrome.tabs.create({url:optionsUrl})
-    // chrome.runtime.sendMessage({signal: "savedWindowPage"})
+    const optionsUrl = chrome.runtime.getURL('options.html')
+    chrome.tabs.create({url:optionsUrl})
   }
+
+
+  if (themeIsSet === false) {
+    return (
+      <div className="h-auto w-[320px] bg-black flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    )
+  }
+
 
   return (
     <div className="h-auto w-[320px] flex flex-col">
+
 
 
       <div className="p-5 bg-gray-100 dark:bg-black">
