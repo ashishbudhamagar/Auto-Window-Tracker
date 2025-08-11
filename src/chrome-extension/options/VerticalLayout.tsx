@@ -13,49 +13,51 @@ export default function VerticalLayout(
    const [activeWindow, setActiveWindow] = useState(0)
 
    return (
-      <div className="gap-6 flex flex-col md:flex-row min-h-[650px] p-4 md:p-6 bg-white dark:bg-gray-900 rounded-xl shadow-md dark:shadow-lg" >
+      <div className="gap-8 flex flex-col lg:flex-row min-h-[700px] p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30" >
 
-         <div className="bg-white dark:bg-gray-800 h-auto md:h-[500px] p-4 rounded-xl shadow-lg dark:shadow-xl w-full md:w-72 mb-6 md:mb-0">
-            <h3 className="font-medium text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wide mb-3 px-2">Windows List</h3>
-            <div className="overflow-y-auto max-h-[calc(100%-2rem)] pr-1 flex flex-col space-y-2">
+         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm h-auto lg:h-[550px] p-5 rounded-xl shadow-lg dark:shadow-xl w-full lg:w-80 mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
+            <h3 className="font-bold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider mb-4 px-3 pb-2 border-b border-gray-200/50 dark:border-gray-600/50">Windows Collection</h3>
+            <div className="overflow-y-auto max-h-[calc(100%-3rem)] pr-2 flex flex-col space-y-3">
                {
                   // @ts-ignore
                   arrayOfTrackedWindowValues.map((window, index) => (
                      <button 
                         key={index} 
-                        className={`w-full hover:cursor-pointer p-3 text-left
-                          break-words rounded-lg border-l-4 border-b-0 sm:border-b-0
-                          flex flex-col items-start gap-1
-                          ${window.isOpen ? 'border-l-green-400' : 'border-l-blue-400'}
+                        className={`group w-full hover:cursor-pointer p-4 text-left
+                          break-words rounded-xl border transition-all duration-300
+                          flex flex-col items-start gap-2 relative overflow-hidden
+                          ${window.isOpen ? 'border-l-4 border-l-green-400 bg-gradient-to-r from-green-50/60 to-white/60 dark:from-green-900/20 dark:to-gray-800/60' : 'border-l-4 border-l-blue-400 bg-gradient-to-r from-blue-50/60 to-white/60 dark:from-blue-900/20 dark:to-gray-800/60'}
                           ${index === activeWindow 
-                            ? 'bg-blue-50 dark:bg-blue-900/20 shadow-sm' 
-                            : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}
-                          transition-all duration-200 relative
+                            ? 'bg-gradient-to-r from-blue-100/80 to-purple-100/80 dark:from-blue-900/30 dark:to-purple-900/30 shadow-lg transform scale-105 border-blue-300 dark:border-blue-500' 
+                            : 'hover:bg-gray-50/80 dark:hover:bg-gray-700/50 border-gray-200/50 dark:border-gray-600/50 hover:scale-102 hover:shadow-md'}
                         `}
                         onClick={() => setActiveWindow(index)}
                      >
                         {index === activeWindow && (
-                          <div className="absolute left-0 top-0 w-1 h-full bg-blue-500 dark:bg-blue-400"></div>
+                          <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-600 rounded-r-full"></div>
                         )}
                         
                         <div className="flex items-center justify-between w-full">
-                          <p className="font-medium text-gray-800 dark:text-gray-100 truncate max-w-[180px]" title={window.windowName}>{window.windowName}</p>
-                          <div className={`w-2 h-2 rounded-full flex-shrink-0
-                            ${window.isOpen ? 'bg-green-500' : 'bg-blue-500'}`}
+                          <p className="font-bold text-gray-800 dark:text-gray-100 truncate max-w-[180px] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" title={window.windowName}>{window.windowName}</p>
+                          <div className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-300
+                            ${window.isOpen ? 'bg-green-500 animate-pulse shadow-lg shadow-green-500/50' : 'bg-blue-500 shadow-lg shadow-blue-500/50'}`}
                           ></div>
                         </div>
                         
-                        <div className="flex items-center">
-                          <div className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-gray-100 dark:bg-gray-700 mr-2">
-                            <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center space-x-2">
+                          <div className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 shadow-sm">
+                            <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
                               {window.tabs.length}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                             {window.tabs.length === 0 ? "No tabs" : window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`}
                           </p>
                         </div>
                         
+                        {index === activeWindow && (
+                          <div className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
+                        )}
                      </button>
                   ))
                }
@@ -65,38 +67,40 @@ export default function VerticalLayout(
 
 
 
-         <div className="shadow-lg dark:shadow-xl h-full rounded-xl flex flex-col 
-            flex-grow bg-white dark:bg-gray-800 overflow-hidden
+         <div className="shadow-xl dark:shadow-2xl h-full rounded-xl flex flex-col 
+            flex-grow bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm overflow-hidden border border-gray-200/30 dark:border-gray-700/30
          ">
 
-            <div className="px-6 py-4 flex justify-between items-center border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 sticky top-0 z-10">
-              <div className="flex items-center space-x-3">
-                <div className={`h-10 w-10 rounded-lg flex items-center justify-center
+            <div className="px-8 py-6 flex justify-between items-center border-b border-gray-200/50 dark:border-gray-600/50 bg-gradient-to-r from-white/80 to-blue-50/80 dark:from-gray-800/80 dark:to-gray-700/80 backdrop-blur-sm sticky top-0 z-10">
+              <div className="flex items-center space-x-4">
+                <div className={`h-14 w-14 rounded-xl flex items-center justify-center shadow-lg border-2
                   ${arrayOfTrackedWindowValues[activeWindow].isOpen 
-                    ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
-                    : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'}`
+                    ? 'bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 text-green-600 dark:text-green-400 border-green-300 dark:border-green-600' 
+                    : 'bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600'}`
                 }>
-                  <span className="text-lg font-bold">
+                  <span className="text-2xl font-bold">
                     {arrayOfTrackedWindowValues[activeWindow].windowName.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                     {arrayOfTrackedWindowValues[activeWindow].windowName}
                   </h2>
-                  <div className="flex items-center text-sm">
-                    <span className={`w-2 h-2 rounded-full mr-2
-                      ${arrayOfTrackedWindowValues[activeWindow].isOpen ? 'bg-green-500' : 'bg-blue-500'}`
-                    }></span>
-                    <span className={`font-medium
-                      ${arrayOfTrackedWindowValues[activeWindow].isOpen 
-                        ? 'text-green-600 dark:text-green-400' 
-                        : 'text-blue-600 dark:text-blue-400'}`
-                    }>
-                      {arrayOfTrackedWindowValues[activeWindow].isOpen ? 'Open' : 'Saved'}
-                    </span>
-                    <span className="mx-2 text-gray-400 dark:text-gray-500">•</span>
-                    <span className="text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center text-sm space-x-3">
+                    <div className="flex items-center">
+                      <span className={`w-3 h-3 rounded-full mr-2 animate-pulse
+                        ${arrayOfTrackedWindowValues[activeWindow].isOpen ? 'bg-green-500' : 'bg-blue-500'}`
+                      }></span>
+                      <span className={`font-semibold
+                        ${arrayOfTrackedWindowValues[activeWindow].isOpen 
+                          ? 'text-green-600 dark:text-green-400' 
+                          : 'text-blue-600 dark:text-blue-400'}`
+                      }>
+                        {arrayOfTrackedWindowValues[activeWindow].isOpen ? 'Active Window' : 'Saved Session'}
+                      </span>
+                    </div>
+                    <span className="text-gray-400 dark:text-gray-500">•</span>
+                    <span className="text-gray-600 dark:text-gray-400 font-medium">
                       {arrayOfTrackedWindowValues[activeWindow].tabs.length === 0 
                         ? "No tabs" 
                         : arrayOfTrackedWindowValues[activeWindow].tabs.length === 1 
@@ -108,30 +112,30 @@ export default function VerticalLayout(
                 </div>
               </div>
                   
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <button 
-                  className={`flex items-center space-x-1 py-2 px-3 rounded-md transition-colors
+                  className={`group flex items-center space-x-2 py-3 px-5 rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105
                     ${arrayOfTrackedWindowValues[activeWindow].isOpen 
-                      ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200 dark:border-gray-700" 
-                      : "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40"}`
+                      ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" 
+                      : "text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/40 dark:hover:to-blue-800/40 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600"}`
                   }
                   disabled={arrayOfTrackedWindowValues[activeWindow].isOpen}
                   onClick={() => onOpenSavedWindowClick(arrayOfTrackedWindowValues[activeWindow].isOpen, arrayOfTrackedWindowValues[activeWindow].windowName)}
                   title={arrayOfTrackedWindowValues[activeWindow].isOpen ? "Window is already open" : "Open saved window"}
                 >
-                  <IconExternal className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    {arrayOfTrackedWindowValues[activeWindow].isOpen ? "Already Open" : "Open Window"}
+                  <IconExternal className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-sm">
+                    {arrayOfTrackedWindowValues[activeWindow].isOpen ? "Already Active" : "Open Session"}
                   </span>
                 </button>
 
                 <button 
-                  className="flex items-center space-x-1 py-2 px-3 rounded-md text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  className="group flex items-center space-x-2 py-3 px-5 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 border-2 border-red-200 dark:border-red-700 hover:border-red-300 dark:hover:border-red-600 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                   onClick={() => onUntrackWindowClick(arrayOfTrackedWindowValues[activeWindow].windowName)}
                   title="Remove this window from tracking"
                 >
-                  <IconX className="h-4 w-4" />
-                  <span className="text-sm font-medium">Untrack</span>
+                  <IconX className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+                  <span className="text-sm">Untrack</span>
                 </button>
               </div>
             </div>
@@ -140,8 +144,8 @@ export default function VerticalLayout(
 
 
 
-            <div className="overflow-y-auto flex-1 px-4 py-3" key={activeWindow}>
-              <div className="space-y-3">
+            <div className="overflow-y-auto flex-1 px-6 py-4" key={activeWindow}>
+              <div className="space-y-4">
                 {arrayOfTrackedWindowValues[activeWindow].tabs.length > 0 ? (
                   // @ts-ignore
                   arrayOfTrackedWindowValues[activeWindow].tabs.map((tab, index) => (
@@ -149,15 +153,15 @@ export default function VerticalLayout(
                       href={tab.url} 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-start p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-200"
+                      className="group flex items-start p-4 rounded-xl border-2 border-gray-100/50 dark:border-gray-700/50 hover:bg-gradient-to-r hover:from-white/60 hover:to-blue-50/60 dark:hover:from-gray-700/50 dark:hover:to-gray-600/50 transition-all duration-300 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-600 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm"
                       style={{
-                        animation: `expandHeight 0.5s ease-out ${index * 0.05}s forwards`,
+                        animation: `expandHeight 0.6s ease-out ${index * 0.05}s forwards`,
                         opacity: 0,
                         maxHeight: 0,
                       }}
                       key={index}
                     >
-                      <div className="w-10 h-10 flex-shrink-0 rounded overflow-hidden border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 mr-3 p-1">
+                      <div className="w-12 h-12 flex-shrink-0 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 mr-4 p-2 shadow-sm group-hover:shadow-md transition-shadow duration-300">
                         <img 
                           src={tab.favIconUrl} 
                           alt=""
@@ -170,28 +174,30 @@ export default function VerticalLayout(
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-base mb-1 text-gray-900 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 truncate">
+                        <p className="font-semibold text-lg mb-2 text-gray-900 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 truncate transition-colors duration-300">
                           {tab.title || "Untitled Tab"}
                         </p>
-                        <p className="text-sm truncate text-gray-500 dark:text-gray-400">
+                        <p className="text-sm truncate text-gray-500 dark:text-gray-400 font-medium">
                           {tab.url}
                         </p>
                       </div>
                       
-                      <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <IconExternal className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                      <div className="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                        <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700">
+                          <IconExternal className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        </div>
                       </div>
                     </a>
                   ))
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="rounded-full bg-gray-100 dark:bg-gray-700 p-4 mb-4">
-                      <svg className="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 p-6 mb-6 shadow-inner">
+                      <svg className="h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
-                    <p className="text-base font-medium text-gray-600 dark:text-gray-300 mb-1">No tabs in this window</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">This window doesn't have any saved tabs.</p>
+                    <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">No Tabs Available</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md leading-relaxed">This window session doesn't contain any saved tabs yet.</p>
                   </div>
                 )}
               </div>

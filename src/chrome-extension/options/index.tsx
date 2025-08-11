@@ -11,7 +11,7 @@ import VerticalLayout from "./VerticalLayout";
 
 const Options = () => {
 
-  // document.documentElement.style.zoom = "85%";
+  document.documentElement.style.zoom = "85%";
   const sortingOptions = ['Name: ASC', 'Name: DES', 'Status: Open', 'Status: Saved']
   
   const [currentSort, setCurrentSort] = useState(sortingOptions[0]);
@@ -167,54 +167,75 @@ const Options = () => {
 
   if (theme === null) {
     return (
-      <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center">
-        <div className="animate-pulse">
-          <IconBookmark className="h-12 w-12 text-blue-500 mb-4"/>
+      <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900 flex flex-col items-center justify-center">
+        <div className="relative">
+          <div className="absolute inset-0 animate-ping">
+            <IconBookmark className="h-12 w-12 text-blue-500/30 mb-4"/>
+          </div>
+          <IconBookmark className="h-12 w-12 text-blue-500 mb-4 relative z-10"/>
         </div>
-        <p className="text-gray-600 dark:text-gray-300 font-medium">Loading Auto Window Tracker...</p>
+        <div className="text-center space-y-2">
+          <p className="text-gray-700 dark:text-gray-200 font-semibold text-lg">Auto Window Tracker</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Initializing your workspace...</p>
+        </div>
+        <div className="mt-6 flex space-x-1">
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-
-      <header className="bg-white dark:bg-gray-900 shadow-md dark:shadow-lg sticky top-0 z-10 transition-colors duration-300">
-        <div className="flex justify-between py-5 items-center max-w-7xl mx-auto px-5 md:px-8">
-          <div className="flex items-center space-x-2">
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-              <IconBookmark className="h-8 w-8 text-blue-500 dark:text-blue-400"/>
+    <div className="h-full w-full bg-gradient-to-b from-slate-50 via-blue-50 to-indigo-100 dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
+        <div className="flex justify-between py-6 items-center max-w-7xl mx-auto px-6 md:px-8">
+          <div className="flex items-center space-x-3 group">
+            <div className="relative p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+              <IconBookmark className="h-8 w-8 text-white"/>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </div>
-            <h1 className="font-bold text-2xl text-gray-900 dark:text-gray-100 tracking-tight">
-              Auto Window Tracker
-            </h1>
+            <div>
+              <h1 className="font-bold text-2xl text-gray-900 dark:text-gray-100 tracking-tight">
+                Auto Window Tracker
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Manage your browser sessions</p>
+            </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            <div className="hidden md:flex items-center space-x-6 px-4 py-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-gray-700/30 shadow-sm">
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  <span className="text-blue-600 dark:text-blue-400 font-bold">
+                <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     {arrayOfTrackedWindowValues.length}
-                  </span> windows
+                  </span>
+                  <span className="text-sm ml-1">windows</span>
                 </span>
-                <span className="text-gray-400 dark:text-gray-500">|</span>
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  <span className="text-green-600 dark:text-green-400 font-bold">
+              </div>
+              <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                     {arrayOfTrackedWindowValues.filter(ele => ele.isOpen).length}
-                  </span> open
+                  </span>
+                  <span className="text-sm ml-1">active</span>
                 </span>
               </div>
             </div>
 
             <button 
-              className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-200"
+              className="group relative flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               onClick={onThemeChange}
               aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
             >
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               {theme === "light" ? 
-                <IconLightMode className="h-5 w-5 text-blue-500"/> : 
-                <IconDarkMode className="h-5 w-5 text-blue-400"/>
+                <IconLightMode className="h-6 w-6 text-blue-600 relative z-10 transition-transform group-hover:rotate-180 duration-500"/> : 
+                <IconDarkMode className="h-6 w-6 text-blue-400 relative z-10 transition-transform group-hover:rotate-180 duration-500"/>
               }
             </button>
           </div>
@@ -223,13 +244,13 @@ const Options = () => {
 
 
 
-      <main className="h-auto py-10 mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 max-w-7xl">
+      <main className="py-12 mx-auto px-6 sm:px-8 lg:px-10 transition-all duration-500 max-w-7xl">
 
-        <div className="bg-white dark:bg-gray-800 w-full h-auto flex py-6 items-center justify-between rounded-xl mb-8 shadow-lg dark:shadow-xl flex-col md:flex-row gap-4">
-          <div className="w-full md:flex-1 px-5" onClick={() => inputRef.current?.focus()}>
-            <div className="relative w-full max-w-xl mx-auto md:mx-0">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg w-full flex py-8 items-center justify-between rounded-2xl mb-10 shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30 flex-col lg:flex-row gap-6">
+          <div className="w-full lg:flex-1 px-6" onClick={() => inputRef.current?.focus()}>
+            <div className="relative w-full max-w-2xl mx-auto lg:mx-0">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg className="h-6 w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -239,45 +260,51 @@ const Options = () => {
                 ref={inputRef}
                 value={searchQuery}
                 onChange={(e) => onSearchType(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border-0 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 
-                  bg-gray-50 dark:bg-gray-700/70 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 
-                  transition-all duration-200 focus:outline-none"
+                className="block w-full pl-12 pr-12 py-4 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 
+                  bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 
+                  transition-all duration-300 focus:outline-none shadow-sm focus:shadow-lg text-lg font-medium
+                  border border-gray-200/50 dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
               />
               {searchQuery && (
                 <button 
                   onClick={() => onSearchType("")}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors group"
                 >
-                  <IconX className="h-5 w-5" />
+                  <div className="p-1 rounded-full group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
+                    <IconX className="h-5 w-5" />
+                  </div>
                 </button>
               )}
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 px-5 w-full md:w-auto">
-            <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700/70 rounded-lg px-3 py-2">
-              <label htmlFor="sort" className="text-sm font-medium text-gray-600 dark:text-gray-300">Sort:</label>
+          <div className="flex items-center space-x-4 px-6 w-full lg:w-auto">
+            <div className="flex items-center space-x-3 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl px-4 py-3 border border-gray-200/50 dark:border-gray-600/50 shadow-sm">
+              <label htmlFor="sort" className="text-sm font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">Sort by:</label>
               <select 
                 id="sort" 
-                className="bg-transparent text-gray-700 dark:text-gray-200 border-0 focus:ring-0 focus:outline-none py-1 pl-1 pr-8 appearance-none cursor-pointer"
+                className="bg-transparent text-gray-700 dark:text-gray-200 border-0 focus:ring-0 focus:outline-none py-1 pl-2 pr-8 appearance-none cursor-pointer font-medium"
                 value={currentSort}
                 onChange={(e) => setCurrentSort(e.target.value)}
               >
                 {sortingOptions.map((option, index) => (
-                  <option value={option} key={index}>{option}</option>
+                  <option value={option} key={index} className="bg-white dark:bg-gray-800">{option}</option>
                 ))}
               </select>
             </div>
             
             <button 
-              className={`flex items-center justify-center p-2 rounded-lg transition-all duration-300
+              className={`group relative flex items-center justify-center p-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg
                 ${layout === 'card' 
-                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' 
-                  : 'bg-gray-50 text-gray-600 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-blue-500/25' 
+                  : 'bg-white/80 text-gray-600 dark:bg-gray-700/80 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600 border border-gray-200/50 dark:border-gray-600/50'}`}
               onClick={() => layout === 'card' ? setLayout('vertical') : setLayout('card')}
               title={layout === 'card' ? 'Switch to vertical layout' : 'Switch to card layout'}
             >
-              <IconWindows className="h-6 w-6" />
+              <IconWindows className="h-6 w-6 transition-transform group-hover:rotate-12 duration-300" />
+              {layout === 'card' && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              )}
             </button>
           </div>
         </div>
@@ -290,14 +317,24 @@ const Options = () => {
           
           
           (
-            <div className="flex flex-col justify-center items-center h-[300px] p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-xl">
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-full p-5 mb-4">
-                <IconBookmark className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+            <div className="flex flex-col justify-center items-center min-h-[400px] p-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30">
+              <div className="relative mb-6">
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-full p-8 shadow-inner">
+                  <IconBookmark className="h-16 w-16 text-gray-400 dark:text-gray-500" />
+                </div>
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse"></div>
               </div>
-              <h3 className="font-semibold text-xl text-gray-700 dark:text-gray-300 mb-2">No windows tracked</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
-                Track your first browser window to manage and quickly access your saved tab sessions.
-              </p>
+              <div className="text-center space-y-4 max-w-md">
+                <h3 className="font-bold text-2xl text-gray-800 dark:text-gray-200">No Windows Tracked Yet</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                  Start tracking your browser windows to organize and quickly access your saved tab sessions.
+                </p>
+                <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 mt-6">
+                  <p className="text-blue-700 dark:text-blue-300 text-sm font-medium">
+                    💡 Use the browser extension popup to track your first window!
+                  </p>
+                </div>
+              </div>
             </div>
           )
 
