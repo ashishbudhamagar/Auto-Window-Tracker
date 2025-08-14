@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,6 +16,16 @@ html {
   height: auto;
 }
 
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 @keyframes expandHeight {
   0% {
     opacity: 0;
@@ -31,13 +40,19 @@ html {
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
+
+@keyframes spin-once {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-once {
+  animation: spin-once 0.6s ease-in-out;
+}
+

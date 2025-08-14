@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { useState } from "react"
-
+import noImageImage from '../icons/no-image.png';
 
 
 
@@ -13,17 +14,22 @@ export default function VerticalLayout(
    const [activeWindow, setActiveWindow] = useState(0)
 
    return (
-      <div className="gap-8 flex flex-col lg:flex-row min-h-[700px] p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30" >
+      <div className="gap-8 flex flex-col lg:flex-row h-[1200px] lg:h-[700px] p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30" >
 
-         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm h-auto lg:h-[550px] p-5 rounded-xl shadow-lg dark:shadow-xl w-full lg:w-80 mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
-            <h3 className="font-bold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider mb-4 px-3 pb-2 border-b border-gray-200/50 dark:border-gray-600/50">Windows Collection</h3>
-            <div className="overflow-y-auto max-h-[calc(100%-3rem)] pr-2 flex flex-col space-y-3">
-               {
-                  // @ts-ignore
+        <div className="h-[400px] lg:h-[550px] bg-white/80 dark:bg-gray-800/80 flex flex-col  backdrop-blur-sm  py-5 rounded-xl shadow-lg dark:shadow-xl w-full lg:w-80 mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
+
+          <div className="px-6">
+            <h3 className="px-3 font-bold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider mb-5 pb-3 border-b-2 border-gray-200/50 dark:border-gray-600/50">Windows Collection</h3>
+          </div>
+
+
+            <div className="overflow-y-auto space-y-3 py-2">
+
+                {
                   arrayOfTrackedWindowValues.map((window, index) => (
-                     <button 
+                      <button 
                         key={index} 
-                        className={`group w-full hover:cursor-pointer p-4 text-left
+                        className={`group w-[85%] mx-auto hover:cursor-pointer p-4 text-left
                           break-words rounded-xl border transition-all duration-300
                           flex flex-col items-start gap-2 relative overflow-hidden
                           ${window.isOpen ? 'border-l-4 border-l-green-400 bg-gradient-to-r from-green-50/60 to-white/60 dark:from-green-900/20 dark:to-gray-800/60' : 'border-l-4 border-l-blue-400 bg-gradient-to-r from-blue-50/60 to-white/60 dark:from-blue-900/20 dark:to-gray-800/60'}
@@ -32,10 +38,8 @@ export default function VerticalLayout(
                             : 'hover:bg-gray-50/80 dark:hover:bg-gray-700/50 border-gray-200/50 dark:border-gray-600/50 hover:scale-102 hover:shadow-md'}
                         `}
                         onClick={() => setActiveWindow(index)}
-                     >
-                        {index === activeWindow && (
-                          <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-600 rounded-r-full"></div>
-                        )}
+                      >
+              
                         
                         <div className="flex items-center justify-between w-full">
                           <p className="font-bold text-gray-800 dark:text-gray-100 truncate max-w-[180px] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" title={window.windowName}>{window.windowName}</p>
@@ -55,42 +59,33 @@ export default function VerticalLayout(
                           </p>
                         </div>
                         
-                        {index === activeWindow && (
-                          <div className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
-                        )}
-                     </button>
+                        
+                      </button>
                   ))
-               }
+                }
 
             </div>
-         </div>
+
+        </div>
 
 
 
-         <div className="shadow-xl dark:shadow-2xl h-full rounded-xl flex flex-col 
+
+        <div className="shadow-xl dark:shadow-2xl h-full rounded-xl flex flex-col 
             flex-grow bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm overflow-hidden border border-gray-200/30 dark:border-gray-700/30
          ">
 
             <div className="px-8 py-6 flex justify-between items-center border-b border-gray-200/50 dark:border-gray-600/50 bg-gradient-to-r from-white/80 to-blue-50/80 dark:from-gray-800/80 dark:to-gray-700/80 backdrop-blur-sm sticky top-0 z-10">
               <div className="flex items-center space-x-4">
-                <div className={`h-14 w-14 rounded-xl flex items-center justify-center shadow-lg border-2
-                  ${arrayOfTrackedWindowValues[activeWindow].isOpen 
-                    ? 'bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40 text-green-600 dark:text-green-400 border-green-300 dark:border-green-600' 
-                    : 'bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/40 dark:to-blue-800/40 text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-600'}`
-                }>
-                  <span className="text-2xl font-bold">
-                    {arrayOfTrackedWindowValues[activeWindow].windowName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+                <div className={`w-1 h-14 ${arrayOfTrackedWindowValues[activeWindow].isOpen ? 'bg-green-500' : 'bg-blue-500'}`}/>
+              
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                     {arrayOfTrackedWindowValues[activeWindow].windowName}
                   </h2>
                   <div className="flex items-center text-sm space-x-3">
                     <div className="flex items-center">
-                      <span className={`w-3 h-3 rounded-full mr-2 animate-pulse
-                        ${arrayOfTrackedWindowValues[activeWindow].isOpen ? 'bg-green-500' : 'bg-blue-500'}`
-                      }></span>
+                   
                       <span className={`font-semibold
                         ${arrayOfTrackedWindowValues[activeWindow].isOpen 
                           ? 'text-green-600 dark:text-green-400' 
@@ -120,7 +115,7 @@ export default function VerticalLayout(
                       : "text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/40 dark:hover:to-blue-800/40 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600"}`
                   }
                   disabled={arrayOfTrackedWindowValues[activeWindow].isOpen}
-                  onClick={() => onOpenSavedWindowClick(arrayOfTrackedWindowValues[activeWindow].isOpen, arrayOfTrackedWindowValues[activeWindow].windowName)}
+                  onClick={() => onOpenSavedWindowClick(arrayOfTrackedWindowValues[activeWindow].windowName)}
                   title={arrayOfTrackedWindowValues[activeWindow].isOpen ? "Window is already open" : "Open saved window"}
                 >
                   <IconExternal className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
@@ -168,7 +163,7 @@ export default function VerticalLayout(
                           className="w-full h-full object-contain" 
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.src = "../icons/no-image.jpg";
+                            e.currentTarget.src = noImageImage;
                           }}
                         />
                       </div>

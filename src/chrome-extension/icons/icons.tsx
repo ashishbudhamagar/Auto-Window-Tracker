@@ -52,3 +52,22 @@ export const IconLightMode: React.FC<{ className?: string }> = ({ className = "w
     />
   </svg>
 );
+
+
+export const IconLayout: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.2}
+      d="M4 5h5v5H4zM11 5h9v5h-9zM4 12h5v7H4zM11 12h9v7h-9z"
+
+    />
+  </svg>
+);

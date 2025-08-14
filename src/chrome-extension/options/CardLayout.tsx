@@ -1,4 +1,4 @@
-
+import noImageImage from '../icons/no-image.png';
 
 
 export default function CardLayout(
@@ -70,7 +70,7 @@ export default function CardLayout(
                               className="w-full h-full object-contain" 
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
-                                e.currentTarget.src = "../icons/no-image.jpg";
+                                e.currentTarget.src = noImageImage;
                               }}
                             />
                           </div>
@@ -102,12 +102,12 @@ export default function CardLayout(
                           <div className="w-7 h-7 rounded-lg overflow-hidden border-2 border-white dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm
                             hover:scale-125 hover:shadow-lg transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-500">
                             <img 
-                              src={tab.favIconUrl} 
+                              src={tab.favIconUrl}
                               alt=""
                               className="w-full h-full object-contain" 
                               onError={(e) => {
                                 e.currentTarget.onerror = null;
-                                e.currentTarget.src = "../icons/no-image.jpg";
+                                e.currentTarget.src = noImageImage;
                               }}
                             />
                           </div>
@@ -143,7 +143,7 @@ export default function CardLayout(
                     : "text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 border border-blue-200/50 dark:border-blue-700/50 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm"}`
                 }
                 disabled={window.isOpen}
-                onClick={() => onOpenSavedWindowClick(window.isOpen, window.windowName)}
+                onClick={() => onOpenSavedWindowClick(window.windowName)}
                 title={window.isOpen ? "Window is already open" : "Open saved window"}
               >
                 <IconExternal className="h-4 w-4 group-hover:scale-110 transition-transform duration-300" />

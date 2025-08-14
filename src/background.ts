@@ -1,14 +1,17 @@
+// @ts-nocheck
+import {ExtensionData, OptionsPageLayout, OptionsPageSort, Theme} from "./types"
 import { debounce, saveExtensionData, } from "./data-manager"
 
 
 try {
 
 
-const starterExtensionDataStructure = {
+const starterExtensionDataStructure: ExtensionData = {
    trackedWindows: {},
    allWindowNames: [],
-   optionsPageSort: 'Name: ASC',
-   themeMode: 'light'
+   optionsPageSort: OptionsPageSort.nameAsc,
+   theme: Theme.dark,
+   optionsPageLayout: OptionsPageLayout.card
 }
 
 let extensionData = null
@@ -28,41 +31,39 @@ chrome.runtime.onInstalled.addListener((details)=>{
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // If extensionData is not loaded, load it asynchronously and process the message after
+   // anytime message is sent to the background, check if the workers are asleep
+   // if they are, the extensionData will be null
+   // so here, get the data from storage
   if (!extensionData) {
     chrome.storage.local.get('extensionData', (result) => {
       console.log("Data was not found thus now set", result.extensionData)
       extensionData = result.extensionData || structuredClone(starterExtensionDataStructure)
       processMessages(message, sendResponse)
     });
-    return true; // async response
+    return true;
   }
 
-  // Otherwise, process the message synchronously or asynchronously as needed
   return processMessages(message, sendResponse);
 
   function processMessages(message, sendResponse) {
     if (message.signal === 'trackButtonClicked') {
-      // handleWindowTrack and handleWindowUntrack are async and call sendResponse
       if (message.trackWindow === true) {
         handleWindowTrack(message.currentWindowId, message.windowName, sendResponse);
       } else {
         handleWindowUntrack(message.currentWindowId, sendResponse);
       }
-      return true; // async
+      return true;
     }
     else if (message.signal === 'getDataForOptions' || message.signal === 'dataForPopup') {
       sendResponse(extensionData);
-      return false; // sync
+      return false;
     }
-    else if (message.signal === 'untrackWindowFromOptions') {
-      // checkAndGetData is async but does not use sendResponse, so do not return true
-      checkAndGetData((windowName) => {
-        delete extensionData.trackedWindows[`${windowName}`];
-        extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== windowName);
-        saveExtensionData(extensionData);
-        updateOptionsPage();
-      }, message.windowName);
+    else if (message.signal === 'untrackWindowFromOptions') { 
+
+      delete extensionData.trackedWindows[message.windowName];
+      extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
+      saveExtensionData(extensionData);
+      updateOptionsPage();
       return false;
     }
     else if (message.signal === 'openSavedWindow') {
@@ -70,16 +71,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return false;
     }
     else if (message.signal === 'changeTheme') {
+
       let theme = null;
-      if (extensionData.themeMode === 'light') {
-        extensionData.themeMode = 'dark';
-        console.log("Theme changed to: ", extensionData.themeMode);
+
+      if (extensionData.theme === 'light') {
+
+        extensionData.theme = 'dark';
         theme = 'dark';
-      } else if (extensionData.themeMode === 'dark') {
-        extensionData.themeMode = 'light';
-        console.log("Theme changed to: ", extensionData.themeMode);
+
+      } else if (extensionData.theme === 'dark') {
+
+        extensionData.theme = 'light';
         theme = 'light';
+        
       }
+      saveExtensionData(extensionData);
       sendResponse(theme);
       return false;
     }
@@ -271,7 +277,6 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
 
          console.log("============ Window Tracked: True ==============")
          console.log(extensionData.trackedWindows)
-         console.log(extensionData.allWindowNames)
 
       })
       

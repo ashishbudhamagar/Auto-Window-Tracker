@@ -7,13 +7,13 @@ export function saveExtensionData(dataToSave) {
             console.warn(chrome.runtime.lastError)
         }
         else {
-            console.log("=========== Data was saved to local storage ===========")
-            console.log(dataToSave)
+            console.warn("=========== Data was saved to local storage ===========")
+            console.warn(dataToSave)
         }
     })
 }
 
-export function debounce(callback, delay) {
+export function debounce(callback, delay) { 
     let timeout = null
 
     return (...args)=>{
