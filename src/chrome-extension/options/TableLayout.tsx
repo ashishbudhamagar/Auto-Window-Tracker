@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState } from "react"
-import noImageImage from '../icons/no-image.png';
+import noImageImage from '../public/no-image.png';
 
 
 

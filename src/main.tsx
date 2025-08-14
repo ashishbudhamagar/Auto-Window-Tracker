@@ -9,7 +9,7 @@ createRoot(document.getElementById("root")!).render(
 
   
   <StrictMode>
-    <div className="bg-black w-auto h-auto">
+    <div className="w-auto h-auto">
       <Popup />
     </div>
   </StrictMode>

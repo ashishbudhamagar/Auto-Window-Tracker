@@ -2,7 +2,7 @@
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme } from "../../types";
 import { useEffect, useState, useRef } from "react";
 import "../global.css";
-import { IconBookmark, IconX, IconExternal, IconWindows, IconDarkMode, IconLightMode, IconLayout } from "../icons/icons";
+import { IconBookmark, IconX, IconExternal, IconWindows, IconDarkMode, IconLightMode, IconLayout } from "../../icons";
 
 import CardLayout from "./CardLayout";
 import VerticalLayout from "./TableLayout";

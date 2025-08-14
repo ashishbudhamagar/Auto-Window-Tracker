@@ -1,4 +1,4 @@
-import noImageImage from '../icons/no-image.png';
+import noImageImage from '../public/no-image.png';
 
 
 export default function CardLayout(

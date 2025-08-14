@@ -1,7 +1,7 @@
 import { ExtensionData, Theme } from "../../types";
 
 import { useState, useEffect, useRef } from "react";
-import { IconWindows, IconBookmark } from "../icons/icons";
+import { IconWindows, IconBookmark } from "../../icons";
 import "../global.css";
 
  
