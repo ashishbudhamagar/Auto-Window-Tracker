@@ -5,7 +5,7 @@ import noImageImage from '../public/no-image.png';
 
 
 
-export default function VerticalLayout(
+export default function TableLayout(
    {  
       // @ts-ignore
       arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick, IconExternal, IconX
@@ -49,11 +49,9 @@ export default function VerticalLayout(
                         </div>
                         
                         <div className="flex items-center space-x-2">
-                          <div className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 shadow-sm">
-                            <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
-                              {window.tabs.length}
-                            </span>
-                          </div>
+
+                          <div className="border-2 h-1 w-1 py-[3px] px-[5px] mt-[2px] rounded-lg border-gray-400"></div>
+                      
                           <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                             {window.tabs.length === 0 ? "No tabs" : window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`}
                           </p>
@@ -139,8 +137,8 @@ export default function VerticalLayout(
 
 
 
-            <div className="overflow-y-auto flex-1 px-6 py-4" key={activeWindow}>
-              <div className="space-y-4">
+            <div className="overflow-y-auto flex-1 px-6 py-10" key={activeWindow}>
+              <div className="space-y-2 ">
                 {arrayOfTrackedWindowValues[activeWindow].tabs.length > 0 ? (
                   // @ts-ignore
                   arrayOfTrackedWindowValues[activeWindow].tabs.map((tab, index) => (
@@ -148,7 +146,7 @@ export default function VerticalLayout(
                       href={tab.url} 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-start p-4 rounded-xl border-2 border-gray-100/50 dark:border-gray-700/50 hover:bg-gradient-to-r hover:from-white/60 hover:to-blue-50/60 dark:hover:from-gray-700/50 dark:hover:to-gray-600/50 transition-all duration-300 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-600 bg-white/40 dark:bg-gray-800/40 backdrop-blur-sm"
+                      className="group flex items-start p-3 rounded-xl border-2 border-gray-200 dark:border-gray-700/50 hover:bg-gradient-to-r hover:from-white/60 hover:to-blue-50/60 dark:hover:from-gray-700/50 dark:hover:to-gray-600/50 transition-all duration-300 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-600 bg-gray-200/20 border-t-0 border-r-0 dark:bg-gray-800/40 backdrop-blur-sm "
                       style={{
                         animation: `expandHeight 0.6s ease-out ${index * 0.05}s forwards`,
                         opacity: 0,

@@ -17,7 +17,6 @@ export const Popup = () => {
   const [themeIsSet, setThemeIsSet] = useState<boolean>(false)
 
 
-
   useEffect(()=>{
     chrome.windows.getCurrent((window)=>{
       chrome.runtime.sendMessage({signal: 'dataForPopup'},(responseExtensionData: ExtensionData)=>{
@@ -121,8 +120,9 @@ export const Popup = () => {
 
 
   return (
+
     <div className="h-auto w-[350px] flex flex-col bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
-      <header className="p-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-100/50 dark:border-gray-700/50 shadow-sm">
+      <header className="p-5 bg-indigo-50 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-300/50 dark:border-gray-700/50 shadow-sm">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4 group">
             <div className="relative p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
@@ -160,7 +160,7 @@ export const Popup = () => {
 
       <div className="px-6 py-3 space-y-6">
         <div className="space-y-2">
-          <label htmlFor="window-name" className="block p-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
+          <label htmlFor="window-name" className="block pt-4  text-sm font-semibold text-gray-700 dark:text-gray-300">
             Window Name
           </label>
           
@@ -169,8 +169,8 @@ export const Popup = () => {
               type="text" 
               id="window-name"
               className={`
-                w-full px-4 py-3 rounded-xl transition-all duration-300 text-sm font-medium
-                bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm
+                w-full px-4 py-3 rounded-lg transition-all duration-300 text-sm font-medium
+                bg-gray-200 dark:bg-gray-700/80 backdrop-blur-sm
                 text-gray-800 dark:text-gray-200
                 placeholder:text-gray-400 dark:placeholder:text-gray-500
                 focus:outline-none focus:ring-2 focus:ring-opacity-50 shadow-sm focus:shadow-lg
@@ -217,13 +217,13 @@ export const Popup = () => {
         
         <button 
           className={`
-            w-full py-2 px-6 rounded-xl font-semibold text-sm
+            w-full py-3 px-6 rounded-lg font-semibold text-sm
             flex items-center justify-center space-x-3
             transition-all duration-300 transform active:translate-y-1
             focus:outline-none focus:ring-2 focus:ring-opacity-50 shadow-lg hover:shadow-xl
             ${windowTracked 
               ? "bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white focus:ring-red-300 shadow-red-500/25" 
-              : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white focus:ring-blue-300 dark:focus:ring-blue-400 shadow-blue-500/25"}
+              : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white focus:ring-blue-300 dark:focus:ring-blue-400 shadow-blue-500/25 dark:bg-blue-500"}
           `}
           onClick={onTrackButtonClick}
         >
@@ -234,30 +234,39 @@ export const Popup = () => {
 
       <footer>
 
-        <div className={`flex justify-center items-center
+        <div className={`flex justify-center items-center flex-col
             space-x-3 text-sm font-medium transition-all duration-300 pb-2
             ${windowTracked 
               ? 'text-green-600 dark:text-green-400' 
               : 'text-gray-500 dark:text-gray-400'}
           `}>
 
-            <div className="relative ">
-              {windowTracked && (
-                <span className="absolute inset-0 w-3 h-3 -top-1 rounded-full bg-green-400 animate-ping"></span>
-              )}
+            <div className="w-full h-[1px] bg-gray-300/50 dark:bg-gray-700/50 my-2" />
+              
+
+            <div className="">
+              <div className="relative ">
+                {windowTracked && (
+                  <span className="absolute inset-0 w-3 h-3 -top-1 rounded-full bg-green-400 animate-ping"></span>
+                )}
+              </div>
+
+                
+              <span className="p-2 py-[10px]  opacity-50">
+
+                {windowTracked ? (
+                  <span>
+                    <span className="text-xs text-green-600 dark:text-green-400">Auto tracking window</span>
+                  </span>
+                ) : (
+                  <span>
+                    <span className="text-xs">Window not tracked</span>
+                  </span>
+                )}
+              </span>
+
             </div>
 
-            <span className="p-2  opacity-50">
-              {windowTracked ? (
-                <span>
-                  <span className="text-xs text-green-600 dark:text-green-400">Auto tracking enabled</span>
-                </span>
-              ) : (
-                <span>
-                  <span className="text-xs">Click to start tracking</span>
-                </span>
-              )}
-            </span>
         </div>
 
       </footer>
