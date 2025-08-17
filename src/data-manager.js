@@ -7,8 +7,7 @@ export function saveExtensionData(dataToSave) {
             console.warn(chrome.runtime.lastError)
         }
         else {
-            console.warn("=========== Data was saved to local storage ===========")
-            console.warn(dataToSave)
+            console.log("=========== Data was saved to local storage ===========")
         }
     })
 }

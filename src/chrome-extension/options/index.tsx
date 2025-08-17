@@ -1,4 +1,3 @@
-
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme } from "../../types";
 import { useEffect, useState, useRef } from "react";
 import extensionImage192 from "../public/192.png";
@@ -24,6 +23,7 @@ const Options = () => {
   const [theme, setTheme] = useState<Theme | undefined>(undefined)
   const selectRef = useRef<HTMLSelectElement>(null);
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
+  const sentSortRef = useRef<OptionsPageSort | null>(null)
 
   document.documentElement.style.zoom = "85%";
 
@@ -31,22 +31,22 @@ const Options = () => {
 
   useEffect(()=>{
     chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData: ExtensionData)=>{
-      
       const trackedWindowValues: any[] = Object.values(responseExtensionData.trackedWindows)
-      
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-
       setTheme(responseExtensionData.theme)
       setCurrentSort(responseExtensionData.optionsPageSort)
       setLayout(responseExtensionData.optionsPageLayout)
+      sentSortRef.current = responseExtensionData.optionsPageSort
     })
 
     chrome.runtime.onMessage.addListener((message) => {
+      console.log("Message received in options page:", message)
       
       if (message.signal !== 'changeOptions') return
 
       const trackedWindowValues: any[] = Object.values(message.trackedWindows)
+      console.log("new windows", trackedWindowValues)
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
     })
@@ -57,21 +57,19 @@ const Options = () => {
 
   useEffect(() => {
 
-    chrome.runtime.sendMessage({signal: 'changeTheme'}, (theme: Theme)=>{
-          
-      if (theme === Theme.dark) {
-        if (!document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.backgroundColor = "#111827";
-        }
-      } 
-      else if (theme === Theme.light) {
-        if (document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.style.backgroundColor = "#f9fafb";
-        }
+    if (!theme) return
+
+    if (theme === Theme.dark) {
+      if (!document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.backgroundColor = "#111827";
       }
-    })
+    } else {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = "#f9fafb";
+      }
+    }
   }, [theme])
 
 
@@ -80,101 +78,33 @@ const Options = () => {
 
     if (!layout) return
 
-    chrome.runtime.sendMessage({signal: 'changeLayout', optionsPageLayout: layout})
+    chrome.runtime.sendMessage({signal: 'optionsPageLayout', optionsPageLayout: layout})
   }, [layout])
 
 
 
-
-  // useEffect(()=>{
-
-  //   if (!currentSort) return
-
-  //   chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort}, (response: OptionsPageSort) => {
-  //     switch (response) {
-  
-  //       case OptionsPageSort.nameAsc:
-  
-  //         const nameSortAsc: any[] = arrayOfTrackedWindowValues.sort((a,b) => a.windowName.localeCompare(b.windowName))
-  //         console.log("new ASC sorted array:", nameSortAsc);
-
-  //         setArrayOfTrackedWindowValues(nameSortAsc)
-  //         break
-          
-  
-  //       case OptionsPageSort.nameDes:
-  
-  //         const nameSortDes: any[] = arrayOfTrackedWindowValues.sort((a,b) => b.windowName.localeCompare(a.windowName))
-  //         console.log("new DESC sorted array:", nameSortDes);
-
-  //         setArrayOfTrackedWindowValues(nameSortDes)
-  //         break
-        
-  //       case OptionsPageSort.statusOpen:
-
-  //         const nameSortOpen: any[] = arrayOfTrackedWindowValues.sort((a,b) => b.isOpen - a.isOpen)
-  //         console.log("OPEN", nameSortOpen)
-  //         setArrayOfTrackedWindowValues(nameSortOpen)
-  //         break
-  
-  //       case OptionsPageSort.statusSaved:
-
-  //         const nameSortSaved: any[] = arrayOfTrackedWindowValues.sort((a,b) => a.isOpen - b.isOpen)
-  //         console.log("SAVED", nameSortSaved)
-  //         setArrayOfTrackedWindowValues(nameSortSaved)
-  //         break
-  //       default:
-  //         console.warn("Not a valid sort")
-  //         break
-  //     }
-    
-  //   })
-  // },[currentSort])
-
-
-// ...existing code...
   useEffect(()=>{
 
     if (!currentSort) return
 
-    chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort}, (response: OptionsPageSort) => {
-      const working = [...arrayOfTrackedWindowValues];
+    const cloneData = [...originalArrayOfTrackedWindowValues]
+    let sorted = cloneData
 
-      switch (response) {
+    switch (currentSort) {
+      case OptionsPageSort.nameAsc: sorted = cloneData.sort((a,b)=> a.windowName.localeCompare(b.windowName)); break;
+      case OptionsPageSort.nameDes: sorted = cloneData.sort((a,b)=> b.windowName.localeCompare(a.windowName)); break;
+      case OptionsPageSort.statusOpen: sorted = cloneData.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0)); break;
+      case OptionsPageSort.statusSaved: sorted = cloneData.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0)); break;
+      default: break;
+    }
 
-        case OptionsPageSort.nameAsc: {
-          const nameSortAsc = [...working].sort((a,b) => a.windowName.localeCompare(b.windowName));
-          console.log("new ASC sorted array:", nameSortAsc);
-          setArrayOfTrackedWindowValues(nameSortAsc);
-          break;
-        }
+    setArrayOfTrackedWindowValues([...sorted])
 
-        case OptionsPageSort.nameDes: {
-          const nameSortDes = [...working].sort((a,b) => b.windowName.localeCompare(a.windowName));
-          console.log("new DESC sorted array:", nameSortDes);
-          setArrayOfTrackedWindowValues(nameSortDes);
-          break;
-        }
-
-        case OptionsPageSort.statusOpen: {
-          const nameSortOpen = [...working].sort((a,b) => (b.isOpen ? 1:0) - (a.isOpen ? 1:0));
-          console.log("OPEN", nameSortOpen);
-            setArrayOfTrackedWindowValues(nameSortOpen);
-          break;
-        }
-
-        case OptionsPageSort.statusSaved: {
-          const nameSortSaved = [...working].sort((a,b) => (a.isOpen ? 1:0) - (b.isOpen ? 1:0));
-          console.log("SAVED", nameSortSaved);
-          setArrayOfTrackedWindowValues(nameSortSaved);
-          break;
-        }
-
-        default:
-          console.warn("Not a valid sort");
-      }
-    })
-  },[currentSort, arrayOfTrackedWindowValues])
+    if (sentSortRef.current !== currentSort) {
+      chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort})
+      sentSortRef.current = currentSort
+    }
+  }, [currentSort, originalArrayOfTrackedWindowValues])
   
 
 
@@ -271,8 +201,9 @@ const Options = () => {
 
             <button 
               className="group relative flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              onClick={() => setTheme(theme === Theme.light ? Theme.dark : Theme.light)}
-
+              onClick={() => {
+                chrome.runtime.sendMessage({signal: 'changeTheme'}, (newTheme: Theme)=> { if (newTheme) setTheme(newTheme) })
+              }}
               aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
             >
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

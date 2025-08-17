@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import noImageImage from '../public/no-image.png';
 
 
@@ -13,17 +13,33 @@ export default function TableLayout(
 ) {
    const [activeWindow, setActiveWindow] = useState(0)
 
+
+   useEffect(() => {
+    console.log("Array of tracked windows updated:", arrayOfTrackedWindowValues.length, activeWindow);
+
+      if (arrayOfTrackedWindowValues.length > 0 && activeWindow >= arrayOfTrackedWindowValues.length) {
+         setActiveWindow(0);
+         console.log("Resetting active window to 0 due to index out of bounds");
+      }
+   }, [arrayOfTrackedWindowValues]);
+
+   if (activeWindow > arrayOfTrackedWindowValues.length - 1) {
+      console.warn("Active window index is out of bounds, resetting to 0");
+      setActiveWindow((prev) => prev - 1 < 0 ? 0 : prev - 1);
+      return null
+   }
+
    return (
-      <div className="gap-8 flex flex-col lg:flex-row h-[1200px] lg:h-[700px] p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30" >
+      <div className="gap-8 flex flex-col md:flex-row h-[1200px] lg:h-[700px] p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30" >
 
-        <div className="h-[400px] min-w-[16rem] lg:h-[550px] bg-white/80 dark:bg-gray-800/80 flex flex-col  backdrop-blur-sm  py-5 rounded-xl shadow-lg dark:shadow-xl lg:w-80 mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
+        <div className="h-[400px]   md:w-[260px] flex-grow-0 flex-shrink-0 lg:h-[550px] bg-white/80 dark:bg-gray-800/80 flex flex-col  backdrop-blur-sm  py-5 rounded-xl shadow-lg dark:shadow-xl  mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
 
-          <div className="px-6">
+          <div className="px-6 ">
             <h3 className="px-3 font-bold text-gray-600 dark:text-gray-300 text-sm uppercase mb-5 pb-3 border-b-2 border-gray-200/50 dark:border-gray-600/50">Windows Collection</h3>
           </div>
 
 
-            <div className="overflow-y-auto space-y-3 py-2">
+            <div className="overflow-y-auto space-y-3 py-2 w-full">
 
                 {
                   arrayOfTrackedWindowValues.map((window, index) => (
@@ -42,7 +58,7 @@ export default function TableLayout(
               
                         
                         <div className="flex items-center justify-between w-full">
-                          <p className="font-bold text-gray-800 dark:text-gray-100 truncate max-w-[180px] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" title={window.windowName}>{window.windowName}</p>
+                          <p className="font-bold text-gray-800 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" title={window.windowName}>{window.windowName}</p>
                           <div className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-300
                             ${window.isOpen ? 'bg-green-500 animate-pulse shadow-lg shadow-green-500/50' : 'bg-blue-500 shadow-lg shadow-blue-500/50'}`}
                           ></div>

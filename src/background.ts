@@ -16,7 +16,6 @@ const starterExtensionDataStructure: ExtensionData = {
 
 let extensionData = null
 const debounceSaveData = debounce(saveExtensionData, 25000)
-const debounceUpdateOptionsPage = debounce(updateOptionsPage, 250)
 
 
 chrome.runtime.onInstalled.addListener((details) => {
@@ -59,7 +58,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
    // so here, get the data from storage
   if (!extensionData) {
     chrome.storage.local.get('extensionData', (result) => {
-      console.log("Data was not found thus now set", result.extensionData)
+      console.log("Data was not found thus now set")
       extensionData = result.extensionData || structuredClone(starterExtensionDataStructure)
       processMessages(message, sendResponse)
     });
@@ -88,7 +87,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       delete extensionData.trackedWindows[message.windowName];
       extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
       saveExtensionData(extensionData);
-      debounceUpdateOptionsPage();
+      updateOptionsPage();
       return false;
     }
     else if (message.signal === 'openSavedWindow') {
@@ -118,17 +117,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     else if (message.signal === 'setOptionsPageSort') {
 
       extensionData.optionsPageSort = message.optionsPageSort;
-      console.log("Setting options page sort to:", extensionData.optionsPageSort);
       saveExtensionData(extensionData);
       sendResponse(message.optionsPageSort);
-      debounceUpdateOptionsPage();
+      updateOptionsPage();
       return false;
 
     }
     else if (message.signal === 'optionsPageLayout') {
       extensionData.optionsPageLayout = message.optionsPageLayout;
       saveExtensionData(extensionData);
-      debounceUpdateOptionsPage();
+      updateOptionsPage();
       return false;
 
     }
@@ -171,7 +169,7 @@ function checkAndGetData(forward, ...args) {
    }
    else {
       chrome.storage.local.get('extensionData', (result) => {
-         console.log("Data was not found thus now set", result.extensionData)
+         console.log("Data was not found thus now set")
          extensionData = result.extensionData
          forward(...args)
       })
@@ -192,6 +190,7 @@ chrome.windows.onRemoved.addListener((windowId)=>{
             saveExtensionData(extensionData)
          }
       }
+      updateOptionsPage()
    }
 })
 
@@ -219,10 +218,8 @@ function reQueryAllTabsToSave(windowId) {
                      }
                   })
 
-                  debounceUpdateOptionsPage()
+                  updateOptionsPage()
                   debounceSaveData(extensionData)
-                  console.log("============ Tab Re-queried ==============")
-                  console.log(extensionData.trackedWindows[name].tabs)
                })
                return
          }
@@ -240,7 +237,6 @@ function updateOptionsPage() {
       signal: 'changeOptions',
       trackedWindows: extensionData.trackedWindows
    }, () => {
-      console.log("============ Options Page Updated ==============")
       if (chrome.runtime.lastError) {
          console.debug('No options page open to receive updateOptionsPage message', chrome.runtime.lastError.message)
       }
@@ -319,11 +315,8 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
          
          saveExtensionData(extensionData)
          sendResponse(true)
-         debounceUpdateOptionsPage()
+         updateOptionsPage()
          
-
-         console.log("============ Window Tracked: True ==============")
-         console.log(extensionData.trackedWindows)
 
       })
       
@@ -341,10 +334,7 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
 
          saveExtensionData(extensionData)
          sendResponse(false)
-         debounceUpdateOptionsPage()
-         console.log("============ Window Tracked: False ==============")
-         console.log(extensionData.trackedWindows)
-         console.log(extensionData.allWindowNames)
+         updateOptionsPage()
          return
       }
    }
@@ -357,5 +347,8 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
 
 
 } catch (error) {
- console.warn("========= background.js ERROR =====:", error)  
+ console.warn("========= background.js ERROR =======")  
+ console.log(error)
+ console.warn("========= background.js ERROR =======")  
+
 }
