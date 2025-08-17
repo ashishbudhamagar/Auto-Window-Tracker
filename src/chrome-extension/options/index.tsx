@@ -41,12 +41,10 @@ const Options = () => {
     })
 
     chrome.runtime.onMessage.addListener((message) => {
-      console.log("Message received in options page:", message)
       
       if (message.signal !== 'changeOptions') return
 
       const trackedWindowValues: any[] = Object.values(message.trackedWindows)
-      console.log("new windows", trackedWindowValues)
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
     })
@@ -60,15 +58,20 @@ const Options = () => {
     if (!theme) return
 
     if (theme === Theme.dark) {
+
       if (!document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.add('dark');
-        document.documentElement.style.backgroundColor = "#111827";
       }
-    } else {
+      document.documentElement.style.backgroundColor = "#111827";
+
+    }
+    else {
+
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
-        document.documentElement.style.backgroundColor = "#f9fafb";
       }
+      document.documentElement.style.backgroundColor = "#f9fafb";
+      
     }
   }, [theme])
 

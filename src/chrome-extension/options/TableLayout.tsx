@@ -15,11 +15,9 @@ export default function TableLayout(
 
 
    useEffect(() => {
-    console.log("Array of tracked windows updated:", arrayOfTrackedWindowValues.length, activeWindow);
 
       if (arrayOfTrackedWindowValues.length > 0 && activeWindow >= arrayOfTrackedWindowValues.length) {
-         setActiveWindow(0);
-         console.log("Resetting active window to 0 due to index out of bounds");
+        setActiveWindow(0);
       }
    }, [arrayOfTrackedWindowValues]);
 

@@ -8,7 +8,6 @@ export default function CardLayout(
       arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick, IconExternal, IconX
    }
  ) {
-  console.log("Rendering CardLayout with windows new sorted array:", arrayOfTrackedWindowValues);
 
 
 
