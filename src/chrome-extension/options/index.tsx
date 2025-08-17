@@ -1,467 +1,32 @@
 
-// @ts-nocheck
-document.documentElement.style.zoom = "85%";
-
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme } from "../../types";
 import { useEffect, useState, useRef } from "react";
+import extensionImage192 from "../public/192.png";
 import "../global.css";
-import { IconBookmark, IconX, IconExternal, IconWindows, IconDarkMode, IconLightMode, IconLayout } from "../../icons";
+import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLayout } from "../../icons";
 
 import CardLayout from "./CardLayout";
 import TableLayout from "./TableLayout";
 
-// const windowsData = [
-//   {
-//     windowName: "College and School things",
-//     color: "white",
-//     groupedTabsInfo: [],
-//     isOpen: true,
-//     tabs:[
-//   {
-//     "title": "Google",
-//     "url": "https://www.google.com",
-//     "favIconUrl": "https://www.google.com/favicon.ico"
-//   },
-//   {
-//     "title": "YouTube",
-//     "url": "https://www.youtube.com",
-//     "favIconUrl": "https://www.youtube.com/favicon.ico"
-//   },
-//   {
-//     "title": "Reddit",
-//     "url": "https://www.reddit.com",
-//     "favIconUrl": "https://www.reddit.com/favicon.ico"
-//   },
-//   {
-//     "title": "Stack Overflow",
-//     "url": "https://stackoverflow.com",
-//     "favIconUrl": "https://stackoverflow.com/favicon.ico"
-//   },
-//   {
-//     "title": "GitHub",
-//     "url": "https://github.com",
-//     "favIconUrl": "https://github.githubassets.com/favicons/favicon.svg"
-//   },
-//   {
-//     "title": "Wikipedia",
-//     "url": "https://en.wikipedia.org",
-//     "favIconUrl": "https://en.wikipedia.org/static/favicon/wikipedia.ico"
-//   },
-//   {
-//     "title": "Twitter",
-//     "url": "https://twitter.com",
-//     "favIconUrl": "https://abs.twimg.com/favicons/twitter.ico"
-//   },
-//   {
-//     "title": "LinkedIn",
-//     "url": "https://www.linkedin.com",
-//     "favIconUrl": "https://static.licdn.com/scds/common/u/images/logos/favicons/v1/favicon.ico"
-//   },
-//   {
-//     "title": "Instagram",
-//     "url": "https://www.instagram.com",
-//     "favIconUrl": "https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico"
-//   },
-//   {
-//     "title": "Broken Icon Example",
-//     "url": "https://example.com",
-//     "favIconUrl": "https://example.com/thisdoesnotexist.ico"
-//   }
-// ],
-//     windowId: 134320737
-//   },
-//   {
-//     windowName: "asd 2",
-//     color: "white",
-//     groupedTabsInfo: [],
-//     isOpen: true,
-//     tabs: [
-//   {
-//     "title": "Google",
-//     "url": "https://www.google.com",
-//     "favIconUrl": "https://www.google.com/favicon.ico"
-//   },
-//   {
-//     "title": "YouTube",
-//     "url": "https://www.youtube.com",
-//     "favIconUrl": "https://www.youtube.com/favicon.ico"
-//   },
-//   {
-//     "title": "Reddit",
-//     "url": "https://www.reddit.com",
-//     "favIconUrl": "https://www.reddit.com/favicon.ico"
-//   },
-//   {
-//     "title": "Stack Overflow",
-//     "url": "https://stackoverflow.com",
-//     "favIconUrl": "https://stackoverflow.com/favicon.ico"
-//   },
-//   {
-//     "title": "GitHub",
-//     "url": "https://github.com",
-//     "favIconUrl": "https://github.githubassets.com/favicons/favicon.svg"
-//   },
-//   {
-//     "title": "Wikipedia",
-//     "url": "https://en.wikipedia.org",
-//     "favIconUrl": "https://en.wikipedia.org/static/favicon/wikipedia.ico"
-//   },
-//   {
-//     "title": "Twitter",
-//     "url": "https://twitter.com",
-//     "favIconUrl": "https://abs.twimg.com/favicons/twitter.ico"
-//   },
-//   {
-//     "title": "LinkedIn",
-//     "url": "https://www.linkedin.com",
-//     "favIconUrl": "https://static.licdn.com/scds/common/u/images/logos/favicons/v1/favicon.ico"
-//   },
-//   {
-//     "title": "Instagram",
-//     "url": "https://www.instagram.com",
-//     "favIconUrl": "https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico"
-//   },
-//   {
-//     "title": "Netflix",
-//     "url": "https://www.netflix.com",
-//     "favIconUrl": "https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.ico"
-//   },
-//   {
-//     "title": "Spotify",
-//     "url": "https://www.spotify.com",
-//     "favIconUrl": "https://www.scdn.co/i/_global/favicon.png"
-//   },
-//   {
-//     "title": "Amazon",
-//     "url": "https://www.amazon.com",
-//     "favIconUrl": "https://www.amazon.com/favicon.ico"
-//   },
-//   {
-//     "title": "Microsoft",
-//     "url": "https://www.microsoft.com",
-//     "favIconUrl": "https://www.microsoft.com/favicon.ico"
-//   },
-//   {
-//     "title": "Broken Icon 1",
-//     "url": "https://example.com",
-//     "favIconUrl": "https://example.com/notfound.ico"
-//   },
-//   {
-//     "title": "Broken Icon 2",
-//     "url": "https://example.org",
-//     "favIconUrl": "https://example.org/404favicon.png"
-//   },
-//   {
-//     "title": "No Icon 1",
-//     "url": "https://noicon1.com"
-//   },
-//   {
-//     "title": "No Icon 2",
-//     "url": "https://noicon2.com"
-//   },
-//   {
-//     "title": "Broken Icon 3",
-//     "url": "https://testsite.com",
-//     "favIconUrl": "https://testsite.com/fakeicon.ico"
-//   },
-//   {
-//     "title": "OpenAI",
-//     "url": "https://www.openai.com",
-//     "favIconUrl": "https://openai.com/favicon.ico"
-//   },
-//   {
-//     "title": "Cloudflare",
-//     "url": "https://www.cloudflare.com",
-//     "favIconUrl": "https://www.cloudflare.com/favicon.ico"
-//   }
-// ]
-// ,
-//     windowId: 134321034
-//   },
-//   {
-//     windowName: "dev tools",
-//     color: "blue",
-//     groupedTabsInfo: [],
-//     isOpen: false,
-//     tabs: [
-//       {
-//         favIconUrl: "https://developer.chrome.com/favicon.ico",
-//         groupId: -1,
-//         id: 200001,
-//         title: "Chrome Developers",
-//         url: "https://developer.chrome.com/"
-//       },
-//       {
-//         favIconUrl: "https://nodejs.org/static/images/favicons/favicon.ico",
-//         groupId: -1,
-//         id: 200002,
-//         title: "Node.js",
-//         url: "https://nodejs.org/"
-//       },
-//       {
-//         favIconUrl: "https://webpack.js.org/icon-square-big.svg",
-//         groupId: -1,
-//         id: 200003,
-//         title: "Webpack Documentation",
-//         url: "https://webpack.js.org/"
-//       }
-//     ],
-//     windowId: 200000
-//   },
-//   {
-//     windowName: "research",
-//     color: "green",
-//     groupedTabsInfo: [],
-//     isOpen: true,
-//     tabs: [
-//       {
-//         favIconUrl: "https://en.wikipedia.org/static/favicon/wikipedia.ico",
-//         groupId: -1,
-//         id: 200101,
-//         title: "JavaScript - Wikipedia",
-//         url: "https://en.wikipedia.org/wiki/JavaScript"
-//       },
-//       {
-//         favIconUrl: "https://stackoverflow.com/favicon.ico",
-//         groupId: -1,
-//         id: 200102,
-//         title: "Stack Overflow",
-//         url: "https://stackoverflow.com/"
-//       },
-//       {
-//         favIconUrl: "https://developer.mozilla.org/favicon.ico",
-//         groupId: -1,
-//         id: 200103,
-//         title: "MDN Web Docs",
-//         url: "https://developer.mozilla.org/"
-//       },
-//       {
-//         favIconUrl: "https://react.dev/favicon.ico",
-//         groupId: -1,
-//         id: 200104,
-//         title: "React Docs",
-//         url: "https://react.dev/"
-//       }
-//     ],
-//     windowId: 200100
-//   },
-//   {
-//     windowName: "music",
-//     color: "purple",
-//     groupedTabsInfo: [],
-//     isOpen: false,
-//     tabs: [
-//       {
-//         favIconUrl: "https://www.youtube.com/s/desktop/fe9b36c2/img/favicon_32x32.png",
-//         groupId: -1,
-//         id: 200201,
-//         title: "LoFi Hip Hop",
-//         url: "https://www.youtube.com/watch?v=5qap5aO4i9A"
-//       },
-//       {
-//         favIconUrl: "https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png",
-//         groupId: -1,
-//         id: 200202,
-//         title: "Spotify",
-//         url: "https://open.spotify.com/"
-//       },
-//       {
-//         favIconUrl: "https://soundcloud.com/favicon.ico",
-//         groupId: -1,
-//         id: 200203,
-//         title: "SoundCloud",
-//         url: "https://soundcloud.com/"
-//       }
-//     ],
-//     windowId: 200200
-//   },
-//   {
-//     windowName: "shopping",
-//     color: "pink",
-//     groupedTabsInfo: [],
-//     isOpen: true,
-//     tabs: [
-//       {
-//         favIconUrl: "https://www.amazon.com/favicon.ico",
-//         groupId: -1,
-//         id: 200301,
-//         title: "Amazon",
-//         url: "https://www.amazon.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.ebay.com/favicon.ico",
-//         groupId: -1,
-//         id: 200302,
-//         title: "eBay",
-//         url: "https://www.ebay.com/"
-//       },
-//       {
-//         favIconUrl: "https://target.com/favicon.ico",
-//         groupId: -1,
-//         id: 200303,
-//         title: "Target",
-//         url: "https://www.target.com/"
-//       }
-//     ],
-//     windowId: 200300
-//   },
-//   {
-//     windowName: "news",
-//     color: "orange",
-//     groupedTabsInfo: [],
-//     isOpen: false,
-//     tabs: [
-//       {
-//         favIconUrl: "https://www.bbc.com/favicon.ico",
-//         groupId: -1,
-//         id: 200401,
-//         title: "BBC News",
-//         url: "https://www.bbc.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.cnn.com/favicon.ico",
-//         groupId: -1,
-//         id: 200402,
-//         title: "CNN",
-//         url: "https://www.cnn.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.reuters.com/pf/resources/images/reuters/favicon.ico",
-//         groupId: -1,
-//         id: 200403,
-//         title: "Reuters",
-//         url: "https://www.reuters.com/"
-//       }
-//     ],
-//     windowId: 200400
-//   },
-//   {
-//     windowName: "gaming",
-//     color: "red",
-//     groupedTabsInfo: [],
-//     isOpen: true,
-//     tabs: [
-//       {
-//         favIconUrl: "https://store.steampowered.com/favicon.ico",
-//         groupId: -1,
-//         id: 200501,
-//         title: "Steam Store",
-//         url: "https://store.steampowered.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.epicgames.com/favicon.ico",
-//         groupId: -1,
-//         id: 200502,
-//         title: "Epic Games",
-//         url: "https://www.epicgames.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.ign.com/favicon.ico",
-//         groupId: -1,
-//         id: 200503,
-//         title: "IGN",
-//         url: "https://www.ign.com/"
-//       }
-//     ],
-//     windowId: 200500
-//   },
-//   {
-//     windowName: "coding",
-//     color: "cyan",
-//     groupedTabsInfo: [],
-//     isOpen: true,
-//     tabs: [
-//       {
-//         favIconUrl: "https://github.com/favicon.ico",
-//         groupId: -1,
-//         id: 200601,
-//         title: "GitHub",
-//         url: "https://github.com/"
-//       },
-//       {
-//         favIconUrl: "https://code.visualstudio.com/favicon.ico",
-//         groupId: -1,
-//         id: 200602,
-//         title: "Visual Studio Code",
-//         url: "https://code.visualstudio.com/"
-//       },
-//       {
-//         favIconUrl: "https://git-scm.com/favicon.ico",
-//         groupId: -1,
-//         id: 200603,
-//         title: "Git",
-//         url: "https://git-scm.com/"
-//       }
-//     ],
-//     windowId: 200600
-//   },
-//   {
-//     windowName: "social",
-//     color: "yellow",
-//     groupedTabsInfo: [],
-//     isOpen: false,
-//     tabs: [
-//       {
-//         favIconUrl: "https://twitter.com/favicon.ico",
-//         groupId: -1,
-//         id: 200701,
-//         title: "Twitter",
-//         url: "https://twitter.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.facebook.com/favicon.ico",
-//         groupId: -1,
-//         id: 200702,
-//         title: "Facebook",
-//         url: "https://www.facebook.com/"
-//       },
-//       {
-//         favIconUrl: "https://www.instagram.com/favicon.ico",
-//         groupId: -1,
-//         id: 200703,
-//         title: "Instagram",
-//         url: "https://www.instagram.com/"
-//       }
-//     ],
-//     windowId: 200700
-//   }
-// ];
 
- 
- 
+
+     
 const Options = () => {
-
-  
 
   const sortingOptions: OptionsPageSort[] = [OptionsPageSort.nameAsc, OptionsPageSort.nameDes, OptionsPageSort.statusOpen, OptionsPageSort.statusSaved];
 
-  const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null);
+  const [currentSort, setCurrentSort] = useState<OptionsPageSort | undefined>(undefined);
   const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState<any[]>([]);
   const [originalArrayOfTrackedWindowValues, setOriginalArrayOfTrackedWindowValues] = useState<any[]>([]);
 
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [layout, setLayout] = useState<OptionsPageLayout | null>("card");
-  const [theme, setTheme] = useState<Theme | null>(null)
-  const selectRef = useRef<HTMLSelectElement | null>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-
-  const [testTheme, setTestTheme] = useState<boolean>(true)
+  const [layout, setLayout] = useState<OptionsPageLayout | undefined>(OptionsPageLayout.card);
+  const [theme, setTheme] = useState<Theme | undefined>(undefined)
+  const selectRef = useRef<HTMLSelectElement>(null);
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
 
-  // useEffect(() => {
+  document.documentElement.style.zoom = "85%";
 
-  //   if (testTheme === true) {
-  //     document.documentElement.classList.add('dark');
-  //     document.documentElement.style.backgroundColor = "#111827"
-  //   } 
-  //   else {
-      
-  //     document.documentElement.classList.remove('dark');
-  //     document.documentElement.style.backgroundColor = "#f9fafb";
-
-  //   }
-
-  // }, [testTheme])
 
 
   useEffect(()=>{
@@ -471,11 +36,12 @@ const Options = () => {
       
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
+
       setTheme(responseExtensionData.theme)
       setCurrentSort(responseExtensionData.optionsPageSort)
       setLayout(responseExtensionData.optionsPageLayout)
     })
-    
+
     chrome.runtime.onMessage.addListener((message) => {
       
       if (message.signal !== 'changeOptions') return
@@ -484,59 +50,22 @@ const Options = () => {
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
     })
+    
+
   },[])
 
 
-
-  useEffect(()=>{
-
-    if (!currentSort) return
-
-    switch (currentSort) {
-
-      case OptionsPageSort.nameAsc:
-
-        const nameSortAsc = arrayOfTrackedWindowValues.sort((a,b) => b.windowName.localeCompare(a.windowName))
-        setArrayOfTrackedWindowValues(nameSortAsc)
-        break
-        
-
-      case OptionsPageSort.nameDes:
-
-        const nameSortDes: any[] = arrayOfTrackedWindowValues.sort((a,b) => a.windowName.localeCompare(b.windowName))
-        setArrayOfTrackedWindowValues(nameSortDes)
-        break
-      
-      case OptionsPageSort.statusOpen:
-
-        const nameSortOpen = arrayOfTrackedWindowValues.sort((a,b) => b.isOpen - a.isOpen)
-        setArrayOfTrackedWindowValues(nameSortOpen)
-        break
-
-      case OptionsPageSort.statusSaved:
-
-        const nameSortSaved = arrayOfTrackedWindowValues.sort((a,b) => a.isOpen - b.isOpen)
-        setArrayOfTrackedWindowValues(nameSortSaved)
-        break
-      default:
-        console.warn("Not a valid sort")
-        break
-    }
-  },[currentSort])
-  // },[currentSort, arrayOfTrackedWindowValues])
-
-
-
   useEffect(() => {
+
     chrome.runtime.sendMessage({signal: 'changeTheme'}, (theme: Theme)=>{
           
-      if (theme === 'dark') {
+      if (theme === Theme.dark) {
         if (!document.documentElement.classList.contains('dark')) {
           document.documentElement.classList.add('dark');
           document.documentElement.style.backgroundColor = "#111827";
         }
       } 
-      else {
+      else if (theme === Theme.light) {
         if (document.documentElement.classList.contains('dark')) {
           document.documentElement.classList.remove('dark');
           document.documentElement.style.backgroundColor = "#f9fafb";
@@ -547,11 +76,115 @@ const Options = () => {
 
 
 
-  function onSearchType(text : string) {
+  useEffect(() => {
 
+    if (!layout) return
+
+    chrome.runtime.sendMessage({signal: 'changeLayout', optionsPageLayout: layout})
+  }, [layout])
+
+
+
+
+  // useEffect(()=>{
+
+  //   if (!currentSort) return
+
+  //   chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort}, (response: OptionsPageSort) => {
+  //     switch (response) {
+  
+  //       case OptionsPageSort.nameAsc:
+  
+  //         const nameSortAsc: any[] = arrayOfTrackedWindowValues.sort((a,b) => a.windowName.localeCompare(b.windowName))
+  //         console.log("new ASC sorted array:", nameSortAsc);
+
+  //         setArrayOfTrackedWindowValues(nameSortAsc)
+  //         break
+          
+  
+  //       case OptionsPageSort.nameDes:
+  
+  //         const nameSortDes: any[] = arrayOfTrackedWindowValues.sort((a,b) => b.windowName.localeCompare(a.windowName))
+  //         console.log("new DESC sorted array:", nameSortDes);
+
+  //         setArrayOfTrackedWindowValues(nameSortDes)
+  //         break
+        
+  //       case OptionsPageSort.statusOpen:
+
+  //         const nameSortOpen: any[] = arrayOfTrackedWindowValues.sort((a,b) => b.isOpen - a.isOpen)
+  //         console.log("OPEN", nameSortOpen)
+  //         setArrayOfTrackedWindowValues(nameSortOpen)
+  //         break
+  
+  //       case OptionsPageSort.statusSaved:
+
+  //         const nameSortSaved: any[] = arrayOfTrackedWindowValues.sort((a,b) => a.isOpen - b.isOpen)
+  //         console.log("SAVED", nameSortSaved)
+  //         setArrayOfTrackedWindowValues(nameSortSaved)
+  //         break
+  //       default:
+  //         console.warn("Not a valid sort")
+  //         break
+  //     }
+    
+  //   })
+  // },[currentSort])
+
+
+// ...existing code...
+  useEffect(()=>{
+
+    if (!currentSort) return
+
+    chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort}, (response: OptionsPageSort) => {
+      const working = [...arrayOfTrackedWindowValues];
+
+      switch (response) {
+
+        case OptionsPageSort.nameAsc: {
+          const nameSortAsc = [...working].sort((a,b) => a.windowName.localeCompare(b.windowName));
+          console.log("new ASC sorted array:", nameSortAsc);
+          setArrayOfTrackedWindowValues(nameSortAsc);
+          break;
+        }
+
+        case OptionsPageSort.nameDes: {
+          const nameSortDes = [...working].sort((a,b) => b.windowName.localeCompare(a.windowName));
+          console.log("new DESC sorted array:", nameSortDes);
+          setArrayOfTrackedWindowValues(nameSortDes);
+          break;
+        }
+
+        case OptionsPageSort.statusOpen: {
+          const nameSortOpen = [...working].sort((a,b) => (b.isOpen ? 1:0) - (a.isOpen ? 1:0));
+          console.log("OPEN", nameSortOpen);
+            setArrayOfTrackedWindowValues(nameSortOpen);
+          break;
+        }
+
+        case OptionsPageSort.statusSaved: {
+          const nameSortSaved = [...working].sort((a,b) => (a.isOpen ? 1:0) - (b.isOpen ? 1:0));
+          console.log("SAVED", nameSortSaved);
+          setArrayOfTrackedWindowValues(nameSortSaved);
+          break;
+        }
+
+        default:
+          console.warn("Not a valid sort");
+      }
+    })
+  },[currentSort, arrayOfTrackedWindowValues])
+  
+
+
+
+  function onSearch(text : string) {
+
+    setSearchQuery(text)
     const searched = text.trim()
-    setSearchQuery(searched)
     if (searched === "") {
+      setArrayOfTrackedWindowValues(originalArrayOfTrackedWindowValues)
       return
     }
 
@@ -579,7 +212,7 @@ const Options = () => {
 
 
   if (theme === null || layout === null ||  currentSort === null) {
-    return (
+  return (
       <div className="min-h-screen w-full bg-black flex flex-col items-center justify-center">
         <div className="relative">
           <div className="absolute inset-0 animate-ping">
@@ -607,7 +240,8 @@ const Options = () => {
         <div className="flex justify-between py-6 items-center max-w-7xl mx-auto px-6 md:px-8">
           <div className="flex items-center space-x-3 group">
             <div className="relative p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-              <IconBookmark className="h-8 w-8 text-white"/>
+              <img src={extensionImage192} className="h-8 w-8 object-cover object-center scale-150"/>
+
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </div>
             <div>
@@ -630,15 +264,14 @@ const Options = () => {
               <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
 
               <div className="flex items-center">
-                  <span className="text-sm ml-1 text-blue-500 dark:text-blue-600 font-semibold">{arrayOfTrackedWindowValues.length} {arrayOfTrackedWindowValues.length === 1 ? "window" : "windows"}</span>
+                  <span className="text-sm ml-1 text-gray-500 dark:text-gray-400 font-semibold">{arrayOfTrackedWindowValues.length} {arrayOfTrackedWindowValues.length === 1 ? "window" : "windows"}</span>
               </div>
 
             </div>
 
             <button 
               className="group relative flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              // onClick={() => setTestTheme(!testTheme)}
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              onClick={() => setTheme(theme === Theme.light ? Theme.dark : Theme.light)}
 
               aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
             >
@@ -668,7 +301,7 @@ const Options = () => {
                 type="text" 
                 placeholder="Search windows by name..." 
                 value={searchQuery}
-                onChange={(e) => onSearchType(e.target.value)}
+                onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-12 pr-12 py-4 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 
                   bg-gray-100 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 
                   transition-all duration-300 focus:outline-none shadow-sm focus:shadow-lg text-lg font-medium
@@ -676,7 +309,7 @@ const Options = () => {
               />
               {searchQuery && (
                 <button 
-                  onClick={() => onSearchType("")}
+                  onClick={() => onSearch("")}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors group"
                 >
                   <div className="p-1 rounded-full group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
@@ -713,7 +346,7 @@ const Options = () => {
                   : 'bg-white/80 text-gray-600 dark:bg-gray-700/80 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600 border border-gray-200/50 dark:border-gray-600/50'}`}
               onClick={() => { layout === 'card' ? setLayout(OptionsPageLayout.table) : setLayout(OptionsPageLayout.card); setSpinLayoutIcon(true); setTimeout(()=> setSpinLayoutIcon(false), 650); }}
             >
-              <IconLayout className={`h-[35px] w-[35px] transition-transform group-hover:rotate-12 duration-300 ${spinLayoutIcon ? 'animate-spin-once' : ''}`} />
+              <IconLayout className={`h-[30px] w-[30px] transition-transform group-hover:rotate-12 duration-300 ${spinLayoutIcon ? 'animate-spin-once' : ''}`} />
               {layout === 'card' && (
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
               )}
@@ -772,7 +405,9 @@ const Options = () => {
             }/>
           )
 
-        }        
+        }
+
+
       </main>
     </div>
   )
@@ -780,3 +415,4 @@ const Options = () => {
 
 
 export default Options
+

@@ -16,10 +16,10 @@ export default function TableLayout(
    return (
       <div className="gap-8 flex flex-col lg:flex-row h-[1200px] lg:h-[700px] p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30" >
 
-        <div className="h-[400px] lg:h-[550px] bg-white/80 dark:bg-gray-800/80 flex flex-col  backdrop-blur-sm  py-5 rounded-xl shadow-lg dark:shadow-xl w-full lg:w-80 mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
+        <div className="h-[400px] min-w-[16rem] lg:h-[550px] bg-white/80 dark:bg-gray-800/80 flex flex-col  backdrop-blur-sm  py-5 rounded-xl shadow-lg dark:shadow-xl lg:w-80 mb-6 lg:mb-0 border border-gray-200/30 dark:border-gray-700/30">
 
           <div className="px-6">
-            <h3 className="px-3 font-bold text-gray-600 dark:text-gray-300 text-sm uppercase tracking-wider mb-5 pb-3 border-b-2 border-gray-200/50 dark:border-gray-600/50">Windows Collection</h3>
+            <h3 className="px-3 font-bold text-gray-600 dark:text-gray-300 text-sm uppercase mb-5 pb-3 border-b-2 border-gray-200/50 dark:border-gray-600/50">Windows Collection</h3>
           </div>
 
 
@@ -74,11 +74,12 @@ export default function TableLayout(
          ">
 
             <div className="px-8 py-6 flex justify-between items-center border-b border-gray-200/50 dark:border-gray-600/50 bg-gradient-to-r from-white/80 to-blue-50/80 dark:from-gray-800/80 dark:to-gray-700/80 backdrop-blur-sm sticky top-0 z-10">
-              <div className="flex items-center space-x-4">
-                <div className={`w-1 h-14 ${arrayOfTrackedWindowValues[activeWindow].isOpen ? 'bg-green-500' : 'bg-blue-500'}`}/>
+              <div className={`flex items-center space-x-4 border-l-4 pl-4 ${
+                arrayOfTrackedWindowValues[activeWindow].isOpen ? 'border-green-500' : 'border-blue-500'
+              }`}>
               
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1 break-all pr-10">
                     {arrayOfTrackedWindowValues[activeWindow].windowName}
                   </h2>
                   <div className="flex items-center text-sm space-x-3">

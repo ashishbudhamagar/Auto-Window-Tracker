@@ -1,7 +1,8 @@
 import { ExtensionData, Theme } from "../../types";
 
 import { useState, useEffect, useRef } from "react";
-import { IconWindows, IconBookmark } from "../../icons";
+import { IconWindows } from "../../icons";
+import extensionImage192 from "../public/192.png";
 import "../global.css";
 
  
@@ -45,6 +46,13 @@ export const Popup = () => {
           }
         }
       })
+    })
+
+    // needs to be here to stop no connection error from happening
+    // because the background script sends message which is only suppose to be for options page
+    // @ts-ignore
+    chrome.runtime.onMessage.addListener((message) => {
+      return
     })
     },[])
 
@@ -126,7 +134,7 @@ export const Popup = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4 group">
             <div className="relative p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-              <IconBookmark className="h-6 w-6 text-white"/>
+              <img src={extensionImage192} className="h-6 w-6 object-cover object-center scale-125"/>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </div>
             <div>
@@ -168,6 +176,10 @@ export const Popup = () => {
             <input 
               type="text" 
               id="window-name"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
               className={`
                 w-full px-4 py-3 rounded-lg transition-all duration-300 text-sm font-medium
                 bg-gray-200 dark:bg-gray-700/80 backdrop-blur-sm
@@ -247,7 +259,7 @@ export const Popup = () => {
             <div className="">
               <div className="relative ">
                 {windowTracked && (
-                  <span className="absolute inset-0 w-3 h-3 -top-1 rounded-full bg-green-400 animate-ping"></span>
+                  <span className="absolute inset-0 w-3 h-3 top-[5.5px] -left-[12px] rounded-full bg-green-400 animate-ping"></span>
                 )}
               </div>
 

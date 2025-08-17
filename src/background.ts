@@ -16,7 +16,7 @@ const starterExtensionDataStructure: ExtensionData = {
 
 let extensionData = null
 const debounceSaveData = debounce(saveExtensionData, 25000)
-
+const debounceUpdateOptionsPage = debounce(updateOptionsPage, 250)
 
 
 chrome.runtime.onInstalled.addListener((details)=>{
@@ -42,14 +42,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true;
   }
-
+ 
   return processMessages(message, sendResponse);
 
   function processMessages(message, sendResponse) {
+      
     if (message.signal === 'trackButtonClicked') {
       if (message.trackWindow === true) {
         handleWindowTrack(message.currentWindowId, message.windowName, sendResponse);
-      } else {
+      }
+      else {
         handleWindowUntrack(message.currentWindowId, sendResponse);
       }
       return true;
@@ -63,11 +65,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       delete extensionData.trackedWindows[message.windowName];
       extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
       saveExtensionData(extensionData);
-      updateOptionsPage();
+      debounceUpdateOptionsPage();
       return false;
     }
     else if (message.signal === 'openSavedWindow') {
       handleSavedWindowOpen(message.openedWindowDetails);
+
       return false;
     }
     else if (message.signal === 'changeTheme') {
@@ -89,7 +92,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse(theme);
       return false;
     }
-    // fallback: do not return true
+    else if (message.signal === 'setOptionsPageSort') {
+
+      extensionData.optionsPageSort = message.optionsPageSort;
+      console.log("Setting options page sort to:", extensionData.optionsPageSort);
+      saveExtensionData(extensionData);
+      sendResponse(message.optionsPageSort);
+      debounceUpdateOptionsPage();
+      return false;
+
+    }
+    else if (message.signal === 'optionsPageLayout') {
+      extensionData.optionsPageLayout = message.optionsPageLayout;
+      saveExtensionData(extensionData);
+      debounceUpdateOptionsPage();
+      return false;
+
+    }
+
     return false;
   }
 });
@@ -176,7 +196,7 @@ function reQueryAllTabsToSave(windowId) {
                      }
                   })
 
-                  updateOptionsPage()                  
+                  debounceUpdateOptionsPage()
                   debounceSaveData(extensionData)
                   console.log("============ Tab Re-queried ==============")
                   console.log(extensionData.trackedWindows[name].tabs)
@@ -189,16 +209,15 @@ function reQueryAllTabsToSave(windowId) {
 
 
 
-
+ 
 
 function updateOptionsPage() {
-   chrome.tabs.query({url: "chrome-extension://nfhnplnmgoblehoadbjmkiadacjafcgj/options.html"},(tab)=>{
-      if (tab.length !== 0) {
-            setTimeout(()=>{
-               chrome.runtime.sendMessage({signal: "changeOptions", trackedWindows: extensionData.trackedWindows})
-            },150)
-      }
-   })
+
+   chrome.runtime.sendMessage({
+      signal: 'changeOptions',
+      trackedWindows: extensionData.trackedWindows
+   });
+   
 }
 
 
@@ -272,7 +291,7 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
          
          saveExtensionData(extensionData)
          sendResponse(true)
-         updateOptionsPage()
+         debounceUpdateOptionsPage()
          
 
          console.log("============ Window Tracked: True ==============")
@@ -294,7 +313,7 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
 
          saveExtensionData(extensionData)
          sendResponse(false)
-         updateOptionsPage()
+         debounceUpdateOptionsPage()
          console.log("============ Window Tracked: False ==============")
          console.log(extensionData.trackedWindows)
          console.log(extensionData.allWindowNames)
