@@ -248,7 +248,13 @@ function reQueryAllTabsToSave(windowId) {
 
 function updateOptionsPage() {
 
-   chrome.runtime.sendMessage({signal: 'changeOptions', trackedWindows: extensionData.trackedWindows});
+   chrome.runtime.sendMessage({signal: 'changeOptions', trackedWindows: extensionData.trackedWindows},
+      () => {
+         if (chrome.runtime.lastError) {
+            console.debug("error was probably the options page not being found when this message is sent which is not an issue", chrome.runtime.lastError.message)
+         }
+      });
+   );
    
 }
 
