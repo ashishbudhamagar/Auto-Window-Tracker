@@ -137,26 +137,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
 
+const debounceContainer = {};
+
+function debounceRequeryOfAllTabs(windowId) {
+
+   if (!windowId) return;
+
+   clearTimeout(debounceContainer[windowId]);
+
+   debounceContainer[windowId] = setTimeout(() => {
+
+      reQueryAllTabsToSave(windowId);
+      delete debounceContainer[windowId];
+   }, 700);
+
+}
+
 chrome.tabs.onRemoved.addListener((tabId, removeInfo)=> {
    if (removeInfo.isWindowClosing === false) {
-      reQueryAllTabsToSave(removeInfo.windowId)
+      debounceRequeryOfAllTabs(removeInfo.windowId)
    }
 })
 
 chrome.tabs.onMoved.addListener((tabId, moveInfo)=>{
-   reQueryAllTabsToSave(moveInfo.windowId)
+   debounceRequeryOfAllTabs(moveInfo.windowId)
 })
 
 chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
-   if (updateInfo.url || updateInfo.groupId) {
-      reQueryAllTabsToSave(tab.windowId)
+   if (updateInfo.url || updateInfo.status === 'complete' || updateInfo.groupId || updateInfo.title || updateInfo.favIconUrl) {
+      debounceRequeryOfAllTabs(tab.windowId)
    }
 })
 
-
 chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
    if (detachInfo.oldPosition) {
-      reQueryAllTabsToSave(detachInfo.oldWindowId)
+      debounceRequeryOfAllTabs(detachInfo.oldWindowId)
    }
 })
 
@@ -233,14 +248,7 @@ function reQueryAllTabsToSave(windowId) {
 
 function updateOptionsPage() {
 
-   chrome.runtime.sendMessage({
-      signal: 'changeOptions',
-      trackedWindows: extensionData.trackedWindows
-   }, () => {
-      if (chrome.runtime.lastError) {
-         console.debug('No options page open to receive updateOptionsPage message', chrome.runtime.lastError.message)
-      }
-   });
+   chrome.runtime.sendMessage({signal: 'changeOptions', trackedWindows: extensionData.trackedWindows});
    
 }
 
