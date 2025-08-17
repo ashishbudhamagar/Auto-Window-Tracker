@@ -19,14 +19,37 @@ const debounceSaveData = debounce(saveExtensionData, 25000)
 const debounceUpdateOptionsPage = debounce(updateOptionsPage, 250)
 
 
-chrome.runtime.onInstalled.addListener((details)=>{
-   if (details.reason === 'install' || details.reason === 'update') {
+chrome.runtime.onInstalled.addListener((details) => {
 
-      chrome.storage.local.clear()
-      chrome.storage.local.set({extensionData: starterExtensionDataStructure})
-      extensionData = starterExtensionDataStructure      
-   }
-})
+  if (details.reason === 'install') {
+
+    chrome.storage.local.set({ extensionData: starterExtensionDataStructure });
+    extensionData = structuredClone(starterExtensionDataStructure);
+
+  }
+  else if (details.reason === 'update') {
+
+    chrome.storage.local.get('extensionData', (result) => {
+
+      if (!result.extensionData) {
+        chrome.storage.local.set({ extensionData: starterExtensionDataStructure });
+        extensionData = structuredClone(starterExtensionDataStructure);
+        return;
+      }
+
+      const oldExtensionData: ExtensionData = {
+        trackedWindows: result.extensionData.trackedWindows || {},
+        allWindowNames: Array.isArray(result.extensionData.allWindowNames) ? result.extensionData.allWindowNames : [],
+        optionsPageSort: result.extensionData.optionsPageSort || OptionsPageSort.nameAsc,
+        theme: result.extensionData.theme === Theme.light ? Theme.light : Theme.dark,
+        optionsPageLayout: result.extensionData.optionsPageLayout || OptionsPageLayout.card
+      };
+
+      chrome.storage.local.set({ extensionData: oldExtensionData });
+      extensionData = structuredClone(oldExtensionData);
+    });
+  }
+});
 
 
 
@@ -216,6 +239,11 @@ function updateOptionsPage() {
    chrome.runtime.sendMessage({
       signal: 'changeOptions',
       trackedWindows: extensionData.trackedWindows
+   }, () => {
+      console.log("============ Options Page Updated ==============")
+      if (chrome.runtime.lastError) {
+         console.debug('No options page open to receive updateOptionsPage message', chrome.runtime.lastError.message)
+      }
    });
    
 }
