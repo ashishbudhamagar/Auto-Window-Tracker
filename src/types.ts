@@ -9,7 +9,7 @@ export interface ExtensionData {
 export enum OptionsPageSort {
   nameAsc = "Name: ASC",
   nameDes = "Name: DES",
-  statusOpen = "Status: Open",
+  statusOpen = "Status: Active",
   statusSaved = "Status: Saved"
 }
 

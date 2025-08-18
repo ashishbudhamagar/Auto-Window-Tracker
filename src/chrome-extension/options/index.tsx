@@ -71,7 +71,7 @@ const Options = () => {
         document.documentElement.classList.remove('dark');
       }
       document.documentElement.style.backgroundColor = "#f9fafb";
-      
+
     }
   }, [theme])
 
@@ -192,6 +192,12 @@ const Options = () => {
 
               <span className="flex items-center">
                 <span className="text-sm ml-1 text-green-500 dark:text-green-600 font-semibold">{arrayOfTrackedWindowValues.filter(ele => ele.isOpen).length} active</span>
+              </span>
+
+              <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+
+               <span className="flex items-center">
+                <span className="text-sm ml-1 text-blue-500 dark:text-blue-600 font-semibold">{arrayOfTrackedWindowValues.filter(ele => !ele.isOpen).length} saved</span>
               </span>
 
               <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
