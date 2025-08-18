@@ -29,6 +29,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   else if (details.reason === 'update') {
 
     chrome.storage.local.get('extensionData', (result) => {
+      console.log(result.extensionData)
 
       if (!result.extensionData) {
         chrome.storage.local.set({ extensionData: starterExtensionDataStructure });
@@ -88,10 +89,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
       saveExtensionData(extensionData);
       updateOptionsPage();
+      // send an acknowledgement so callers waiting on a response don't get the channel closed unexpectedly
+      try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
       return false;
     }
     else if (message.signal === 'openSavedWindow') {
       handleSavedWindowOpen(message.openedWindowDetails);
+      // acknowledge request
+      try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
 
       return false;
     }
@@ -127,6 +132,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       extensionData.optionsPageLayout = message.optionsPageLayout;
       saveExtensionData(extensionData);
       updateOptionsPage();
+      // acknowledge so callers don't hang when extensionData had to be fetched first
+      try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
       return false;
 
     }
@@ -295,6 +302,7 @@ function handleSavedWindowOpen(openedWindowDetails) {
          extensionData.trackedWindows[openedWindowDetails.windowName].isOpen = true
          extensionData.trackedWindows[openedWindowDetails.windowName].windowId = newWindow.id
          saveExtensionData(extensionData)
+         updateOptionsPage()
 
       },500)
    })
@@ -352,6 +360,10 @@ function handleWindowUntrack(currentWindowId, sendResponse) {
          return
       }
    }
+
+   sendResponse(false)
+
+
 }
 
 
