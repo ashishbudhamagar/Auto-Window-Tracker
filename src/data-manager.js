@@ -1,6 +1,3 @@
-
-
-
 export function saveExtensionData(dataToSave) {
     chrome.storage.local.set({extensionData: dataToSave}, ()=>{
         if (chrome.runtime.lastError) {
@@ -8,9 +5,13 @@ export function saveExtensionData(dataToSave) {
         }
         else {
             console.log("=========== Data was saved to local storage ===========")
+            console.log(dataToSave)
+            console.log("=========== Data was saved to local storage ===========")
+
         }
     })
 }
+
 
 export function debounce(callback, delay) { 
     let timeout = null
@@ -18,7 +19,6 @@ export function debounce(callback, delay) {
     return (...args)=>{
 
         clearTimeout(timeout)
-
         timeout = setTimeout(()=>{
             callback(...args)
         },delay)

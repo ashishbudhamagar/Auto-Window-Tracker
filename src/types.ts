@@ -1,9 +1,18 @@
 export interface ExtensionData { 
-  trackedWindows: Record<string, any>
-  allWindowNames: string[]
+  trackedWindows: Record<string, TrackedWindow>
+  trackedWindowNames: string[]
   optionsPageLayout: OptionsPageLayout
   optionsPageSort: OptionsPageSort
   theme: Theme
+}
+
+export interface TrackedWindow {
+  "windowId": string,
+  "windowName": string,
+  "color": string,
+  "isOpen": boolean,
+  "tabs": any[],
+  "groupedTabsInfo": any
 }
 
 export enum OptionsPageSort {
