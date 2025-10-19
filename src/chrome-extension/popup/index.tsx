@@ -48,7 +48,6 @@ export const Popup = () => {
   },[])
 
 
-
   async function onTrackWindowButtonClicked() {
 
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{

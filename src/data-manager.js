@@ -18,7 +18,7 @@ export function debounce(callback, delay) {
 
     return (...args)=>{
 
-        clearTimeout(timeout)
+        clearTimeout(timeout)   
         timeout = setTimeout(()=>{
             callback(...args)
         },delay)

@@ -1,35 +1,11 @@
-// @ts-nocheck
+//@ts-nocheck
 import {ExtensionData, OptionsPageLayout, OptionsPageSort, Theme, TrackedWindow} from "./types"
-import { debounce, saveExtensionData, } from "./data-manager"
+import { debounce, saveExtensionData } from "./data-manager"
 
 
-// chrome.storage.local.get("extensionData", (result)=>{
-//    if (result.extensionData) {
-//       extensionData = result.extensionData
-//       console.log("data gotten and set")
-//       return
-//    }
-//    extensionData = structuredClone(initialExtensionData)
-//    console.error("// ERROR - extension data wasnt found")
-// })
-
-
-const initialExtensionData: ExtensionData = {
-   trackedWindows: {},
-   trackedWindowNames: [],
-   theme: Theme.light,
-   optionsPageSort: OptionsPageSort.nameAsc,
-   optionsPageLayout: OptionsPageLayout.card
-}
-let extensionData: ExtensionData = null
+let extensionData: ExtensionData | null = null
 const debounceSaveData = debounce(saveExtensionData, 25000)
 
-function printExtensionData(data) {
-      console.log("================ data ===============")
-      console.log(data)
-      console.log("================ data ===============")
-
-}
 
 
 try {
@@ -38,9 +14,32 @@ try {
 chrome.runtime.onInstalled.addListener((details) => {
    
    if (details.reason === "install") {
+
+      const initialExtensionData: ExtensionData = {
+         trackedWindows: {},
+         trackedWindowNames: [],
+         theme: Theme.light,
+         optionsPageSort: OptionsPageSort.nameAsc,
+         optionsPageLayout: OptionsPageLayout.card
+      }
+
+      chrome.action.setBadgeTextColor({color: "white"})
+      chrome.action.setBadgeBackgroundColor({ color: "green" });
       chrome.storage.local.set({ extensionData: structuredClone(initialExtensionData)});
-      console.log("data is set in local")
-      printExtensionData()
+   }
+   if (details.reason === "update") {
+
+      const initialExtensionData: ExtensionData = {
+         trackedWindows: {},
+         trackedWindowNames: [],
+         theme: Theme.light,
+         optionsPageSort: OptionsPageSort.nameAsc,
+         optionsPageLayout: OptionsPageLayout.card
+      }
+
+      chrome.action.setBadgeTextColor({color: "white"})
+      chrome.action.setBadgeBackgroundColor({ color: "green" });
+      chrome.storage.local.set({ extensionData: structuredClone(initialExtensionData)});
    }
 });
 
@@ -54,8 +53,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
       })
       return true
    }
-
-
    return processMessages()
 
 
@@ -71,18 +68,53 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
             return true
          }
          else {
-            handleWindowUntrack(message.currentWindowId, message.windowName, sendResponse)
-            return false
+            handleWindowUntrack(message.windowName, sendResponse)
+            return null
          }
       }
-
    }
 })
 
-function handleWindowTrack(currentWindowId, windowName, sendResponse) {
+
+
+
+chrome.windows.onFocusChanged.addListener((windowId)=>{
+   if (windowId === chrome.windows.WINDOW_ID_NONE) return null
+   console.log("window changed")
+
+   if (!extensionData) {
+      chrome.storage.local.get("extensionData", (result)=>{
+         extensionData = result.extensionData
+         handleExtensionBadge(windowId)
+      })
+   }
+   else {
+      handleExtensionBadge(windowId)
+   }
+})
+
+
+function handleExtensionBadge(windowId: number) {
+   if (!extensionData) return null
+
+   for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
+
+      if (!trackedWindow.isOpen) continue
+
+      if (trackedWindow.windowId === String(windowId)) {
+         chrome.action.setBadgeText({ text: "on" });
+         return null
+      }
+   }
+   chrome.action.setBadgeText({ text: "" });
+}
+
+function handleWindowTrack(currentWindowId: string, windowName: string, sendResponse: (response: any) => void) {
 
    chrome.tabs.query({windowId: Number(currentWindowId)}, (allTabs)=>{
       chrome.tabGroups.query({windowId: Number(currentWindowId)}, (groups) => {
+
+         if (!extensionData) return null
          console.log("groups:", groups)
          console.log("all tabs:", allTabs)
 
@@ -112,24 +144,26 @@ function handleWindowTrack(currentWindowId, windowName, sendResponse) {
          
          saveExtensionData(extensionData)
          sendResponse(true)
-         // updateOptionsPage()
+         handleExtensionBadge(Number(currentWindowId))
+         updateOptionsPage()
       })
    })
 }
 
 
-function handleWindowUntrack(currentWindowId, windowName, sendResponse) {
+function handleWindowUntrack(windowName: string, sendResponse: (response: any) => void) {
+   if (!extensionData) return null
 
    for (let [key, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-      // if (key === windowName && trackedWindow.windowId === currentWindowId && trackedWindow.isOpen === true) {
       if (key === windowName) {
 
          extensionData.trackedWindowNames = extensionData.trackedWindowNames.filter(ele=>ele !== trackedWindow.windowName)
          delete extensionData.trackedWindows[key]
-
+         
          saveExtensionData(extensionData)
          sendResponse(false)
-         // updateOptionsPage()
+         handleExtensionBadge(Number(trackedWindow.windowId))
+         updateOptionsPage()
          return null
       }
    }
@@ -137,93 +171,94 @@ function handleWindowUntrack(currentWindowId, windowName, sendResponse) {
 
 
 
-// function updateOptionsPage() {
+function updateOptionsPage() {
+   if (!extensionData) return null
 
-//    chrome.runtime.sendMessage({signal: 'changeOptions', trackedWindows: extensionData.trackedWindows},
-//       () => {
-//          if (chrome.runtime.lastError) {
-//             console.debug("error was probably the options page not being found when this message is sent which is not an issue", chrome.runtime.lastError.message)
-//          }
-//       }
-//    );
+   chrome.runtime.sendMessage({signal: 'changeOptions', trackedWindows: extensionData.trackedWindows},
+      () => {
+         if (chrome.runtime.lastError) {
+            console.debug("error was probably the options page not being found when this message is sent which is not an issue", chrome.runtime.lastError.message)
+         }
+      }
+   );
    
-// }
-
-
-
-function processMessages222(message, sendResponse) {
-   
-   if (message.signal === 'trackButtonClicked') {
-      if (message.trackWindow === true) {
-            handleWindowTrack(message.currentWindowId, message.windowName, sendResponse);
-      }
-      else {
-            handleWindowUntrack(message.currentWindowId, sendResponse);
-      }
-      return true;
-   }
-   else if (message.signal === 'dataForOptions' || message.signal === 'dataForPopup') {
-      sendResponse(extensionData);
-      return false;
-   }
-
-   else if (message.signal === 'untrackWindowFromOptions') {
-
-      delete extensionData.trackedWindows[message.windowName];
-      extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
-      saveExtensionData(extensionData);
-      updateOptionsPage();
-      // send an acknowledgement so callers waiting on a response don't get the channel closed unexpectedly
-      try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
-      return false;
-      }
-      else if (message.signal === 'openSavedWindow') {
-      handleSavedWindowOpen(message.openedWindowDetails);
-      // acknowledge request
-      try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
-
-      return false;
-      }
-      else if (message.signal === 'changeTheme') {
-
-      let theme = null;
-
-      if (extensionData.theme === 'light') {
-
-            extensionData.theme = 'dark';
-            theme = 'dark';
-
-      } else if (extensionData.theme === 'dark') {
-
-            extensionData.theme = 'light';
-            theme = 'light';
-            
-      }
-      saveExtensionData(extensionData);
-      sendResponse(theme);
-      return false;
-      }
-      else if (message.signal === 'setOptionsPageSort') {
-
-      extensionData.optionsPageSort = message.optionsPageSort;
-      saveExtensionData(extensionData);
-      sendResponse(message.optionsPageSort);
-      updateOptionsPage();
-      return false;
-
-      }
-      else if (message.signal === 'optionsPageLayout') {
-      extensionData.optionsPageLayout = message.optionsPageLayout;
-      saveExtensionData(extensionData);
-      updateOptionsPage();
-      // acknowledge so callers don't hang when extensionData had to be fetched first
-      try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
-      return false;
-
-   }
-
-   return false;
 }
+
+
+
+// function processMessages222(message, sendResponse) {
+   
+//    if (message.signal === 'trackButtonClicked') {
+//       if (message.trackWindow === true) {
+//             handleWindowTrack(message.currentWindowId, message.windowName, sendResponse);
+//       }
+//       else {
+//             handleWindowUntrack(message.currentWindowId, sendResponse);
+//       }
+//       return true;
+//    }
+//    else if (message.signal === 'dataForOptions' || message.signal === 'dataForPopup') {
+//       sendResponse(extensionData);
+//       return false;
+//    }
+
+//    else if (message.signal === 'untrackWindowFromOptions') {
+
+//       delete extensionData.trackedWindows[message.windowName];
+//       extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
+//       saveExtensionData(extensionData);
+//       updateOptionsPage();
+//       // send an acknowledgement so callers waiting on a response don't get the channel closed unexpectedly
+//       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
+//       return false;
+//       }
+//       else if (message.signal === 'openSavedWindow') {
+//       handleSavedWindowOpen(message.openedWindowDetails);
+//       // acknowledge request
+//       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
+
+//       return false;
+//       }
+//       else if (message.signal === 'changeTheme') {
+
+//       let theme = null;
+
+//       if (extensionData.theme === 'light') {
+
+//             extensionData.theme = 'dark';
+//             theme = 'dark';
+
+//       } else if (extensionData.theme === 'dark') {
+
+//             extensionData.theme = 'light';
+//             theme = 'light';
+            
+//       }
+//       saveExtensionData(extensionData);
+//       sendResponse(theme);
+//       return false;
+//       }
+//       else if (message.signal === 'setOptionsPageSort') {
+
+//       extensionData.optionsPageSort = message.optionsPageSort;
+//       saveExtensionData(extensionData);
+//       sendResponse(message.optionsPageSort);
+//       updateOptionsPage();
+//       return false;
+
+//       }
+//       else if (message.signal === 'optionsPageLayout') {
+//       extensionData.optionsPageLayout = message.optionsPageLayout;
+//       saveExtensionData(extensionData);
+//       updateOptionsPage();
+//       // acknowledge so callers don't hang when extensionData had to be fetched first
+//       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
+//       return false;
+
+//    }
+
+//    return false;
+// }
 
 
 
@@ -384,17 +419,9 @@ function processMessages222(message, sendResponse) {
 
 
 
-
-
-
-
-
-
-
 } catch (error) {
-console.warn("========= background.js ERROR =======")  
-console.log(error)
-console.warn("========= background.js ERROR =======")  
+   console.warn("========= background.js ERROR =======")  
+   console.log(error)
+   console.warn("========= background.js ERROR =======")  
 
 }
-

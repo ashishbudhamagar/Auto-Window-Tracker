@@ -6,12 +6,10 @@
     "default_popup": "popup.html"
   },
   "options_page": "options.html",
-
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
-
   "description": "Track and manage browser windows and tabs automatically. Save, restore, and organize your browsing sessions with a click of a button",
   "icons": {
     "16": "public/16.png",
@@ -20,5 +18,4 @@
     "192": "public/192.png"
   },
   "permissions": ["storage", "tabs", "tabGroups", "windows"]
-
 }

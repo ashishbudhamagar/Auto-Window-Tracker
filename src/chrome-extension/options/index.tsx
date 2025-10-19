@@ -30,7 +30,7 @@ const Options = () => {
 
 
   useEffect(()=>{
-    chrome.runtime.sendMessage({signal: "getDataForOptions"}, (responseExtensionData: ExtensionData)=>{
+    chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
       const trackedWindowValues: any[] = Object.values(responseExtensionData.trackedWindows)
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
@@ -43,6 +43,8 @@ const Options = () => {
     chrome.runtime.onMessage.addListener((message) => {
       
       if (message.signal !== 'changeOptions') return
+
+      console.log("data", message)
 
       const trackedWindowValues: any[] = Object.values(message.trackedWindows)
       setArrayOfTrackedWindowValues(trackedWindowValues)
