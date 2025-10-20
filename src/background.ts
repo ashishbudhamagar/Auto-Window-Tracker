@@ -93,6 +93,41 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          return null
       }
 
+      else if (message.signal === 'reorderTrackedWindows') {
+         // Expect newOrder: string[] of windowName in desired order
+         if (!Array.isArray(message.newOrder)) {
+            sendResponse(false)
+            return null
+         }
+
+         const newOrder: string[] = message.newOrder
+         // Rebuild trackedWindows object in same order (trackedWindows is an object keyed by name, but we persist ordering in trackedWindowNames)
+         const newTrackedWindowNames: string[] = []
+         const newTrackedWindows: Record<string, TrackedWindow> = {}
+
+         for (const name of newOrder) {
+            if (extensionData.trackedWindows[name]) {
+               newTrackedWindowNames.push(name)
+               newTrackedWindows[name] = extensionData.trackedWindows[name]
+            }
+         }
+
+         // For any windows not included in newOrder, append them at the end to avoid data loss
+         for (const [name, tw] of Object.entries(extensionData.trackedWindows)) {
+            if (!newTrackedWindows[name]) {
+               newTrackedWindowNames.push(name)
+               newTrackedWindows[name] = tw
+            }
+         }
+
+         extensionData.trackedWindowNames = newTrackedWindowNames
+         extensionData.trackedWindows = newTrackedWindows
+         saveExtensionData(extensionData)
+         updateOptionsPage()
+         sendResponse(true)
+         return null
+      }
+
 
       
    }

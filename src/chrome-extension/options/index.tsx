@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme } from "../../types";
 import { useEffect, useState, useRef } from "react";
 import extensionImage192 from "../public/192.png";
@@ -42,7 +43,7 @@ let trackedWindows11 = {
       },
     ],
     windowId: "134351500",
-    windowName: "work",
+    windowName: "ent",
   },
 
   research: {
@@ -141,19 +142,26 @@ const Options = () => {
 
 
   useEffect(()=>{
-    chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
+    //@ts-ignore
+    // chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
 
       // const trackedWindowValues: any[] = Object.values(responseExtensionData.trackedWindows)
-      const trackedWindowValues: any[] = Object.values(trackedWindows11)
-
       
+      // setArrayOfTrackedWindowValues(trackedWindowValues)
+      // setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
+      // setTheme(responseExtensionData.theme)
+      // setCurrentSort(responseExtensionData.optionsPageSort)
+      // setLayout(responseExtensionData.optionsPageLayout)
+      // sentSortRef.current = responseExtensionData.optionsPageSort
+      const trackedWindowValues: any[] = Object.values(trackedWindows11)
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-      setTheme(responseExtensionData.theme)
-      setCurrentSort(responseExtensionData.optionsPageSort)
-      setLayout(responseExtensionData.optionsPageLayout)
-      sentSortRef.current = responseExtensionData.optionsPageSort
-    })
+      setTheme(Theme.light)
+      setCurrentSort(OptionsPageSort.nameAsc)
+      setLayout(OptionsPageLayout.card)
+      sentSortRef.current = OptionsPageSort.nameAsc
+
+    // })
 
     // chrome.runtime.onMessage.addListener((message) => {
       
@@ -209,28 +217,28 @@ const Options = () => {
 
 
 
-  useEffect(()=>{
+  // useEffect(()=>{
 
-    if (!currentSort) return
+  //   if (!currentSort) return
 
-    const cloneData = [...originalArrayOfTrackedWindowValues]
-    let sorted = cloneData
+  //   const cloneData = [...originalArrayOfTrackedWindowValues]
+  //   let sorted = cloneData
 
-    switch (currentSort) {
-      case OptionsPageSort.nameAsc: sorted = cloneData.sort((a,b)=> a.windowName.localeCompare(b.windowName)); break;
-      case OptionsPageSort.nameDes: sorted = cloneData.sort((a,b)=> b.windowName.localeCompare(a.windowName)); break;
-      case OptionsPageSort.statusOpen: sorted = cloneData.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0)); break;
-      case OptionsPageSort.statusSaved: sorted = cloneData.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0)); break;
-      default: break;
-    }
+  //   switch (currentSort) {
+  //     case OptionsPageSort.nameAsc: sorted = cloneData.sort((a,b)=> a.windowName.localeCompare(b.windowName)); break;
+  //     case OptionsPageSort.nameDes: sorted = cloneData.sort((a,b)=> b.windowName.localeCompare(a.windowName)); break;
+  //     case OptionsPageSort.statusOpen: sorted = cloneData.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0)); break;
+  //     case OptionsPageSort.statusSaved: sorted = cloneData.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0)); break;
+  //     default: break;
+  //   }
 
-    setArrayOfTrackedWindowValues([...sorted])
+  //   setArrayOfTrackedWindowValues([...sorted])
 
-    if (sentSortRef.current !== currentSort) {
-      chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort})
-      sentSortRef.current = currentSort
-    }
-  }, [currentSort, originalArrayOfTrackedWindowValues])
+  //   if (sentSortRef.current !== currentSort) {
+  //     chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort})
+  //     sentSortRef.current = currentSort
+  //   }
+  // }, [currentSort, originalArrayOfTrackedWindowValues])
   
 
 
@@ -263,6 +271,24 @@ const Options = () => {
       }
     }
     chrome.runtime.sendMessage({signal: 'openSavedWindow', openedWindowDetails: openedWindowDetails})
+  }
+
+
+  function handleDragAndDrop(fromIndex: number, toIndex: number) {
+
+    if (fromIndex < 0 || toIndex < 0 || fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
+
+    const clone = [...originalArrayOfTrackedWindowValues]
+
+    const fromData = clone[fromIndex]
+    const toData = clone[toIndex]
+    clone[fromIndex] = toData
+    clone[toIndex] = fromData
+
+    setArrayOfTrackedWindowValues(clone)
+    setOriginalArrayOfTrackedWindowValues(clone)
+
+    // chrome.runtime.sendMessage({signal: 'reorderTrackedWindows', newOrder: clone.map((w)=>w.windowName)})
   }
 
 
@@ -448,7 +474,8 @@ const Options = () => {
                 onOpenSavedWindowClick,
                 onUntrackWindowClick,
                 IconExternal,
-                IconX
+                IconX,
+                handleDragAndDrop
               }
             } /> 
             

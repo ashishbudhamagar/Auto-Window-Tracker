@@ -1,20 +1,14 @@
+//@ts-nocheck
 
 import noImageImage from '../public/no-image.png';
 
 
 export default function CardLayout(
-   {  
-      // @ts-ignore
-      arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick, IconExternal, IconX
-   }
- ) {
-
-
-
-
-
-
-
+  {  
+    // @ts-ignore
+    arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick, IconExternal, IconX, handleDragAndDrop
+  }
+) {
 
 
 
@@ -27,9 +21,29 @@ export default function CardLayout(
         arrayOfTrackedWindowValues.map((window : any, index: number)=>(
 
 
-          <div className={`group  backdrop-blur-lg h-auto w-full rounded-2xl px-6 py-6 flex flex-col justify-between gap-2
+          <div
+            draggable
+            onDragStart={(e) => {
+              
+              e.dataTransfer.setData('cardIndex', String(index))
+              e.currentTarget.style.opacity = "0.0"
+            }}
+            onDragEnd={(e) => {
+              e.currentTarget.style.opacity = "1"
+            }}
+            onDragOver={(e) => {
+              e.preventDefault()
+            }}
+            onDrop={(e) => {
+              e.preventDefault()
+
+              const from = Number(e.dataTransfer.getData('cardIndex'))
+              const to = index
+              handleDragAndDrop(from, to)
+            }}
+            className={`group  backdrop-blur-lg h-auto w-full rounded-2xl px-6 py-6 flex flex-col justify-between gap-2
             hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-3xl
-            transition-transform duration-500 overflow-hidden border border-white/20 dark:border-gray-700/30 border-l-4
+            transition-[opacity,transform] ease-out duration-500 overflow-hidden border border-white/20 dark:border-gray-700/30 border-l-4
             bg-white dark:bg-gray-800
             ${window.isOpen ? " border-l-green-500 dark:border-l-green-600" : " border-l-blue-500 dark:border-l-blue-600 "}
           `} key={index}>
@@ -37,7 +51,7 @@ export default function CardLayout(
             <div>
               <div className="flex justify-between items-center mb-2">
                 <h2
-                  className="text-xl font-bold text-gray-800 dark:text-gray-100 truncate w-auto min-w-24 max-w-56  duration-300"
+                  className="text-xl font-bold text-gray-800 dark:text-gray-100 truncate w-auto min-w-24 max-w-56"
                   title={window.windowName}
                 >
                   {window.windowName}
@@ -71,7 +85,8 @@ export default function CardLayout(
                             target="_blank" 
                             key={index}
                             rel="noopener noreferrer"
-                            
+                            draggable={false}
+                            onDragStart={(e) => e.stopPropagation()}
                           >
                             <div className="flex-shrink-0 w-8 h-8 rounded-md overflow-hidden shadow-sm  dark:border-gray-600/50">
                               <img 
@@ -108,6 +123,8 @@ export default function CardLayout(
                             rel="noopener noreferrer"
                             className="group relative"
                             title={tab.title}
+                            draggable={false}
+                            onDragStart={(e) => e.stopPropagation()}
                           >
                             <div className="w-7 h-7 rounded-lg overflow-hidden border-2 border-white dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm
                               hover:scale-125 hover:shadow-lg transition-transform duration-300 hover:border-blue-300 dark:hover:border-blue-500">
@@ -135,16 +152,16 @@ export default function CardLayout(
 
             <div className="flex  border-t border-gray-200/50 dark:border-gray-600/50 space-x-3">
               <button 
-                className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all duration-300 border border-red-200/50 dark:border-red-700/50 hover:border-red-300 dark:hover:border-red-600 hover:shadow-sm flex-1 justify-center font-medium"
+                className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-300 border border-red-200/50 dark:border-red-700/50 hover:border-red-300 dark:hover:border-red-600 hover:shadow-sm flex-1 justify-center font-medium"
                 onClick={() => onUntrackWindowClick(window.windowName)}
                 title="Remove this window from tracking"
               >
-                <IconX className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                <IconX className="h-4 w-4" />
                 <span className="text-sm">Untrack</span>
               </button>
 
-              <button 
-                className={`group flex items-center space-x-2 py-3 px-4 rounded-xl transition-all duration-300 flex-1 justify-center font-medium 
+              <button
+                className={`group flex items-center space-x-2 py-3 px-4 rounded-xl transition-colors duration-300 flex-1 justify-center font-medium 
                   ${window.isOpen 
                     ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200 dark:border-gray-700 bg-green-100 dark:bg-gray-800/50" 
                     : "text-blue-600 dark:text-blue-500 bg-indigo-100 hover:bg-blue-200 bg-blue-900/30 dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 hover:shadow-sm"}`
@@ -153,7 +170,7 @@ export default function CardLayout(
                 onClick={() => onOpenSavedWindowClick(window.windowName)}
                 title={window.isOpen ? "Window is already open" : "Open saved window"}
               >
-                <IconExternal className="h-4 w-4 group-hover:scale-110 transition-transform duration-300" />
+                <IconExternal className="h-4 w-4" />
                 <span className="text-sm">
                   {window.isOpen ? "Active" : "Open"}
                 </span>
