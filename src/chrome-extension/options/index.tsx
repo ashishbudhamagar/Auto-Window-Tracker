@@ -7,31 +7,146 @@ import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLay
 import CardLayout from "./CardLayout";
 import TableLayout from "./TableLayout";
 
+let trackedWindows11 = {
+  work: {
+    color: "blue",
+    groupedTabsInfo: [],
+    isOpen: true,
+    tabs: [
+      {
+        id: 134351510,
+        active: false,
+        pinned: true,
+        groupId: -1,
+        favIconUrl: "https://mail.google.com/favicon.ico",
+        title: "Inbox (4) – ash@northeastern.edu – Gmail",
+        url: "https://mail.google.com/mail/u/0/#inbox",
+      },
+      {
+        id: 134351514,
+        active: false,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://calendar.google.com/googlecalendar/images/favicons_2020q4/calendar_4_16.png",
+        title: "Google Calendar",
+        url: "https://calendar.google.com/",
+      },
+      {
+        id: 134351523,
+        active: true,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://github.com/favicon.ico",
+        title: "GitHub – Repositories",
+        url: "https://github.com/",
+      },
+    ],
+    windowId: "134351500",
+    windowName: "work",
+  },
+
+  research: {
+    color: "green",
+    groupedTabsInfo: [],
+    isOpen: true,
+    tabs: [
+      {
+        id: 134351601,
+        active: false,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://scholar.google.com/favicon.ico",
+        title: "AI Bias in Machine Learning - Google Scholar",
+        url: "https://scholar.google.com/scholar?q=ai+bias+machine+learning",
+      },
+      {
+        id: 134351607,
+        active: true,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://www.nature.com/favicon.ico",
+        title: "Nature: Artificial Intelligence Articles",
+        url: "https://www.nature.com/subjects/artificial-intelligence",
+      },
+      {
+        id: 134351610,
+        active: false,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://chat.openai.com/favicon.ico",
+        title: "ChatGPT – Research Assistant",
+        url: "https://chat.openai.com/",
+      },
+    ],
+    windowId: "134351590",
+    windowName: "research",
+  },
+
+  entertainment: {
+    color: "orange",
+    groupedTabsInfo: [],
+    isOpen: false,
+    tabs: [
+      {
+        id: 134351710,
+        active: false,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://www.youtube.com/s/desktop/f4eb01f0/img/favicon.ico",
+        title: "YouTube – LoFi Beats",
+        url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+      },
+      {
+        id: 134351718,
+        active: false,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://www.netflix.com/favicon.ico",
+        title: "Netflix Home",
+        url: "https://www.netflix.com/browse",
+      },
+      {
+        id: 134351723,
+        active: true,
+        pinned: false,
+        groupId: -1,
+        favIconUrl: "https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico",
+        title: "Spotify – Discover Weekly",
+        url: "https://open.spotify.com/playlist/37i9dQZEVXcI8sVxXbBBA0",
+      },
+    ],
+    windowId: "134351700",
+    windowName: "entertainment",
+  },
+};
 
 
-     
+
 const Options = () => {
 
   const sortingOptions: OptionsPageSort[] = [OptionsPageSort.nameAsc, OptionsPageSort.nameDes, OptionsPageSort.statusOpen, OptionsPageSort.statusSaved];
 
-  const [currentSort, setCurrentSort] = useState<OptionsPageSort | undefined>(undefined);
+  const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null);
   const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState<any[]>([]);
   const [originalArrayOfTrackedWindowValues, setOriginalArrayOfTrackedWindowValues] = useState<any[]>([]);
 
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [layout, setLayout] = useState<OptionsPageLayout | undefined>(OptionsPageLayout.card);
-  const [theme, setTheme] = useState<Theme | undefined>(undefined)
+  const [layout, setLayout] = useState<OptionsPageLayout | null>(null);
+  const [theme, setTheme] = useState<Theme | null>(null)
   const selectRef = useRef<HTMLSelectElement>(null);
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
   const sentSortRef = useRef<OptionsPageSort | null>(null)
 
-  document.documentElement.style.zoom = "85%";
 
 
 
   useEffect(()=>{
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
-      const trackedWindowValues: any[] = Object.values(responseExtensionData.trackedWindows)
+
+      // const trackedWindowValues: any[] = Object.values(responseExtensionData.trackedWindows)
+      const trackedWindowValues: any[] = Object.values(trackedWindows11)
+
+      
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
       setTheme(responseExtensionData.theme)
@@ -40,51 +155,57 @@ const Options = () => {
       sentSortRef.current = responseExtensionData.optionsPageSort
     })
 
-    chrome.runtime.onMessage.addListener((message) => {
+    // chrome.runtime.onMessage.addListener((message) => {
       
-      if (message.signal !== 'changeOptions') return
+    //   if (message.signal !== 'changeOptions') return
 
-      console.log("data", message)
+    //   console.log("data", message)
 
-      const trackedWindowValues: any[] = Object.values(message.trackedWindows)
-      setArrayOfTrackedWindowValues(trackedWindowValues)
-      setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-    })
+    //   const trackedWindowValues: any[] = Object.values(message.trackedWindows)
+    //   setArrayOfTrackedWindowValues(trackedWindowValues)
+    //   setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
+    // })
     
 
   },[])
 
 
-  useEffect(() => {
 
+
+  useEffect(() => {
     if (!theme) return
 
     if (theme === Theme.dark) {
-
       if (!document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.add('dark');
       }
       document.documentElement.style.backgroundColor = "#111827";
-
     }
     else {
-
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
       }
       document.documentElement.style.backgroundColor = "#f9fafb";
-
     }
   }, [theme])
 
+  function onChangeThemeButtonClicked() {
+    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=> {
+      setTheme(newTheme)
+    })
+  }
 
 
-  useEffect(() => {
+  function onChangeLayoutButtonClicked() {
+    setSpinLayoutIcon(true)
+    setTimeout(
+      ()=> setSpinLayoutIcon(false), 650
+    )
+    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout)=> {
+      setLayout(newLayout)
+    })
+  }
 
-    if (!layout) return
-
-    chrome.runtime.sendMessage({signal: 'optionsPageLayout', optionsPageLayout: layout})
-  }, [layout])
 
 
 
@@ -148,16 +269,13 @@ const Options = () => {
 
   if (theme === null || layout === null ||  currentSort === null) {
   return (
-      <div className="min-h-screen w-full bg-black flex flex-col items-center justify-center">
+      <div className="min-h-screen w-full bg-[rgb(95,95,95)] flex flex-col items-center justify-center">
         <div className="relative">
-          <div className="absolute inset-0 animate-ping">
-            <IconBookmark className="h-12 w-12 text-blue-500/30 mb-4"/>
-          </div>
           <IconBookmark className="h-12 w-12 text-blue-500 mb-4 relative z-10"/>
         </div>
         <div className="text-center space-y-2">
-          <p className="text-gray-500 dark:text-gray-200 font-semibold text-lg">Auto Window Tracker</p>
-          <p className="text-gray-400 dark:text-gray-400 text-sm">Loading data...</p>
+          <p className="text-gray-400 font-semibold text-lg">Auto Window Tracker</p>
+          <p className="text-gray-400/90 text-sm">Loading data...</p>
         </div>
         <div className="mt-6 flex space-x-1">
           <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
@@ -167,11 +285,14 @@ const Options = () => {
       </div>
     )
   }
+  document.documentElement.style.zoom = "85%"
+
+
 
   return (
     <div className="h-full w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
-      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
+      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
         <div className="flex justify-between py-6 items-center max-w-7xl mx-auto px-6 md:px-8">
           <div className="flex items-center space-x-3 group">
             <div className="relative p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
@@ -212,10 +333,7 @@ const Options = () => {
 
             <button 
               className="group relative flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              onClick={() => {
-                chrome.runtime.sendMessage({signal: 'changeTheme'}, (newTheme: Theme)=> { if (newTheme) setTheme(newTheme) })
-              }}
-              aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              onClick={onChangeThemeButtonClicked}
             >
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               {theme === "light" ? 
@@ -246,7 +364,7 @@ const Options = () => {
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-12 pr-12 py-4 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 
                   bg-gray-100 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 
-                  transition-all duration-300 focus:outline-none shadow-sm focus:shadow-lg text-lg font-medium
+                  transition-shadow duration-300  focus:outline-none shadow-sm focus:shadow-lg text-lg font-medium
                   border border-gray-200 dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
               />
               {searchQuery && (
@@ -286,7 +404,7 @@ const Options = () => {
                 ${layout === 'card' 
                   ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-blue-500/25' 
                   : 'bg-white/80 text-gray-600 dark:bg-gray-700/80 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600 border border-gray-200/50 dark:border-gray-600/50'}`}
-              onClick={() => { layout === 'card' ? setLayout(OptionsPageLayout.table) : setLayout(OptionsPageLayout.card); setSpinLayoutIcon(true); setTimeout(()=> setSpinLayoutIcon(false), 650); }}
+              onClick={onChangeLayoutButtonClicked}
             >
               <IconLayout className={`h-[30px] w-[30px] transition-transform group-hover:rotate-12 duration-300 ${spinLayoutIcon ? 'animate-spin-once' : ''}`} />
               {layout === 'card' && (

@@ -62,6 +62,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          sendResponse(extensionData)
          return null
       }
+
+
+
       else if (message.signal === "trackOrUntrackButtonClicked") {
          if (message.trackWindow) {
             handleWindowTrack(message.currentWindowId, message.windowName, sendResponse)
@@ -72,6 +75,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
             return null
          }
       }
+
+
+      else if (message.signal === "changeTheme") {
+
+         extensionData.theme = extensionData.theme === Theme.light ? Theme.dark : Theme.light
+         saveExtensionData(extensionData)
+         sendResponse(extensionData.theme)
+         return null
+      }
+
+
+      else if (message.signal === "changeOptionsPageLayout") {
+         extensionData.optionsPageLayout = extensionData.optionsPageLayout === OptionsPageLayout.card ? OptionsPageLayout.table : OptionsPageLayout.card
+         saveExtensionData(extensionData)
+         sendResponse(extensionData.optionsPageLayout)
+         return null
+      }
+
+
+      
    }
 })
 
