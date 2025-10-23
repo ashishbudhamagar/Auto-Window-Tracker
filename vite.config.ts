@@ -15,6 +15,8 @@ export default defineConfig({
         { src: "src/chrome-extension/public/48.png", dest: "./public" },
         { src: "src/chrome-extension/public/192.png", dest: "./public" },
         { src: "src/chrome-extension/public/no-image.png", dest: "./public" },
+        { src: "src/chrome-extension/public/check-mark.png", dest: "./public" },
+
 
       ],
     }),

@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme } from "../../types";
+import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow } from "../../types";
 import { useEffect, useState, useRef } from "react";
 import extensionImage192 from "../public/192.png";
 import "../global.css";
@@ -8,173 +8,60 @@ import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLay
 import CardLayout from "./CardLayout";
 import TableLayout from "./TableLayout";
 
-let trackedWindows11 = {
-  work: {
-    color: "blue",
-    groupedTabsInfo: [],
-    isOpen: true,
-    tabs: [
-      {
-        id: 134351510,
-        active: false,
-        pinned: true,
-        groupId: -1,
-        favIconUrl: "https://mail.google.com/favicon.ico",
-        title: "Inbox (4) – ash@northeastern.edu – Gmail",
-        url: "https://mail.google.com/mail/u/0/#inbox",
-      },
-      {
-        id: 134351514,
-        active: false,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://calendar.google.com/googlecalendar/images/favicons_2020q4/calendar_4_16.png",
-        title: "Google Calendar",
-        url: "https://calendar.google.com/",
-      },
-      {
-        id: 134351523,
-        active: true,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://github.com/favicon.ico",
-        title: "GitHub – Repositories",
-        url: "https://github.com/",
-      },
-    ],
-    windowId: "134351500",
-    windowName: "ent",
-  },
-
-  research: {
-    color: "green",
-    groupedTabsInfo: [],
-    isOpen: true,
-    tabs: [
-      {
-        id: 134351601,
-        active: false,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://scholar.google.com/favicon.ico",
-        title: "AI Bias in Machine Learning - Google Scholar",
-        url: "https://scholar.google.com/scholar?q=ai+bias+machine+learning",
-      },
-      {
-        id: 134351607,
-        active: true,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://www.nature.com/favicon.ico",
-        title: "Nature: Artificial Intelligence Articles",
-        url: "https://www.nature.com/subjects/artificial-intelligence",
-      },
-      {
-        id: 134351610,
-        active: false,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://chat.openai.com/favicon.ico",
-        title: "ChatGPT – Research Assistant",
-        url: "https://chat.openai.com/",
-      },
-    ],
-    windowId: "134351590",
-    windowName: "research",
-  },
-
-  entertainment: {
-    color: "orange",
-    groupedTabsInfo: [],
-    isOpen: false,
-    tabs: [
-      {
-        id: 134351710,
-        active: false,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://www.youtube.com/s/desktop/f4eb01f0/img/favicon.ico",
-        title: "YouTube – LoFi Beats",
-        url: "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-      },
-      {
-        id: 134351718,
-        active: false,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://www.netflix.com/favicon.ico",
-        title: "Netflix Home",
-        url: "https://www.netflix.com/browse",
-      },
-      {
-        id: 134351723,
-        active: true,
-        pinned: false,
-        groupId: -1,
-        favIconUrl: "https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico",
-        title: "Spotify – Discover Weekly",
-        url: "https://open.spotify.com/playlist/37i9dQZEVXcI8sVxXbBBA0",
-      },
-    ],
-    windowId: "134351700",
-    windowName: "entertainment",
-  },
-};
-
-
 
 const Options = () => {
 
-  const sortingOptions: OptionsPageSort[] = [OptionsPageSort.nameAsc, OptionsPageSort.nameDes, OptionsPageSort.statusOpen, OptionsPageSort.statusSaved];
+  const sortingOptions: OptionsPageSort[] = [
+    OptionsPageSort.nameAsc, OptionsPageSort.nameDes,
+    OptionsPageSort.statusOpen, OptionsPageSort.statusSaved,
+    OptionsPageSort.custom1, OptionsPageSort.custom2, OptionsPageSort.custom3
+  ]
 
   const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null);
+
   const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState<any[]>([]);
   const [originalArrayOfTrackedWindowValues, setOriginalArrayOfTrackedWindowValues] = useState<any[]>([]);
 
-  const [searchQuery, setSearchQuery] = useState<string>('')
   const [layout, setLayout] = useState<OptionsPageLayout | null>(null);
   const [theme, setTheme] = useState<Theme | null>(null)
-  const selectRef = useRef<HTMLSelectElement>(null);
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
-  const sentSortRef = useRef<OptionsPageSort | null>(null)
+  
+  const [searchQuery, setSearchQuery] = useState<string>('')
+
+  const [isDragging, setIsDragging] = useState(false)
 
 
 
 
   useEffect(()=>{
-    //@ts-ignore
-    // chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
-
-      // const trackedWindowValues: any[] = Object.values(responseExtensionData.trackedWindows)
-      
+      // const trackedWindowValues: any[] = Object.values(trackedWindows11)
       // setArrayOfTrackedWindowValues(trackedWindowValues)
       // setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-      // setTheme(responseExtensionData.theme)
-      // setCurrentSort(responseExtensionData.optionsPageSort)
-      // setLayout(responseExtensionData.optionsPageLayout)
-      // sentSortRef.current = responseExtensionData.optionsPageSort
-      const trackedWindowValues: any[] = Object.values(trackedWindows11)
+      // setTheme(Theme.light)
+      // setCurrentSort(OptionsPageSort.custom3)
+      // setLayout(OptionsPageLayout.card)
+
+    chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
+
+      const trackedWindowValues: TrackedWindow[] = Object.values(responseExtensionData.trackedWindows)
+      
       setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-      setTheme(Theme.light)
-      setCurrentSort(OptionsPageSort.nameAsc)
-      setLayout(OptionsPageLayout.card)
-      sentSortRef.current = OptionsPageSort.nameAsc
+      setTheme(responseExtensionData.theme)
+      setCurrentSort(responseExtensionData.optionsPageSort)
+      setLayout(responseExtensionData.optionsPageLayout)
+    })
 
-    // })
-
-    // chrome.runtime.onMessage.addListener((message) => {
+    chrome.runtime.onMessage.addListener((message) => {
       
-    //   if (message.signal !== 'changeOptions') return
+      if (message.signal !== "updateOptions") return
 
-    //   console.log("data", message)
+      const trackedWindowValues: any[] = Object.values(message.extensionData.trackedWindows)
+      setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
+      applyOptionsPageSort()
 
-    //   const trackedWindowValues: any[] = Object.values(message.trackedWindows)
-    //   setArrayOfTrackedWindowValues(trackedWindowValues)
-    //   setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-    // })
-    
-
+      console.log("============Options page received updateOptions message", message.extensionData)
+    })
   },[])
 
 
@@ -197,98 +84,185 @@ const Options = () => {
     }
   }, [theme])
 
+
   function onChangeThemeButtonClicked() {
-    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=> {
+    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=>{
       setTheme(newTheme)
     })
   }
 
-
   function onChangeLayoutButtonClicked() {
+    // setLayout(layout === 'card' ? 'table' : 'card')
+    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout)=>{
+      setLayout(newLayout)
+    })
+
     setSpinLayoutIcon(true)
     setTimeout(
       ()=> setSpinLayoutIcon(false), 650
     )
-    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout)=> {
-      setLayout(newLayout)
+  }
+
+
+  function onSearch(text: string) {
+
+    setSearchQuery(text)
+    const searched = text.trim()
+
+    if (searched === "") {
+      applyOptionsPageSort()
+      return
+    }
+    setArrayOfTrackedWindowValues(originalArrayOfTrackedWindowValues.filter(ele=> ele.windowName.toLowerCase().startsWith(searched.toLowerCase())))
+  }
+
+  function applyOptionsPageSort() {
+    if (!currentSort) return
+
+    console.log("Applying sort:", currentSort)
+
+    const cloneOriginalData = structuredClone(originalArrayOfTrackedWindowValues)
+    let sorted = cloneOriginalData
+
+    switch (currentSort) {
+      case OptionsPageSort.nameAsc:
+        sorted = cloneOriginalData.sort((a,b)=> a.windowName.localeCompare(b.windowName))
+        break
+      case OptionsPageSort.nameDes:
+        sorted = cloneOriginalData.sort((a,b)=> b.windowName.localeCompare(a.windowName))
+        break
+      case OptionsPageSort.statusOpen:
+        sorted = cloneOriginalData.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0))
+        break
+      case OptionsPageSort.statusSaved:
+        sorted = cloneOriginalData.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0))
+        break
+
+      case OptionsPageSort.custom1:
+      case OptionsPageSort.custom2:
+      case OptionsPageSort.custom3:
+
+        if (cloneOriginalData.every(ele => ele.order === -1)) {
+          sorted = cloneOriginalData.sort((a,b) => a.dateAdded - b.dateAdded)
+          break
+        }
+
+        sorted = cloneOriginalData.sort((a,b) => a.order - b.order)
+        break
+      default:
+        break
+    }
+
+    console.log("=======setting sorted data:", sorted)
+    setArrayOfTrackedWindowValues(sorted)
+  }
+
+  useEffect(()=>{
+    applyOptionsPageSort()
+  }, [currentSort])
+
+  
+  function onChangeSortButtonClicked(newSort: OptionsPageSort) {
+    // setCurrentSort(newSort)
+    chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort)=>{
+      setCurrentSort(updatedSort)
     })
   }
 
 
 
 
-  // useEffect(()=>{
-
-  //   if (!currentSort) return
-
-  //   const cloneData = [...originalArrayOfTrackedWindowValues]
-  //   let sorted = cloneData
-
-  //   switch (currentSort) {
-  //     case OptionsPageSort.nameAsc: sorted = cloneData.sort((a,b)=> a.windowName.localeCompare(b.windowName)); break;
-  //     case OptionsPageSort.nameDes: sorted = cloneData.sort((a,b)=> b.windowName.localeCompare(a.windowName)); break;
-  //     case OptionsPageSort.statusOpen: sorted = cloneData.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0)); break;
-  //     case OptionsPageSort.statusSaved: sorted = cloneData.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0)); break;
-  //     default: break;
-  //   }
-
-  //   setArrayOfTrackedWindowValues([...sorted])
-
-  //   if (sentSortRef.current !== currentSort) {
-  //     chrome.runtime.sendMessage({signal: 'setOptionsPageSort', optionsPageSort: currentSort})
-  //     sentSortRef.current = currentSort
-  //   }
-  // }, [currentSort, originalArrayOfTrackedWindowValues])
-  
-
-
-
-  function onSearch(text : string) {
-
-    setSearchQuery(text)
-    const searched = text.trim()
-    if (searched === "") {
-      setArrayOfTrackedWindowValues(originalArrayOfTrackedWindowValues)
-      return
-    }
-
-    setArrayOfTrackedWindowValues(originalArrayOfTrackedWindowValues.filter(ele=> ele.windowName.toLowerCase().startsWith(searched.toLowerCase())))
-  }
-
 
   function onUntrackWindowClick(windowName : string) {
-    chrome.runtime.sendMessage({signal: 'untrackWindowFromOptions', windowName: windowName})
+    // chrome.runtime.sendMessage({signal: 'untrackWindowFromOptions', windowName: windowName})
   }
 
   function onOpenSavedWindowClick(windowName: string) {
 
-    let openedWindowDetails = null
+    // let openedWindowDetails = null
 
-    for (let trackedWindow of arrayOfTrackedWindowValues) {
-      if (trackedWindow.windowName === windowName) {
-        openedWindowDetails = trackedWindow
-        break
-      }
-    }
-    chrome.runtime.sendMessage({signal: 'openSavedWindow', openedWindowDetails: openedWindowDetails})
+    // for (let trackedWindow of arrayOfTrackedWindowValues) {
+    //   if (trackedWindow.windowName === windowName) {
+    //     openedWindowDetails = trackedWindow
+    //     break
+    //   }
+    // }
+    // chrome.runtime.sendMessage({signal: 'openSavedWindow', openedWindowDetails: openedWindowDetails})
   }
 
 
   function handleDragAndDrop(fromIndex: number, toIndex: number) {
 
+    if (fromIndex === toIndex) return
     if (fromIndex < 0 || toIndex < 0 || fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
 
-    const clone = [...originalArrayOfTrackedWindowValues]
+    const clone = structuredClone(arrayOfTrackedWindowValues)
 
     const fromData = clone[fromIndex]
     const toData = clone[toIndex]
     clone[fromIndex] = toData
     clone[toIndex] = fromData
+    
+    chrome.runtime.sendMessage({signal: "customOptionsPageSort", customOrderArrayOfTrackedWindows: clone})
+  }
 
-    setArrayOfTrackedWindowValues(clone)
-    setOriginalArrayOfTrackedWindowValues(clone)
 
-    // chrome.runtime.sendMessage({signal: 'reorderTrackedWindows', newOrder: clone.map((w)=>w.windowName)})
+
+  function determinIfDraggable() {
+    if (currentSort === OptionsPageSort.custom1 || currentSort === OptionsPageSort.custom2 || currentSort === OptionsPageSort.custom3) {
+      return searchQuery === "" ? true : false
+    }
+    return false
+  }
+
+
+  const handleDragStart = (e, index: number) => {
+    setIsDragging(true)
+    e.currentTarget.setAttribute("data-card-index", String(index))
+    e.dataTransfer.setData("cardIndex", String(index))
+    e.currentTarget.style.opacity = "0"
+  }
+
+  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
+    e.currentTarget.removeAttribute("data-card-index")
+    e.dataTransfer.clearData()
+    e.currentTarget.style.opacity = "1"
+  }
+
+  const handleDragOver = (e, index: number) => {
+    e.preventDefault()
+    if (e.currentTarget.getAttribute("data-card-index") === String(index)) return
+
+    const element = e.currentTarget
+    setTimeout(() => {
+      element.style.transform = "scale(0.90)"
+    }, 60)
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const element = e.currentTarget
+    setTimeout(() => {
+      element.style.removeProperty("transform")
+    }, 60)
+  }
+
+  const handleDrop = (e, index: number) => {
+    e.preventDefault()
+
+    const element = e.currentTarget
+    setTimeout(() => {
+      element.style.removeProperty("transform")
+    }, 60)
+
+    const from = Number(e.dataTransfer.getData("cardIndex"))
+    e.currentTarget.removeAttribute("data-card-index")
+    e.dataTransfer.clearData()
+    const to = index
+
+    handleDragAndDrop(from, to)
   }
 
 
@@ -385,7 +359,7 @@ const Options = () => {
               </div>
               <input 
                 type="text" 
-                placeholder="Search windows by name..." 
+                placeholder="Search windows by name..."
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-12 pr-12 py-4 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 
@@ -408,15 +382,13 @@ const Options = () => {
 
           <div className="flex items-center space-x-4 px-6 w-full lg:w-auto">
             <div className="flex items-center space-x-3 bg-white/80 dark:bg-transparent backdrop-blur-sm rounded-xl border-[1px] px-4 py-3  border-gray-200 dark:border-gray-600/50 shadow-sm"
-              onClick={() => selectRef.current?.focus()}
             >
               <label htmlFor="sort" className="text-sm font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">Sort by:</label>
               <select
-                ref={selectRef}
                 id="sort" 
                 className="bg-gray-100 dark:bg-gray-600 rounded-md text-gray-700 dark:text-gray-200 border-0 focus:ring-0 focus:outline-none py-1 pl-2 pr-8 appearance-none cursor-pointer font-medium"
                 value={currentSort}
-                onChange={(e) => setCurrentSort(e.target.value as OptionsPageSort)}
+                onChange={(e)=>onChangeSortButtonClicked(e.target.value)}
               >
                 {sortingOptions.map((option, index) => (
                   <option value={option} key={index} className="bg-white dark:bg-gray-800">{option}</option>
@@ -475,7 +447,15 @@ const Options = () => {
                 onUntrackWindowClick,
                 IconExternal,
                 IconX,
-                handleDragAndDrop
+                currentSort,
+                determinIfDraggable,
+                handleDragStart,
+                handleDragEnd,
+                handleDragOver,
+                handleDragLeave,
+                handleDrop,
+                isDragging,
+                setIsDragging
               }
             } /> 
             
@@ -487,7 +467,16 @@ const Options = () => {
                 onOpenSavedWindowClick,
                 onUntrackWindowClick,
                 IconExternal,
-                IconX
+                IconX,
+                currentSort,
+                determinIfDraggable,
+                handleDragStart,
+                handleDragEnd,
+                handleDragOver,
+                handleDragLeave,
+                handleDrop,
+                isDragging,
+                setIsDragging
               }
             }/>
           )

@@ -4,9 +4,16 @@ export function saveExtensionData(dataToSave) {
             console.warn(chrome.runtime.lastError)
         }
         else {
-            console.log("=========== Data was saved to local storage ===========")
-            console.log(dataToSave)
-            console.log("=========== Data was saved to local storage ===========")
+            console.log("===========DataSavedToLocal===========")
+            console.log("===========DataSavedToLocal===========")
+            console.log("===========DataSavedToLocal===========")
+            // console.log(dataToSave)
+            console.log(dataToSave.trackedWindows)
+
+            console.log("===========DataSavedToLocal===========")
+            console.log("===========DataSavedToLocal===========")
+            console.log("===========DataSavedToLocal===========")
+
 
         }
     })

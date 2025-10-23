@@ -8,22 +8,24 @@ import noImageImage from '../public/no-image.png';
 export default function TableLayout(
    {  
       // @ts-ignore
-      arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick, IconExternal, IconX
+      arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick,
+      IconExternal, IconX, currentSort, determinIfDraggable,
+      handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, isDragging, setIsDragging
    }
 ) {
-   const [activeWindow, setActiveWindow] = useState(0)
+
+  const [activeWindow, setActiveWindow] = useState(0)
 
 
    useEffect(() => {
 
       if (arrayOfTrackedWindowValues.length > 0 && activeWindow >= arrayOfTrackedWindowValues.length) {
-        setActiveWindow(0);
+        setActiveWindow(0)
       }
    }, [arrayOfTrackedWindowValues]);
 
    if (activeWindow > arrayOfTrackedWindowValues.length - 1) {
-      console.warn("Active window index is out of bounds, resetting to 0");
-      setActiveWindow((prev) => prev - 1 < 0 ? 0 : prev - 1);
+      setActiveWindow((prev) => prev - 1 < 0 ? 0 : prev - 1)
       return null
    }
 
@@ -42,6 +44,14 @@ export default function TableLayout(
                 {
                   arrayOfTrackedWindowValues.map((window, index) => (
                       <button 
+                        draggable={determinIfDraggable()}
+
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragEnd={(e) => handleDragEnd(e)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDragLeave={(e) => handleDragLeave(e)}
+                        onDrop={(e) => handleDrop(e, index)}
+
                         key={index} 
                         className={`group w-[85%] mx-auto hover:cursor-pointer p-4 text-left
                           break-words rounded-xl border transition-all duration-300
@@ -49,7 +59,7 @@ export default function TableLayout(
                           ${window.isOpen ? 'border-l-4 border-l-green-400 bg-gradient-to-r from-green-50/60 to-white/60 dark:from-green-900/20 dark:to-gray-800/60' : 'border-l-4 border-l-blue-400 bg-gradient-to-r from-blue-50/60 to-white/60 dark:from-blue-900/20 dark:to-gray-800/60'}
                           ${index === activeWindow 
                             ? 'bg-gradient-to-r from-blue-100/80 to-purple-100/80 dark:from-blue-900/30 dark:to-purple-900/30 shadow-lg transform scale-105 border-blue-300 dark:border-blue-500' 
-                            : 'hover:bg-gray-50/80 dark:hover:bg-gray-700/50 border-gray-200/50 dark:border-gray-600/50 hover:scale-102 hover:shadow-md'}
+                            : 'hover:bg-gray-50/80 dark:hover:bg-gray-700/50 border-gray-200/50 dark:border-gray-600/50 hover:scale-102 shadow-md'}
                         `}
                         onClick={() => setActiveWindow(index)}
                       >

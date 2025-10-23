@@ -19,7 +19,7 @@ chrome.runtime.onInstalled.addListener((details) => {
          trackedWindows: {},
          trackedWindowNames: [],
          theme: Theme.light,
-         optionsPageSort: OptionsPageSort.nameAsc,
+         optionsPageSort: OptionsPageSort.custom1,
          optionsPageLayout: OptionsPageLayout.card
       }
 
@@ -29,11 +29,231 @@ chrome.runtime.onInstalled.addListener((details) => {
    }
    if (details.reason === "update") {
 
+      const windows = 
+{
+    "1": {
+        "windowId": "134350397",
+        "windowName": "1",
+        "color": "1",
+        "isOpen": true,
+        "tabs": [
+            {
+                "id": 134351483,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://www.youtube.com/watch?v=4NY7S2YguXk",
+                "favIconUrl": "https://www.youtube.com/s/desktop/a192c735/img/favicon_32x32.png",
+                "title": "Kelly Clarkson - since u been gone (slowed reverb) - YouTube"
+            },
+            {
+                "id": 134352916,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://www.amctheatres.com/showtimes/137012206/seats",
+                "favIconUrl": "https://www.amctheatres.com/favicon.ico",
+                "title": "Select Seats"
+            },
+            {
+                "id": 134351804,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://chromewebstore.google.com/detail/icloud-passwords/pejdijmoenmkgeppbflobdenhhabjlaj",
+                "favIconUrl": "https://ssl.gstatic.com/chrome/webstore/images/icon_48px.png",
+                "title": "iCloud Passwords - Chrome Web Store"
+            },
+            {
+                "id": 134352364,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://outlook.office.com/mail/inbox/id/AAQkADQ5ZmE3YjU5LTUzNTUtNDBhNC1iYmU2LWI0ZTliMTNjZDYxNAAQANONZs2VXvlMjevkeq%2FCM8w%3D",
+                "favIconUrl": "https://res.public.onecdn.static.microsoft/owamail/20251010001.20/resources/images/favicons/mail-unseen.ico",
+                "title": "Mail - Ashish Budha - Outlook"
+            },
+            {
+                "id": 134352684,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://northeastern.instructure.com/courses/225911",
+                "favIconUrl": "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico",
+                "title": "CS4700 Network Fundamentals MERGED Fall 2025 [BOS-1-TR]"
+            },
+            {
+                "id": 134352681,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://github.khoury.northeastern.edu/cs3700/transport-starter-code",
+                "favIconUrl": "https://assets.github.khoury.northeastern.edu/favicons/favicon-ent-dark.svg",
+                "title": "cs3700/transport-starter-code: Starter code and scripts for the CS 3700 Transport (TCP) project."
+            },
+            {
+                "id": 134352524,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://docs.google.com/document/d/1ZbCxzVDZEVvQ0M2bWZ3CF_Q72QpafKZ-hTxZnNURUS0/edit?tab=t.0",
+                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
+                "title": "Untitled document - Google Docs"
+            },
+            {
+                "id": 134352530,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://gemini.google.com/app/6c840ee18f949abd",
+                "favIconUrl": "https://www.gstatic.com/lamda/images/gemini_sparkle_aurora_33f86dc0c0257da337c63.svg",
+                "title": "Google Gemini"
+            },
+            {
+                "id": 134352541,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://docs.google.com/document/d/1SW0tyMEvlE5pt1uvodGCNHYh731get85naJ4wIEMQp4/edit?tab=t.0",
+                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
+                "title": "Untitled document - Google Docs"
+            },
+            {
+                "id": 134352952,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://docs.google.com/document/d/1I9Oq7YjrprpGXyHbicxEvlRsXBD9UAblMGBay00wakg/edit?tab=t.0",
+                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
+                "title": "Assignment Four (Presentation) - Google Docs"
+            },
+            {
+                "id": 134352599,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://docs.google.com/presentation/d/1Dr_C2mDax5tsbibBZIPp5xNcP1-53z60QKSVghlcQVA/edit?slide=id.g2ef931fea1c_1_148#slide=id.g2ef931fea1c_1_148",
+                "favIconUrl": "https://ssl.gstatic.com/docs/presentations/images/favicon-2023q4.ico",
+                "title": "D3M prezz - Google Slides"
+            },
+            {
+                "id": 134352622,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://docs.google.com/document/d/1IZl6n26fTK3xQ7dg1xKnz4NXZhJ_wNSDrt3HNW_uyPs/edit?tab=t.0",
+                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
+                "title": "Untitled document - Google Docs"
+            },
+            {
+                "id": 134352967,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://chatgpt.com/c/68f9a4c9-8334-8329-9a74-9faf8960e8f7",
+                "favIconUrl": "https://cdn.oaistatic.com/assets/favicon-l4nq08hd.svg",
+                "title": "JavaScript sort behavior"
+            },
+            {
+                "id": 134352738,
+                "active": true,
+                "pinned": false,
+                "groupId": -1,
+                "url": "chrome://extensions/",
+                "favIconUrl": "",
+                "title": "Extensions"
+            },
+            {
+                "id": 134353006,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://gemini.google.com/app/522d9c3e7997b27d",
+                "favIconUrl": "https://www.gstatic.com/lamda/images/gemini_sparkle_aurora_33f86dc0c0257da337c63.svg",
+                "title": "Google Gemini"
+            },
+            {
+                "id": 134353009,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "https://claude.ai/chat/55971a4e-ac4c-4103-b3ff-73be31be38cc",
+                "favIconUrl": "https://claude.ai/favicon.ico",
+                "title": "JavaScript array swap debugging - Claude"
+            }
+        ],
+        "groupedTabsInfo": [],
+        "dateAdded": 1761193579267,
+        "order": -1
+    },
+    "2": {
+        "windowId": "134352832",
+        "windowName": "2",
+        "color": "2",
+        "isOpen": true,
+        "tabs": [
+            {
+                "id": 134352833,
+                "active": true,
+                "pinned": false,
+                "groupId": -1,
+                "url": "chrome://newtab/",
+                "favIconUrl": "",
+                "title": "New Tab"
+            }
+        ],
+        "groupedTabsInfo": [],
+        "dateAdded": 1761193581518,
+        "order": -1
+    },
+    "3": {
+        "windowId": "134352933",
+        "windowName": "3",
+        "color": "3",
+        "isOpen": true,
+        "tabs": [
+            {
+                "id": 134352934,
+                "active": true,
+                "pinned": false,
+                "groupId": -1,
+                "url": "chrome://newtab/",
+                "favIconUrl": "",
+                "title": "New Tab"
+            }
+        ],
+        "groupedTabsInfo": [],
+        "dateAdded": 1761193584216,
+        "order": -1
+    },
+    "4": {
+        "windowId": "134352935",
+        "windowName": "4",
+        "color": "4",
+        "isOpen": true,
+        "tabs": [
+            {
+                "id": 134352936,
+                "active": true,
+                "pinned": false,
+                "groupId": -1,
+                "url": "chrome://newtab/",
+                "favIconUrl": "",
+                "title": "New Tab"
+            }
+        ],
+        "groupedTabsInfo": [],
+        "dateAdded": 1761193597560,
+        "order": -1
+    }
+}
+
+
       const initialExtensionData: ExtensionData = {
-         trackedWindows: {},
+         trackedWindows: windows,
          trackedWindowNames: [],
          theme: Theme.light,
-         optionsPageSort: OptionsPageSort.nameAsc,
+         optionsPageSort: OptionsPageSort.custom1,
          optionsPageLayout: OptionsPageLayout.card
       }
 
@@ -93,38 +313,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          return null
       }
 
-      else if (message.signal === 'reorderTrackedWindows') {
-         // Expect newOrder: string[] of windowName in desired order
-         if (!Array.isArray(message.newOrder)) {
-            sendResponse(false)
-            return null
+      else if (message.signal === "changeOptionsPageSort") {
+         extensionData.optionsPageSort = message.newSort
+         saveExtensionData(extensionData)
+         sendResponse(extensionData.optionsPageSort)
+         return null
+
+      }
+
+      else if (message.signal === "customOptionsPageSort") {
+
+         const customOrderArrayOfTrackedWindows: TrackedWindow = message.customOrderArrayOfTrackedWindows
+
+
+         for (let i = 0; i < customOrderArrayOfTrackedWindows.length; i++) {
+            extensionData.trackedWindows[customOrderArrayOfTrackedWindows[i].windowName].order = i
          }
 
-         const newOrder: string[] = message.newOrder
-         // Rebuild trackedWindows object in same order (trackedWindows is an object keyed by name, but we persist ordering in trackedWindowNames)
-         const newTrackedWindowNames: string[] = []
-         const newTrackedWindows: Record<string, TrackedWindow> = {}
 
-         for (const name of newOrder) {
-            if (extensionData.trackedWindows[name]) {
-               newTrackedWindowNames.push(name)
-               newTrackedWindows[name] = extensionData.trackedWindows[name]
-            }
-         }
-
-         // For any windows not included in newOrder, append them at the end to avoid data loss
-         for (const [name, tw] of Object.entries(extensionData.trackedWindows)) {
-            if (!newTrackedWindows[name]) {
-               newTrackedWindowNames.push(name)
-               newTrackedWindows[name] = tw
-            }
-         }
-
-         extensionData.trackedWindowNames = newTrackedWindowNames
-         extensionData.trackedWindows = newTrackedWindows
          saveExtensionData(extensionData)
          updateOptionsPage()
-         sendResponse(true)
          return null
       }
 
@@ -194,7 +402,9 @@ function handleWindowTrack(currentWindowId: string, windowName: string, sendResp
             "color": "white",
             "isOpen": true,
             "tabs": usefulTabsData,
-            "groupedTabsInfo": groups
+            "groupedTabsInfo": groups,
+            "dateAdded": Date.now(),
+            "order": -1
          }
          
          extensionData.trackedWindows[windowName] = trackedWindow
@@ -231,15 +441,7 @@ function handleWindowUntrack(windowName: string, sendResponse: (response: any) =
 
 function updateOptionsPage() {
    if (!extensionData) return null
-
-   chrome.runtime.sendMessage({signal: 'changeOptions', trackedWindows: extensionData.trackedWindows},
-      () => {
-         if (chrome.runtime.lastError) {
-            console.debug("error was probably the options page not being found when this message is sent which is not an issue", chrome.runtime.lastError.message)
-         }
-      }
-   );
-   
+   chrome.runtime.sendMessage({signal: "updateOptions", extensionData: extensionData})
 }
 
 
@@ -265,7 +467,7 @@ function updateOptionsPage() {
 //       delete extensionData.trackedWindows[message.windowName];
 //       extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
 //       saveExtensionData(extensionData);
-//       updateOptionsPage();
+//       updateOptionsPage()();
 //       // send an acknowledgement so callers waiting on a response don't get the channel closed unexpectedly
 //       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
 //       return false;
@@ -301,14 +503,14 @@ function updateOptionsPage() {
 //       extensionData.optionsPageSort = message.optionsPageSort;
 //       saveExtensionData(extensionData);
 //       sendResponse(message.optionsPageSort);
-//       updateOptionsPage();
+//       updateOptionsPage()();
 //       return false;
 
 //       }
 //       else if (message.signal === 'optionsPageLayout') {
 //       extensionData.optionsPageLayout = message.optionsPageLayout;
 //       saveExtensionData(extensionData);
-//       updateOptionsPage();
+//       updateOptionsPage()();
 //       // acknowledge so callers don't hang when extensionData had to be fetched first
 //       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
 //       return false;
@@ -390,7 +592,7 @@ function updateOptionsPage() {
 //             saveExtensionData(extensionData)
 //          }
 //       }
-//       updateOptionsPage()
+//       updateOptionsPage()()
 //    }
 // })
 
@@ -418,7 +620,7 @@ function updateOptionsPage() {
 //                      }
 //                   })
 
-//                   updateOptionsPage()
+//                   updateOptionsPage()()
 //                   debounceSaveData(extensionData)
 //                })
 //                return
@@ -468,7 +670,7 @@ function updateOptionsPage() {
 //          extensionData.trackedWindows[openedWindowDetails.windowName].isOpen = true
 //          extensionData.trackedWindows[openedWindowDetails.windowName].windowId = newWindow.id
 //          saveExtensionData(extensionData)
-//          updateOptionsPage()
+//          updateOptionsPage()()
 
 //       },500)
 //    })

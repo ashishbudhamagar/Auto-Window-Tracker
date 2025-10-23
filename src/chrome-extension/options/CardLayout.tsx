@@ -1,14 +1,20 @@
 //@ts-nocheck
-
+import { useState } from 'react';
 import noImageImage from '../public/no-image.png';
 
 
 export default function CardLayout(
   {  
     // @ts-ignore
-    arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick, IconExternal, IconX, handleDragAndDrop
+    arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick,
+    IconExternal, IconX, currentSort, determinIfDraggable,
+    handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, isDragging, setIsDragging
+    
   }
 ) {
+
+  console.log("Rendering CardLayout with windows:", arrayOfTrackedWindowValues);
+
 
 
 
@@ -22,30 +28,19 @@ export default function CardLayout(
 
 
           <div
-            draggable
-            onDragStart={(e) => {
-              
-              e.dataTransfer.setData('cardIndex', String(index))
-              e.currentTarget.style.opacity = "0.0"
-            }}
-            onDragEnd={(e) => {
-              e.currentTarget.style.opacity = "1"
-            }}
-            onDragOver={(e) => {
-              e.preventDefault()
-            }}
-            onDrop={(e) => {
-              e.preventDefault()
+            draggable={determinIfDraggable()}
 
-              const from = Number(e.dataTransfer.getData('cardIndex'))
-              const to = index
-              handleDragAndDrop(from, to)
-            }}
-            className={`group  backdrop-blur-lg h-auto w-full rounded-2xl px-6 py-6 flex flex-col justify-between gap-2
-            hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-3xl
-            transition-[opacity,transform] ease-out duration-500 overflow-hidden border border-white/20 dark:border-gray-700/30 border-l-4
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnd={(e) => handleDragEnd(e)}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={(e) => handleDragLeave(e)}
+            onDrop={(e) => handleDrop(e, index)}
+
+            className={`${isDragging ? "dragging" : ""} group  backdrop-blur-lg h-auto w-full rounded-2xl px-6 py-6 flex flex-col justify-between gap-2
+            hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
+            transition-[opacity,transform, shadow] ease-out duration-500 overflow-hidden border border-white/20 dark:border-gray-700/30 border-l-4
             bg-white dark:bg-gray-800
-            ${window.isOpen ? " border-l-green-500 dark:border-l-green-600" : " border-l-blue-500 dark:border-l-blue-600 "}
+            ${window.isOpen ? " border-l-green-500 dark:border-l-green-600" : " border-l-blue-500 dark:border-l-blue-600"}
           `} key={index}>
 
             <div>
@@ -59,7 +54,6 @@ export default function CardLayout(
                 <div className={`flex items-center px-3 py-2 rounded-full text-sm font-semibold shadow-sm
                   ${window.isOpen ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 border border-green-200 dark:border-green-700" : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-700"}
                 `}>
-                  <span className={`w-2.5 h-2.5 rounded-full mr-2 animate-pulse ${window.isOpen ? "bg-green-500" : "bg-blue-500"}`}></span>
                   {window.isOpen ? "Active" : "Saved"}
                 </div>
               </div>
