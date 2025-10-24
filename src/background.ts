@@ -24,139 +24,221 @@ chrome.runtime.onInstalled.addListener((details) => {
       }
 
       chrome.action.setBadgeTextColor({color: "white"})
-      chrome.action.setBadgeBackgroundColor({ color: "green" });
+      chrome.action.setBadgeBackgroundColor({ color: "#3CB371" })
       chrome.storage.local.set({ extensionData: structuredClone(initialExtensionData)});
    }
    if (details.reason === "update") {
 
-      const windows = 
-{
-    "1": {
-        "windowId": "134350397",
-        "windowName": "1",
-        "color": "1",
-        "isOpen": true,
+
+      const initialExtensionData: ExtensionData = {
+         trackedWindows: {
+    "asd": {
+        "color": "white",
+        "dateAdded": 1761257135370,
+        "groupedTabsInfo": [
+            {
+                "collapsed": false,
+                "color": "grey",
+                "id": 2092834314,
+                "shared": false,
+                "title": "gorup 1",
+                "windowId": 134353339
+            },
+            {
+                "collapsed": false,
+                "color": "blue",
+                "id": 324467991,
+                "shared": false,
+                "title": "goruped 3",
+                "windowId": 134353339
+            },
+            {
+                "collapsed": true,
+                "color": "red",
+                "id": 649247906,
+                "shared": false,
+                "title": "new one",
+                "windowId": 134353339
+            }
+        ],
+        "isOpen": false,
+        "order": -1,
         "tabs": [
             {
-                "id": 134351483,
                 "active": false,
-                "pinned": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
                 "groupId": -1,
-                "url": "https://www.youtube.com/watch?v=4NY7S2YguXk",
-                "favIconUrl": "https://www.youtube.com/s/desktop/a192c735/img/favicon_32x32.png",
-                "title": "Kelly Clarkson - since u been gone (slowed reverb) - YouTube"
+                "id": 134353382,
+                "pinned": false,
+                "title": "web 1 - Google Search",
+                "url": "https://www.google.com/search?q=web+1&oq=web+1&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTITCAEQLhiDARjHARixAxjRAxiABDITCAIQLhiDARjHARixAxjRAxiABDITCAMQLhiDARjHARixAxjRAxiABDIKCAQQABixAxiABDIHCAUQLhiABDIKCAYQABixAxiABDINCAcQABiDARixAxiABDIKCAgQABixAxiABNIBBzUxNWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352916,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 324467991,
+                "id": 134353386,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://www.amctheatres.com/showtimes/137012206/seats",
-                "favIconUrl": "https://www.amctheatres.com/favicon.ico",
-                "title": "Select Seats"
+                "title": "web 2 - Google Search",
+                "url": "https://www.google.com/search?q=web+2&oq=web+2&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIPCAEQABhDGLEDGIAEGIoFMgwIAhAAGEMYgAQYigUyDAgDEAAYQxiABBiKBTIHCAQQABiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBCDIxMDhqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134351804,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 324467991,
+                "id": 134353389,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://chromewebstore.google.com/detail/icloud-passwords/pejdijmoenmkgeppbflobdenhhabjlaj",
-                "favIconUrl": "https://ssl.gstatic.com/chrome/webstore/images/icon_48px.png",
-                "title": "iCloud Passwords - Chrome Web Store"
+                "title": "web 3 - Google Search",
+                "url": "https://www.google.com/search?q=web+3&oq=web+3&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIPCAEQABhDGLEDGIAEGIoFMgwIAhAAGEMYgAQYigUyDAgDEAAYQxiABBiKBTIMCAQQABhDGIAEGIoFMgwIBRAAGEMYgAQYigUyDwgGEAAYFBiHAhixAxiABDIMCAcQABhDGIAEGIoFMgkICBAAGAoYgAQyDAgJEAAYQxiABBiKBdIBCDEzNjFqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352364,
                 "active": false,
-                "pinned": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
                 "groupId": -1,
-                "url": "https://outlook.office.com/mail/inbox/id/AAQkADQ5ZmE3YjU5LTUzNTUtNDBhNC1iYmU2LWI0ZTliMTNjZDYxNAAQANONZs2VXvlMjevkeq%2FCM8w%3D",
-                "favIconUrl": "https://res.public.onecdn.static.microsoft/owamail/20251010001.20/resources/images/favicons/mail-unseen.ico",
-                "title": "Mail - Ashish Budha - Outlook"
+                "id": 134353392,
+                "pinned": false,
+                "title": "web 5 - Google Search",
+                "url": "https://www.google.com/search?q=web+5&oq=web+5&gs_lcrp=EgZjaHJvbWUyDggAEEUYORhDGIAEGIoFMgwIARAjGCcYgAQYigUyDAgCEAAYQxiABBiKBTIMCAMQABhDGIAEGIoFMgwIBBAAGEMYgAQYigUyBggFEEUYPDIGCAYQRRg8MgYIBxBFGDzSAQgyMTk4ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352684,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 2092834314,
+                "id": 134353395,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://northeastern.instructure.com/courses/225911",
-                "favIconUrl": "https://du11hjcvx0uqb.cloudfront.net/dist/images/favicon-e10d657a73.ico",
-                "title": "CS4700 Network Fundamentals MERGED Fall 2025 [BOS-1-TR]"
+                "title": "web 6 - Google Search",
+                "url": "https://www.google.com/search?q=web+6&oq=web+6&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQLhiABBjlBDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzcxMmowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352681,
                 "active": false,
+                "favIconUrl": "",
+                "groupId": 2092834314,
+                "id": 134353398,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://github.khoury.northeastern.edu/cs3700/transport-starter-code",
-                "favIconUrl": "https://assets.github.khoury.northeastern.edu/favicons/favicon-ent-dark.svg",
-                "title": "cs3700/transport-starter-code: Starter code and scripts for the CS 3700 Transport (TCP) project."
+                "title": "New Tab",
+                "url": "chrome://newtab/"
             },
             {
-                "id": 134352524,
                 "active": false,
-                "pinned": false,
+                "favIconUrl": "",
                 "groupId": -1,
-                "url": "https://docs.google.com/document/d/1ZbCxzVDZEVvQ0M2bWZ3CF_Q72QpafKZ-hTxZnNURUS0/edit?tab=t.0",
-                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
-                "title": "Untitled document - Google Docs"
+                "id": 134353399,
+                "pinned": false,
+                "title": "New Tab",
+                "url": "chrome://newtab/"
             },
             {
-                "id": 134352530,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 649247906,
+                "id": 134353400,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://gemini.google.com/app/6c840ee18f949abd",
-                "favIconUrl": "https://www.gstatic.com/lamda/images/gemini_sparkle_aurora_33f86dc0c0257da337c63.svg",
-                "title": "Google Gemini"
+                "title": "5 - Google Search",
+                "url": "https://www.google.com/search?q=5&oq=5&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIQCAEQLhjHARixAxjRAxiABDIQCAIQLhjHARixAxjRAxiABDIHCAMQABiABDINCAQQABiDARixAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzE1NWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352541,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 649247906,
+                "id": 134353401,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://docs.google.com/document/d/1SW0tyMEvlE5pt1uvodGCNHYh731get85naJ4wIEMQp4/edit?tab=t.0",
-                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
-                "title": "Untitled document - Google Docs"
+                "title": "1 - Google Search",
+                "url": "https://www.google.com/search?q=1&oq=1&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIWCAEQLhivARjHARiRAhiABBiKBRiOBTINCAIQABiRAhiABBiKBTIQCAMQLhjHARixAxjRAxiABDIHCAQQABiABDINCAUQABiDARixAxiABDIGCAYQRRg8MgYIBxBFGDzSAQcxMzFqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352952,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 649247906,
+                "id": 134353402,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://docs.google.com/document/d/1I9Oq7YjrprpGXyHbicxEvlRsXBD9UAblMGBay00wakg/edit?tab=t.0",
-                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
-                "title": "Assignment Four (Presentation) - Google Docs"
+                "title": "2 - Google Search",
+                "url": "https://www.google.com/search?q=2&oq=2&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQLhixAxiABDINCAIQLhiDARixAxiABDINCAMQLhiDARixAxiABDINCAQQABiDARixAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzUxMGowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352599,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 649247906,
+                "id": 134353403,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://docs.google.com/presentation/d/1Dr_C2mDax5tsbibBZIPp5xNcP1-53z60QKSVghlcQVA/edit?slide=id.g2ef931fea1c_1_148#slide=id.g2ef931fea1c_1_148",
-                "favIconUrl": "https://ssl.gstatic.com/docs/presentations/images/favicon-2023q4.ico",
-                "title": "D3M prezz - Google Slides"
+                "title": "3 - Google Search",
+                "url": "https://www.google.com/search?q=3&oq=3&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTINCAEQABiDARixAxiABDINCAIQABiDARixAxiABDINCAMQABiDARixAxiABDINCAQQABiDARixAxiABDIHCAUQABiABDIGCAYQRRg8MgYIBxBFGDzSAQcxODdqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352622,
                 "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": 649247906,
+                "id": 134353404,
                 "pinned": false,
-                "groupId": -1,
-                "url": "https://docs.google.com/document/d/1IZl6n26fTK3xQ7dg1xKnz4NXZhJ_wNSDrt3HNW_uyPs/edit?tab=t.0",
-                "favIconUrl": "https://ssl.gstatic.com/docs/documents/images/kix-favicon-2023q4.ico",
-                "title": "Untitled document - Google Docs"
+                "title": "4 - Google Search",
+                "url": "https://www.google.com/search?q=4&oq=4&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQLhixAxiABDINCAIQABiDARixAxiABDIHCAMQABiABDINCAQQLhjHARjRAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzI1MGowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352967,
                 "active": false,
-                "pinned": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
                 "groupId": -1,
-                "url": "https://chatgpt.com/c/68f9a4c9-8334-8329-9a74-9faf8960e8f7",
-                "favIconUrl": "https://cdn.oaistatic.com/assets/favicon-l4nq08hd.svg",
-                "title": "JavaScript sort behavior"
+                "id": 134353416,
+                "pinned": false,
+                "title": "1 - Google Search",
+                "url": "https://www.google.com/search?q=1&oq=1&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgwIARAAGEMYgAQYigUyDAgCEAAYQxiABBiKBTIMCAMQABhDGIAEGIoFMgwIBBAAGEMYgAQYigUyDAgFEAAYQxiABBiKBTIGCAYQRRg8MgYIBxBFGDzSAQcxMDBqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
             },
             {
-                "id": 134352738,
+                "active": false,
+                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
+                "groupId": -1,
+                "id": 134353420,
+                "pinned": false,
+                "title": "2 - Google Search",
+                "url": "https://www.google.com/search?q=2&oq=2&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgoIARAuGLEDGIAEMg0IAhAuGIMBGLEDGIAEMg0IAxAuGIMBGLEDGIAEMg0IBBAAGIMBGLEDGIAEMgYIBRBFGDwyBggGEEUYPDIGCAcQRRg80gEHMTM5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8"
+            },
+            {
+                "active": false,
+                "favIconUrl": "",
+                "groupId": -1,
+                "id": 134353423,
+                "pinned": false,
+                "title": "New Tab",
+                "url": "chrome://newtab/"
+            },
+            {
+                "active": false,
+                "favIconUrl": "",
+                "groupId": -1,
+                "id": 134353340,
+                "pinned": false,
+                "title": "Extensions",
+                "url": "chrome://extensions/"
+            },
+            {
                 "active": true,
+                "favIconUrl": "",
+                "groupId": -1,
+                "id": 134353452,
+                "pinned": false,
+                "title": "Options",
+                "url": "chrome-extension://ahgnjipoiaamhkijphjdmlfpnjhcgmdg/options.html"
+            }
+        ],
+        "windowId": "134353339",
+        "windowName": "asd"
+    },
+    "new": {
+        "windowId": "134353455",
+        "windowName": "new",
+        "color": "white",
+        "isOpen": false,
+        "tabs": [
+            {
+                "id": 134353985,
+                "active": false,
+                "pinned": false,
+                "groupId": -1,
+                "url": "chrome://newtab/",
+                "favIconUrl": "",
+                "title": "New Tab"
+            },
+            {
+                "id": 134353456,
+                "active": false,
                 "pinned": false,
                 "groupId": -1,
                 "url": "chrome://extensions/",
@@ -164,94 +246,21 @@ chrome.runtime.onInstalled.addListener((details) => {
                 "title": "Extensions"
             },
             {
-                "id": 134353006,
-                "active": false,
-                "pinned": false,
-                "groupId": -1,
-                "url": "https://gemini.google.com/app/522d9c3e7997b27d",
-                "favIconUrl": "https://www.gstatic.com/lamda/images/gemini_sparkle_aurora_33f86dc0c0257da337c63.svg",
-                "title": "Google Gemini"
-            },
-            {
-                "id": 134353009,
-                "active": false,
-                "pinned": false,
-                "groupId": -1,
-                "url": "https://claude.ai/chat/55971a4e-ac4c-4103-b3ff-73be31be38cc",
-                "favIconUrl": "https://claude.ai/favicon.ico",
-                "title": "JavaScript array swap debugging - Claude"
-            }
-        ],
-        "groupedTabsInfo": [],
-        "dateAdded": 1761193579267,
-        "order": -1
-    },
-    "2": {
-        "windowId": "134352832",
-        "windowName": "2",
-        "color": "2",
-        "isOpen": true,
-        "tabs": [
-            {
-                "id": 134352833,
+                "id": 134355240,
                 "active": true,
                 "pinned": false,
                 "groupId": -1,
-                "url": "chrome://newtab/",
+                "url": "chrome-extension://ahgnjipoiaamhkijphjdmlfpnjhcgmdg/options.html",
                 "favIconUrl": "",
-                "title": "New Tab"
+                "title": "Options"
             }
         ],
         "groupedTabsInfo": [],
-        "dateAdded": 1761193581518,
-        "order": -1
-    },
-    "3": {
-        "windowId": "134352933",
-        "windowName": "3",
-        "color": "3",
-        "isOpen": true,
-        "tabs": [
-            {
-                "id": 134352934,
-                "active": true,
-                "pinned": false,
-                "groupId": -1,
-                "url": "chrome://newtab/",
-                "favIconUrl": "",
-                "title": "New Tab"
-            }
-        ],
-        "groupedTabsInfo": [],
-        "dateAdded": 1761193584216,
-        "order": -1
-    },
-    "4": {
-        "windowId": "134352935",
-        "windowName": "4",
-        "color": "4",
-        "isOpen": true,
-        "tabs": [
-            {
-                "id": 134352936,
-                "active": true,
-                "pinned": false,
-                "groupId": -1,
-                "url": "chrome://newtab/",
-                "favIconUrl": "",
-                "title": "New Tab"
-            }
-        ],
-        "groupedTabsInfo": [],
-        "dateAdded": 1761193597560,
+        "dateAdded": 1761261802641,
         "order": -1
     }
-}
-
-
-      const initialExtensionData: ExtensionData = {
-         trackedWindows: windows,
-         trackedWindowNames: [],
+},
+         trackedWindowNames: ["asd", "new"],
          theme: Theme.light,
          optionsPageSort: OptionsPageSort.custom1,
          optionsPageLayout: OptionsPageLayout.card
@@ -278,9 +287,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
 
    function processMessages() {
 
+
+
       if (message.signal === "getExtensionData") {
          sendResponse(extensionData)
-         return null
+         return false
       }
 
 
@@ -292,7 +303,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          }
          else {
             handleWindowUntrack(message.windowName, sendResponse)
-            return null
+            return false
          }
       }
 
@@ -302,7 +313,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          extensionData.theme = extensionData.theme === Theme.light ? Theme.dark : Theme.light
          saveExtensionData(extensionData)
          sendResponse(extensionData.theme)
-         return null
+         return false
       }
 
 
@@ -310,31 +321,55 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          extensionData.optionsPageLayout = extensionData.optionsPageLayout === OptionsPageLayout.card ? OptionsPageLayout.table : OptionsPageLayout.card
          saveExtensionData(extensionData)
          sendResponse(extensionData.optionsPageLayout)
-         return null
+         return false
       }
 
       else if (message.signal === "changeOptionsPageSort") {
          extensionData.optionsPageSort = message.newSort
          saveExtensionData(extensionData)
          sendResponse(extensionData.optionsPageSort)
-         return null
+         return false
 
       }
 
+
       else if (message.signal === "customOptionsPageSort") {
+         
+         const customOrderArray: TrackedWindow = message.customOrderArrayOfTrackedWindows
+         
+         const fromData = customOrderArray[message.fromIndex]
+         const toData = customOrderArray[message.toIndex]
+         customOrderArray[message.fromIndex] = toData
+         customOrderArray[message.toIndex] = fromData
 
-         const customOrderArrayOfTrackedWindows: TrackedWindow = message.customOrderArrayOfTrackedWindows
-
-
-         for (let i = 0; i < customOrderArrayOfTrackedWindows.length; i++) {
-            extensionData.trackedWindows[customOrderArrayOfTrackedWindows[i].windowName].order = i
+         for (let i = 0; i < customOrderArray.length; i++) {
+            extensionData.trackedWindows[customOrderArray[i].windowName].order = i
          }
-
 
          saveExtensionData(extensionData)
          updateOptionsPage()
-         return null
+         return false
       }
+
+
+      else if (message.signal === "untrackWindowFromOptionsPage") {
+
+         delete extensionData?.trackedWindows[message.windowName]
+         extensionData.trackedWindowNames = extensionData.trackedWindowNames.filter(ele => ele !== message.windowName)
+
+         saveExtensionData(extensionData)
+         updateOptionsPage()
+         return false
+      }
+
+      else if (message.signal === "openSavedWindow") {
+
+         handleOpenSavedWindow(message.trackedWindowToOpen);
+         return false
+
+      }
+
+
 
 
       
@@ -351,24 +386,23 @@ chrome.windows.onFocusChanged.addListener((windowId)=>{
    if (!extensionData) {
       chrome.storage.local.get("extensionData", (result)=>{
          extensionData = result.extensionData
-         handleExtensionBadge(windowId)
+         handleShowingOfExtensionBadge(String(windowId))
       })
    }
    else {
-      handleExtensionBadge(windowId)
+      handleShowingOfExtensionBadge(String(windowId))
    }
 })
 
 
-function handleExtensionBadge(windowId: number) {
+function handleShowingOfExtensionBadge(windowId: string) {
    if (!extensionData) return null
 
    for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
-
       if (!trackedWindow.isOpen) continue
 
-      if (trackedWindow.windowId === String(windowId)) {
-         chrome.action.setBadgeText({ text: "on" });
+      if (trackedWindow.windowId === windowId) {
+         chrome.action.setBadgeText({ text: " +" });
          return null
       }
    }
@@ -381,8 +415,6 @@ function handleWindowTrack(currentWindowId: string, windowName: string, sendResp
       chrome.tabGroups.query({windowId: Number(currentWindowId)}, (groups) => {
 
          if (!extensionData) return null
-         console.log("groups:", groups)
-         console.log("all tabs:", allTabs)
 
          const usefulTabsData = allTabs.map((ele)=>{
             return {
@@ -412,7 +444,7 @@ function handleWindowTrack(currentWindowId: string, windowName: string, sendResp
          
          saveExtensionData(extensionData)
          sendResponse(true)
-         handleExtensionBadge(Number(currentWindowId))
+         handleShowingOfExtensionBadge(currentWindowId)
          updateOptionsPage()
       })
    })
@@ -422,15 +454,15 @@ function handleWindowTrack(currentWindowId: string, windowName: string, sendResp
 function handleWindowUntrack(windowName: string, sendResponse: (response: any) => void) {
    if (!extensionData) return null
 
-   for (let [key, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-      if (key === windowName) {
+   for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
+      if (trackedWindow.windowName === windowName) {
 
+         delete extensionData.trackedWindows[trackedWindow.windowName]
          extensionData.trackedWindowNames = extensionData.trackedWindowNames.filter(ele=>ele !== trackedWindow.windowName)
-         delete extensionData.trackedWindows[key]
          
          saveExtensionData(extensionData)
          sendResponse(false)
-         handleExtensionBadge(Number(trackedWindow.windowId))
+         handleShowingOfExtensionBadge(trackedWindow.windowId)
          updateOptionsPage()
          return null
       }
@@ -446,237 +478,176 @@ function updateOptionsPage() {
 
 
 
-// function processMessages222(message, sendResponse) {
-   
-//    if (message.signal === 'trackButtonClicked') {
-//       if (message.trackWindow === true) {
-//             handleWindowTrack(message.currentWindowId, message.windowName, sendResponse);
-//       }
-//       else {
-//             handleWindowUntrack(message.currentWindowId, sendResponse);
-//       }
-//       return true;
-//    }
-//    else if (message.signal === 'dataForOptions' || message.signal === 'dataForPopup') {
-//       sendResponse(extensionData);
-//       return false;
-//    }
-
-//    else if (message.signal === 'untrackWindowFromOptions') {
-
-//       delete extensionData.trackedWindows[message.windowName];
-//       extensionData.allWindowNames = extensionData.allWindowNames.filter(ele => ele !== message.windowName);
-//       saveExtensionData(extensionData);
-//       updateOptionsPage()();
-//       // send an acknowledgement so callers waiting on a response don't get the channel closed unexpectedly
-//       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
-//       return false;
-//       }
-//       else if (message.signal === 'openSavedWindow') {
-//       handleSavedWindowOpen(message.openedWindowDetails);
-//       // acknowledge request
-//       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
-
-//       return false;
-//       }
-//       else if (message.signal === 'changeTheme') {
-
-//       let theme = null;
-
-//       if (extensionData.theme === 'light') {
-
-//             extensionData.theme = 'dark';
-//             theme = 'dark';
-
-//       } else if (extensionData.theme === 'dark') {
-
-//             extensionData.theme = 'light';
-//             theme = 'light';
-            
-//       }
-//       saveExtensionData(extensionData);
-//       sendResponse(theme);
-//       return false;
-//       }
-//       else if (message.signal === 'setOptionsPageSort') {
-
-//       extensionData.optionsPageSort = message.optionsPageSort;
-//       saveExtensionData(extensionData);
-//       sendResponse(message.optionsPageSort);
-//       updateOptionsPage()();
-//       return false;
-
-//       }
-//       else if (message.signal === 'optionsPageLayout') {
-//       extensionData.optionsPageLayout = message.optionsPageLayout;
-//       saveExtensionData(extensionData);
-//       updateOptionsPage()();
-//       // acknowledge so callers don't hang when extensionData had to be fetched first
-//       try { sendResponse(true); } catch (e) { /* ignore if channel already closed */ }
-//       return false;
-
-//    }
-
-//    return false;
-// }
 
 
 
 
 
-// const debounceContainer = {};
+const debounceContainer = {};
 
-// function debounceRequeryOfAllTabs(windowId) {
+function debounceRequeryOfAllTabs(windowId) {
 
-//    if (!windowId) return;
+   if (!windowId) return;
 
-//    clearTimeout(debounceContainer[windowId]);
+   clearTimeout(debounceContainer[windowId]);
 
-//    debounceContainer[windowId] = setTimeout(() => {
+   debounceContainer[windowId] = setTimeout(() => {
 
-//       reQueryAllTabsToSave(windowId);
-//       delete debounceContainer[windowId];
-//    }, 700);
+      reQueryAllTabsToSave(windowId);
+      delete debounceContainer[windowId];
+   }, 700);
 
-// }
+}
 
-// chrome.tabs.onRemoved.addListener((tabId, removeInfo)=> {
-//    if (removeInfo.isWindowClosing === false) {
-//       debounceRequeryOfAllTabs(removeInfo.windowId)
-//    }
-// })
+chrome.tabs.onRemoved.addListener((tabId, removeInfo)=> {
+   if (removeInfo.isWindowClosing === false) {
+      debounceRequeryOfAllTabs(removeInfo.windowId)
+   }
+})
 
-// chrome.tabs.onMoved.addListener((tabId, moveInfo)=>{
-//    debounceRequeryOfAllTabs(moveInfo.windowId)
-// })
+chrome.tabs.onMoved.addListener((tabId, moveInfo)=>{
+   debounceRequeryOfAllTabs(moveInfo.windowId)
+})
 
-// chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
-//    if (updateInfo.url || updateInfo.status === 'complete' || updateInfo.groupId || updateInfo.title || updateInfo.favIconUrl) {
-//       debounceRequeryOfAllTabs(tab.windowId)
-//    }
-// })
+chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
+   if (updateInfo.url || updateInfo.status === 'complete' || updateInfo.groupId || updateInfo.title || updateInfo.favIconUrl) {
+      debounceRequeryOfAllTabs(tab.windowId)
+   }
+})
 
-// chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
-//    if (detachInfo.oldPosition) {
-//       debounceRequeryOfAllTabs(detachInfo.oldWindowId)
-//    }
-// })
-
-
-
-// function checkAndGetData(forward, ...args) {
-
-//    if (extensionData) {
-//       forward(...args)
-//    }
-//    else {
-//       chrome.storage.local.get('extensionData', (result) => {
-//          console.log("Data was not found thus now set")
-//          extensionData = result.extensionData
-//          forward(...args)
-//       })
-//    }
-// }
+chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
+   if (detachInfo.oldPosition) {
+      debounceRequeryOfAllTabs(detachInfo.oldWindowId)
+   }
+})
 
 
 
-// chrome.windows.onRemoved.addListener((windowId)=>{
+function checkAndGetData(forward, ...args) {
 
-//    checkAndGetData(forward, windowId)
-
-//    function forward(windowId) {
-//       for (let [name, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
-//          if (trackedWindow.isOpen === true && trackedWindow.windowId === windowId) {
-
-//             extensionData.trackedWindows[`${name}`].isOpen = false
-//             saveExtensionData(extensionData)
-//          }
-//       }
-//       updateOptionsPage()()
-//    }
-// })
+   if (extensionData) {
+      forward(...args)
+   }
+   else {
+      chrome.storage.local.get('extensionData', (result) => {
+         console.log("Data was not found thus now set")
+         extensionData = result.extensionData
+         forward(...args)
+      })
+   }
+}
 
 
 
+chrome.windows.onRemoved.addListener((windowId)=>{
 
-// function reQueryAllTabsToSave(windowId) {
+   checkAndGetData(forward, windowId)
 
-//    checkAndGetData(forward, windowId)
+   function forward(windowId) {
+      for (let [name, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
+         if (trackedWindow.isOpen === true && trackedWindow.windowId === windowId) {
 
-//    function forward(windowId) {
+            extensionData.trackedWindows[`${name}`].isOpen = false
+            saveExtensionData(extensionData)
+         }
+      }
+      updateOptionsPage()
+   }
+})
 
-//       for (let [name,trackedWindow] of Object.entries(extensionData.trackedWindows)) {
 
-//          if (trackedWindow.windowId === windowId && trackedWindow.isOpen === true) {
+
+
+function reQueryAllTabsToSave(windowId) {
+
+   checkAndGetData(forward, windowId)
+
+   function forward(windowId) {
+
+      for (let [name,trackedWindow] of Object.entries(extensionData.trackedWindows)) {
+
+         if (trackedWindow.windowId === windowId && trackedWindow.isOpen === true) {
          
-//                chrome.tabs.query({windowId: windowId}, (allTabs)=>{
-//                   extensionData.trackedWindows[name].tabs = allTabs.map((ele)=>{
-//                      return {
-//                      'id': ele.id,
-//                      'groupId': ele.groupId,
-//                      'url': ele.url,
-//                      'favIconUrl': ele.favIconUrl,
-//                      'title': ele.title
-//                      }
-//                   })
+               chrome.tabs.query({windowId: windowId}, (allTabs)=>{
+                  extensionData.trackedWindows[name].tabs = allTabs.map((ele)=>{
+                     return {
+                     'id': ele.id,
+                     'groupId': ele.groupId,
+                     'url': ele.url,
+                     'favIconUrl': ele.favIconUrl,
+                     'title': ele.title
+                     }
+                  })
 
-//                   updateOptionsPage()()
-//                   debounceSaveData(extensionData)
-//                })
-//                return
-//          }
-//       }
-//    }
-// }
-
-
-
- 
+                  updateOptionsPage()
+                  debounceSaveData(extensionData)
+               })
+               return
+         }
+      }
+   }
+}
 
 
+async function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
 
-// function handleSavedWindowOpen(openedWindowDetails) {
+   const createdWindow = await chrome.windows.create({url: trackedWindowToOpen.tabs.map(ele => ele.url)})
+   // wait half a second before doing more operation to let the window to be populated with tabs
+   setTimeout(async ()=>{
 
-   
-//    chrome.windows.create({url: openedWindowDetails.tabs.map(ele=>ele.url)},(newWindow)=>{
-//       setTimeout(()=>{
+      const allTabs = await chrome.tabs.query({windowId: createdWindow.id})
+      let groupedTabsId: [][] = []
+      let groupIndex = -1
+      let lastGroupId = -1
+      
+      trackedWindowToOpen.tabs.forEach((ele, index)=>{
 
-//          let groupedTabsId = []
-//          let groupIndex = -1
-//          let lastGroupId = -1
-
-//          openedWindowDetails.tabs.forEach((ele, index)=>{
+         if (ele.groupId === -1) return null
          
-//                if (ele.groupId !== -1) {
-//                   if (lastGroupId !== ele.groupId) {
-//                      groupIndex++
-//                      groupedTabsId[groupIndex] = []
-//                   }
-//                   groupedTabsId[groupIndex].push(newWindow.tabs[index].id)
-//                   lastGroupId = ele.groupId
-//                }
-//          })
+         if (ele.groupId !== lastGroupId) {
+            groupIndex++
+            groupedTabsId[groupIndex] = []
+         }
 
-//          for (let i = 0; i < groupedTabsId.length; i++) {
-//                chrome.tabs.group({tabIds: groupedTabsId[i]}, (groupId)=>{
-//                   chrome.tabGroups.update(groupId,{
-//                      title: openedWindowDetails.groupedTabsInfo[i].title,
-//                      color: openedWindowDetails.groupedTabsInfo[i].color,
-//                      collapsed: openedWindowDetails.groupedTabsInfo[i].collapsed
-//                   })
-//                })
-//          }
-
-//          extensionData.trackedWindows[openedWindowDetails.windowName].isOpen = true
-//          extensionData.trackedWindows[openedWindowDetails.windowName].windowId = newWindow.id
-//          saveExtensionData(extensionData)
-//          updateOptionsPage()()
-
-//       },500)
-//    })
-// }
+         groupedTabsId[groupIndex].push(allTabs[index].id)
+         lastGroupId = ele.groupId
+      })
 
 
+      for (let i = 0; i < groupedTabsId.length; i++) {
+         const newGroupId = await chrome.tabs.group({tabIds: groupedTabsId[i]})
+
+         await chrome.tabGroups.update(newGroupId, {
+            title: trackedWindowToOpen.groupedTabsInfo[i].title,
+            color: trackedWindowToOpen.groupedTabsInfo[i].color,
+            collapsed: trackedWindowToOpen.groupedTabsInfo[i].collapsed
+         })
+      }
+      
+
+      const usefulTabsData = allTabs.map((ele)=>{
+         return {
+            "id": ele.id,
+            "active": ele.active,
+            "pinned": ele.pinned,
+            "groupId": ele.groupId,
+            "url": ele.url,
+            "favIconUrl": ele.favIconUrl,
+            "title": ele.title
+         }
+      })
+      const updatedGroups = await chrome.tabGroups.query({windowId: createdWindow.id})   
+
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].groupedTabsInfo = updatedGroups
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].isOpen = true
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].tabs = usefulTabsData
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].windowId = String(createdWindow.id)
+
+      saveExtensionData(extensionData)
+      updateOptionsPage()
+      handleShowingOfExtensionBadge(String(createdWindow.id))
+   },500)
+}
 
 
 } catch (error) {

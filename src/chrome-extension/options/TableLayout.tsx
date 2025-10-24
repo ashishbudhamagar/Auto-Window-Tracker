@@ -8,7 +8,7 @@ import noImageImage from '../public/no-image.png';
 export default function TableLayout(
    {  
       // @ts-ignore
-      arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick,
+      arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
       IconExternal, IconX, currentSort, determinIfDraggable,
       handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, isDragging, setIsDragging
    }
@@ -138,7 +138,7 @@ export default function TableLayout(
                       : "text-blue-600 dark:text-blue-400 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/40 dark:hover:to-blue-800/40 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600"}`
                   }
                   disabled={arrayOfTrackedWindowValues[activeWindow].isOpen}
-                  onClick={() => onOpenSavedWindowClick(arrayOfTrackedWindowValues[activeWindow].windowName)}
+                  onClick={() => onOpenSavedWindowButtonClicked(arrayOfTrackedWindowValues[activeWindow].windowName)}
                   title={arrayOfTrackedWindowValues[activeWindow].isOpen ? "Window is already open" : "Open saved window"}
                 >
                   <IconExternal className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
@@ -149,7 +149,7 @@ export default function TableLayout(
 
                 <button 
                   className="group flex items-center space-x-2 py-3 px-5 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 border-2 border-red-200 dark:border-red-700 hover:border-red-300 dark:hover:border-red-600 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
-                  onClick={() => onUntrackWindowClick(arrayOfTrackedWindowValues[activeWindow].windowName)}
+                  onClick={() => onUntrackWindowButtonClicked(arrayOfTrackedWindowValues[activeWindow].windowName)}
                   title="Remove this window from tracking"
                 >
                   <IconX className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />

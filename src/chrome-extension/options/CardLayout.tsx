@@ -6,7 +6,7 @@ import noImageImage from '../public/no-image.png';
 export default function CardLayout(
   {  
     // @ts-ignore
-    arrayOfTrackedWindowValues, onOpenSavedWindowClick, onUntrackWindowClick,
+    arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
     IconExternal, IconX, currentSort, determinIfDraggable,
     handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, isDragging, setIsDragging
     
@@ -75,18 +75,20 @@ export default function CardLayout(
                       window.tabs.slice(0,4).map((tab, index)=>(
                         <a 
                             href={tab.url} 
-                            className="flex hover:underline underline-offset-4 items-center  mb-1 text-gray-700 dark:text-gray-200 rounded-md space-x-3 hover:text-blue-600 dark:hover:text-blue-400 py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:decoration-gray-200 w-full" 
-                            target="_blank" 
+                            className="flex hover:underline underline-offset-4 items-center  mb-1 text-gray-700 dark:text-gray-200
+                              rounded-md space-x-3 hover:text-blue-600 dark:hover:text-blue-400 py-1 px-2 hover:bg-gray-200
+                              dark:hover:bg-gray-700 dark:decoration-gray-200 w-full
+                            " 
+                            target="_blank"
                             key={index}
                             rel="noopener noreferrer"
                             draggable={false}
                             onDragStart={(e) => e.stopPropagation()}
                           >
-                            <div className="flex-shrink-0 w-8 h-8 rounded-md overflow-hidden shadow-sm  dark:border-gray-600/50">
+                            <div className="flex-shrink-0 w-9 h-9 rounded-md overflow-hidden  dark:border-gray-600/50">
                               <img 
                                 src={tab.favIconUrl} 
-                                alt=""
-                                className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700 p-[6px]" 
+                                className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700 p-[5px] rounded-xl"
                                 onError={(e) => {
                                   e.currentTarget.onerror = null;
                                   e.currentTarget.src = noImageImage;
@@ -109,11 +111,11 @@ export default function CardLayout(
                 <div className='w-full max-h-[5.2rem] overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl'>
                     {window.tabs.length > 4 && (
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-[10px] py-2 px-[8px] w-full  border border-gray-200/30 dark:border-gray-600/30">
-                        {window.tabs.slice(4).map((tab: any, idx: number) => (
+                        {window.tabs.slice(4).map((tab: any, index: number) => (
                           <a 
                             href={tab.url} 
                             target="_blank" 
-                            key={idx}
+                            key={index}
                             rel="noopener noreferrer"
                             className="group relative"
                             title={tab.title}
@@ -147,7 +149,7 @@ export default function CardLayout(
             <div className="flex  border-t border-gray-200/50 dark:border-gray-600/50 space-x-3">
               <button 
                 className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-300 border border-red-200/50 dark:border-red-700/50 hover:border-red-300 dark:hover:border-red-600 hover:shadow-sm flex-1 justify-center font-medium"
-                onClick={() => onUntrackWindowClick(window.windowName)}
+                onClick={() => onUntrackWindowButtonClicked(window.windowName)}
                 title="Remove this window from tracking"
               >
                 <IconX className="h-4 w-4" />
@@ -161,7 +163,7 @@ export default function CardLayout(
                     : "text-blue-600 dark:text-blue-500 bg-indigo-100 hover:bg-blue-200 bg-blue-900/30 dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 hover:shadow-sm"}`
                 }
                 disabled={window.isOpen}
-                onClick={() => onOpenSavedWindowClick(window.windowName)}
+                onClick={() => onOpenSavedWindowButtonClicked(window.windowName)}
                 title={window.isOpen ? "Window is already open" : "Open saved window"}
               >
                 <IconExternal className="h-4 w-4" />

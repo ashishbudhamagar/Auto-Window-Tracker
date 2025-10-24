@@ -41,15 +41,16 @@ const Options = () => {
       // setCurrentSort(OptionsPageSort.custom3)
       // setLayout(OptionsPageLayout.card)
 
-    chrome.runtime.sendMessage({signal: "getExtensionData"}, (responseExtensionData: ExtensionData)=>{
+    chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
 
-      const trackedWindowValues: TrackedWindow[] = Object.values(responseExtensionData.trackedWindows)
+      const trackedWindowValues: TrackedWindow[] = Object.values(response.trackedWindows)
+      console.log("receved data", response)
       
-      setArrayOfTrackedWindowValues(trackedWindowValues)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-      setTheme(responseExtensionData.theme)
-      setCurrentSort(responseExtensionData.optionsPageSort)
-      setLayout(responseExtensionData.optionsPageLayout)
+      setArrayOfTrackedWindowValues(trackedWindowValues)
+      setTheme(response.theme)
+      setCurrentSort(response.optionsPageSort)
+      setLayout(response.optionsPageLayout)
     })
 
     chrome.runtime.onMessage.addListener((message) => {
@@ -58,9 +59,6 @@ const Options = () => {
 
       const trackedWindowValues: any[] = Object.values(message.extensionData.trackedWindows)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-      applyOptionsPageSort()
-
-      console.log("============Options page received updateOptions message", message.extensionData)
     })
   },[])
 
@@ -86,6 +84,8 @@ const Options = () => {
 
 
   function onChangeThemeButtonClicked() {
+    // setTheme(newTheme)
+
     chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=>{
       setTheme(newTheme)
     })
@@ -119,8 +119,6 @@ const Options = () => {
   function applyOptionsPageSort() {
     if (!currentSort) return
 
-    console.log("Applying sort:", currentSort)
-
     const cloneOriginalData = structuredClone(originalArrayOfTrackedWindowValues)
     let sorted = cloneOriginalData
 
@@ -153,17 +151,17 @@ const Options = () => {
         break
     }
 
-    console.log("=======setting sorted data:", sorted)
     setArrayOfTrackedWindowValues(sorted)
   }
 
   useEffect(()=>{
     applyOptionsPageSort()
-  }, [currentSort])
+  }, [currentSort, originalArrayOfTrackedWindowValues])
 
   
   function onChangeSortButtonClicked(newSort: OptionsPageSort) {
     // setCurrentSort(newSort)
+    onOpenSavedWindowButtonClicked("newest")
     chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort)=>{
       setCurrentSort(updatedSort)
     })
@@ -173,21 +171,23 @@ const Options = () => {
 
 
 
-  function onUntrackWindowClick(windowName : string) {
-    // chrome.runtime.sendMessage({signal: 'untrackWindowFromOptions', windowName: windowName})
+  function onUntrackWindowButtonClicked(windowName : string) {
+    chrome.runtime.sendMessage({signal: "untrackWindowFromOptionsPage", windowName: windowName})
   }
 
-  function onOpenSavedWindowClick(windowName: string) {
+  function onOpenSavedWindowButtonClicked(windowName: string) {
 
-    // let openedWindowDetails = null
+    let trackedWindowToOpen: TrackedWindow | null = null
 
-    // for (let trackedWindow of arrayOfTrackedWindowValues) {
-    //   if (trackedWindow.windowName === windowName) {
-    //     openedWindowDetails = trackedWindow
-    //     break
-    //   }
-    // }
-    // chrome.runtime.sendMessage({signal: 'openSavedWindow', openedWindowDetails: openedWindowDetails})
+    for (let trackedWindow of originalArrayOfTrackedWindowValues) {
+      if (trackedWindow.windowName === windowName) {
+        trackedWindowToOpen = trackedWindow
+        break
+      }
+    }
+
+    if (!trackedWindowToOpen) return
+    chrome.runtime.sendMessage({signal: "openSavedWindow", trackedWindowToOpen: trackedWindowToOpen})
   }
 
 
@@ -196,14 +196,12 @@ const Options = () => {
     if (fromIndex === toIndex) return
     if (fromIndex < 0 || toIndex < 0 || fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
 
-    const clone = structuredClone(arrayOfTrackedWindowValues)
-
-    const fromData = clone[fromIndex]
-    const toData = clone[toIndex]
-    clone[fromIndex] = toData
-    clone[toIndex] = fromData
-    
-    chrome.runtime.sendMessage({signal: "customOptionsPageSort", customOrderArrayOfTrackedWindows: clone})
+    chrome.runtime.sendMessage({
+      signal: "customOptionsPageSort",
+      customOrderArrayOfTrackedWindows: arrayOfTrackedWindowValues,
+      fromIndex: fromIndex,
+      toIndex: toIndex
+    })
   }
 
 
@@ -443,8 +441,8 @@ const Options = () => {
             <CardLayout {
               ... {
                 arrayOfTrackedWindowValues,
-                onOpenSavedWindowClick,
-                onUntrackWindowClick,
+                onOpenSavedWindowButtonClicked,
+                onUntrackWindowButtonClicked,
                 IconExternal,
                 IconX,
                 currentSort,
@@ -464,8 +462,8 @@ const Options = () => {
             <TableLayout {
               ...{
                 arrayOfTrackedWindowValues,
-                onOpenSavedWindowClick,
-                onUntrackWindowClick,
+                onOpenSavedWindowButtonClicked,
+                onUntrackWindowButtonClicked,
                 IconExternal,
                 IconX,
                 currentSort,
