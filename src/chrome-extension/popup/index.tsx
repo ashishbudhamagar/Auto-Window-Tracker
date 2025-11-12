@@ -35,7 +35,7 @@ export const Popup = () => {
       chrome.windows.getCurrent((currentWindow)=>{
 
         for (let trackedWindow of Object.values(response.trackedWindows)) {
-          if (trackedWindow.windowId == String(currentWindow.id) && trackedWindow.isOpen) {
+          if (trackedWindow.windowId == currentWindow.id && trackedWindow.isOpen) {
             setCurrentWindowTracked(true)
             setCurrentWindowName(trackedWindow.windowName)
             return null
@@ -72,7 +72,7 @@ export const Popup = () => {
 
           signal: "trackOrUntrackButtonClicked",
           trackWindow: !currentWindowTracked,
-          currentWindowId: String(currentWindow.id),
+          currentWindowId: currentWindow.id,
           //@ts-ignore
           windowName: currentWindowName.trim()
 

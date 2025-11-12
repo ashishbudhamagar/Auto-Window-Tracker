@@ -1,6 +1,5 @@
-//@ts-nocheck
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow } from "../../types";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import extensionImage192 from "../public/192.png";
 import "../global.css";
 import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLayout } from "../../icons";
@@ -31,23 +30,13 @@ const Options = () => {
   const [isDragging, setIsDragging] = useState(false)
 
 
-
-
   useEffect(()=>{
-      // const trackedWindowValues: any[] = Object.values(trackedWindows11)
-      // setArrayOfTrackedWindowValues(trackedWindowValues)
-      // setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-      // setTheme(Theme.light)
-      // setCurrentSort(OptionsPageSort.custom3)
-      // setLayout(OptionsPageLayout.card)
-
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
 
       const trackedWindowValues: TrackedWindow[] = Object.values(response.trackedWindows)
-      console.log("receved data", response)
-      
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
       setArrayOfTrackedWindowValues(trackedWindowValues)
+
       setTheme(response.theme)
       setCurrentSort(response.optionsPageSort)
       setLayout(response.optionsPageLayout)
@@ -57,11 +46,10 @@ const Options = () => {
       
       if (message.signal !== "updateOptions") return
 
-      const trackedWindowValues: any[] = Object.values(message.extensionData.trackedWindows)
+      const trackedWindowValues: TrackedWindow[] = Object.values(message.extensionData.trackedWindows)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
     })
   },[])
-
 
 
 
@@ -85,7 +73,6 @@ const Options = () => {
 
   function onChangeThemeButtonClicked() {
     // setTheme(newTheme)
-
     chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=>{
       setTheme(newTheme)
     })
@@ -145,7 +132,10 @@ const Options = () => {
           break
         }
 
-        sorted = cloneOriginalData.sort((a,b) => a.order - b.order)
+        const allWithOrder = cloneOriginalData.filter(ele => ele.order !== -1)
+        const allWithNoOrder = cloneOriginalData.filter(ele => ele.order === -1)
+
+        sorted = [...allWithOrder.sort((a,b) => a.order - b.order), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
         break
       default:
         break
@@ -157,11 +147,10 @@ const Options = () => {
   useEffect(()=>{
     applyOptionsPageSort()
   }, [currentSort, originalArrayOfTrackedWindowValues])
-
+  
   
   function onChangeSortButtonClicked(newSort: OptionsPageSort) {
     // setCurrentSort(newSort)
-    onOpenSavedWindowButtonClicked("newest")
     chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort)=>{
       setCurrentSort(updatedSort)
     })
@@ -191,6 +180,15 @@ const Options = () => {
   }
 
 
+
+  function determinIfDraggable() {
+    if (currentSort === OptionsPageSort.custom1 || currentSort === OptionsPageSort.custom2 || currentSort === OptionsPageSort.custom3) {
+      return searchQuery === "" ? true : false
+    }
+    return false
+  }
+
+
   function handleDragAndDrop(fromIndex: number, toIndex: number) {
 
     if (fromIndex === toIndex) return
@@ -204,17 +202,7 @@ const Options = () => {
     })
   }
 
-
-
-  function determinIfDraggable() {
-    if (currentSort === OptionsPageSort.custom1 || currentSort === OptionsPageSort.custom2 || currentSort === OptionsPageSort.custom3) {
-      return searchQuery === "" ? true : false
-    }
-    return false
-  }
-
-
-  const handleDragStart = (e, index: number) => {
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     setIsDragging(true)
     e.currentTarget.setAttribute("data-card-index", String(index))
     e.dataTransfer.setData("cardIndex", String(index))
@@ -229,7 +217,7 @@ const Options = () => {
     e.currentTarget.style.opacity = "1"
   }
 
-  const handleDragOver = (e, index: number) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     e.preventDefault()
     if (e.currentTarget.getAttribute("data-card-index") === String(index)) return
 
@@ -241,13 +229,14 @@ const Options = () => {
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
+
     const element = e.currentTarget
     setTimeout(() => {
       element.style.removeProperty("transform")
     }, 60)
   }
 
-  const handleDrop = (e, index: number) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     e.preventDefault()
 
     const element = e.currentTarget
@@ -386,7 +375,7 @@ const Options = () => {
                 id="sort" 
                 className="bg-gray-100 dark:bg-gray-600 rounded-md text-gray-700 dark:text-gray-200 border-0 focus:ring-0 focus:outline-none py-1 pl-2 pr-8 appearance-none cursor-pointer font-medium"
                 value={currentSort}
-                onChange={(e)=>onChangeSortButtonClicked(e.target.value)}
+                onChange={(e)=>onChangeSortButtonClicked(e.target.value as OptionsPageSort)}
               >
                 {sortingOptions.map((option, index) => (
                   <option value={option} key={index} className="bg-white dark:bg-gray-800">{option}</option>

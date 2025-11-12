@@ -13,7 +13,7 @@ export default function CardLayout(
   }
 ) {
 
-  console.log("Rendering CardLayout with windows:", arrayOfTrackedWindowValues);
+  // console.log("Rendering CardLayout with windows:", arrayOfTrackedWindowValues);
 
 
 
@@ -110,20 +110,24 @@ export default function CardLayout(
 
                 <div className='w-full max-h-[5.2rem] overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl'>
                     {window.tabs.length > 4 && (
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-[10px] py-2 px-[8px] w-full  border border-gray-200/30 dark:border-gray-600/30">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-[10px] py-2 px-[8px] w-full  border border-gray-200/30 dark:border-gray-600/30
+                      ">
                         {window.tabs.slice(4).map((tab: any, index: number) => (
                           <a 
                             href={tab.url} 
                             target="_blank" 
                             key={index}
                             rel="noopener noreferrer"
-                            className="group relative"
+                            className="relative"
                             title={tab.title}
                             draggable={false}
                             onDragStart={(e) => e.stopPropagation()}
                           >
                             <div className="w-7 h-7 rounded-lg overflow-hidden border-2 border-white dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm
-                              hover:scale-125 hover:shadow-lg transition-transform duration-300 hover:border-blue-300 dark:hover:border-blue-500">
+                              hover:scale-125 hover:shadow-lg transition-transform duration-300 hover:border-blue-300 dark:hover:border-blue-500
+                              
+                              
+                              ">
                               <img 
                                 src={tab.favIconUrl}
                                 alt=""
@@ -146,21 +150,24 @@ export default function CardLayout(
 
             </div>
 
-            <div className="flex  border-t border-gray-200/50 dark:border-gray-600/50 space-x-3">
+            <div className="flex border-gray-200/50 dark:border-gray-600/50 space-x-3">
               <button 
-                className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-300 border border-red-200/50 dark:border-red-700/50 hover:border-red-300 dark:hover:border-red-600 hover:shadow-sm flex-1 justify-center font-medium"
+                className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500 dark:text-red-400 
+                hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-300 border border-red-200/50 dark:border-red-700/50 hover:border-red-300 dark:hover:border-red-600 flex-1 justify-center font-medium
+                  hover:shadow-lg
+                "
                 onClick={() => onUntrackWindowButtonClicked(window.windowName)}
-                title="Remove this window from tracking"
               >
                 <IconX className="h-4 w-4" />
                 <span className="text-sm">Untrack</span>
               </button>
 
               <button
-                className={`group flex items-center space-x-2 py-3 px-4 rounded-xl transition-colors duration-300 flex-1 justify-center font-medium 
+                className={`group flex items-center space-x-2 py-3 px-4 rounded-xl duration-300 flex-1 justify-center font-medium 
+                  hover:shadow-lg transition-[shadow colors]
                   ${window.isOpen 
                     ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200 dark:border-gray-700 bg-green-100 dark:bg-gray-800/50" 
-                    : "text-blue-600 dark:text-blue-500 bg-indigo-100 hover:bg-blue-200 bg-blue-900/30 dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 hover:shadow-sm"}`
+                    : "text-blue-600 dark:text-blue-500 bg-indigo-100 hover:bg-blue-200 bg-blue-900/30 dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600"}`
                 }
                 disabled={window.isOpen}
                 onClick={() => onOpenSavedWindowButtonClicked(window.windowName)}

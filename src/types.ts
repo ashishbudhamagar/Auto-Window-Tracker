@@ -1,19 +1,27 @@
-export interface ExtensionData { 
+
+export interface ExtensionData {
+
   trackedWindows: Record<string, TrackedWindow>
-  trackedWindowNames: string[]
   optionsPageLayout: OptionsPageLayout
   optionsPageSort: OptionsPageSort
   theme: Theme
+
+  // this property exists so I dont have to use Object.values(obj).windowName everytime
+  // I need a list of tracked window names (better preformance)
+  trackedWindowNames: string[]
+  // this property exists so I dont have to use Object.values(obj).windowId everytime 
+  // I need a list of tracked window ids (better preformance)
+  trackedWindowIds: number[]
 }
 
 export interface TrackedWindow {
-  windowId: string,
-  windowName: string,
-  color: string,
-  isOpen: boolean,
-  tabs: any[],
-  groupedTabsInfo: any,
-  dateAdded: Date,
+  windowId: number
+  windowName: string
+  color: string
+  isOpen: boolean
+  tabs: any[]
+  groupedTabsInfo: any
+  dateAdded: number
   order: number
 }
 

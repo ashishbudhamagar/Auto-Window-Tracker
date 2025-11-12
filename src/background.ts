@@ -1,11 +1,98 @@
-//@ts-nocheck
+// @ts-nocheck
 import {ExtensionData, OptionsPageLayout, OptionsPageSort, Theme, TrackedWindow} from "./types"
+// @ts-ignore
 import { debounce, saveExtensionData } from "./data-manager"
+
+const savedUrls = [
+  // Search & Browsers
+  "https://google.com",
+  "https://bing.com",
+  "https://duckduckgo.com",
+  "https://yahoo.com",
+  "https://baidu.com",
+
+  // Social & Media
+  "https://twitter.com",
+  "https://facebook.com",
+  "https://instagram.com",
+  "https://reddit.com",
+  "https://tiktok.com",
+
+  // News & Info
+  "https://cnn.com",
+  "https://bbc.com",
+  "https://nytimes.com",
+  "https://theguardian.com",
+  "https://reuters.com",
+
+  // Tech & Dev
+  "https://github.com",
+  "https://gitlab.com",
+  "https://stackoverflow.com",
+  "https://developer.chrome.com",
+  "https://codepen.io",
+
+  // Learning
+  "https://w3schools.com",
+  "https://freecodecamp.org",
+  "https://coursera.org",
+  "https://udemy.com",
+  "https://khanacademy.org",
+
+  // AI & Research
+  "https://openai.com",
+  "https://huggingface.co",
+  "https://deepmind.com",
+  "https://arxiv.org",
+  "https://paperswithcode.com",
+
+  // Entertainment
+  "https://youtube.com",
+  "https://netflix.com",
+  "https://spotify.com",
+  "https://twitch.tv",
+  "https://disneyplus.com",
+
+  // Shopping & Tools
+  "https://amazon.com",
+  "https://ebay.com",
+  "https://walmart.com",
+  "https://bestbuy.com",
+  "https://etsy.com",
+
+  // Productivity
+  "https://notion.so",
+  "https://slack.com",
+  "https://discord.com",
+  "https://zoom.us",
+  "https://trello.com",
+
+  // Tech News & Blogs
+  "https://techcrunch.com",
+  "https://wired.com",
+  "https://arstechnica.com",
+  "https://thenextweb.com",
+  "https://news.ycombinator.com"
+];
 
 
 let extensionData: ExtensionData | null = null
 const debounceSaveData = debounce(saveExtensionData, 25000)
 
+
+function checkAndGetData(forward: any, ...args: any) {
+
+   if (extensionData) {
+      forward(...args)
+   }
+   else {
+      chrome.storage.local.get("extensionData", (result) => {
+         console.log("Data was not found thus now set")
+         extensionData = result.extensionData
+         forward(...args)
+      })
+   }
+}
 
 
 try {
@@ -18,6 +105,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       const initialExtensionData: ExtensionData = {
          trackedWindows: {},
          trackedWindowNames: [],
+         trackedWindowIds: [],
          theme: Theme.light,
          optionsPageSort: OptionsPageSort.custom1,
          optionsPageLayout: OptionsPageLayout.card
@@ -29,238 +117,12 @@ chrome.runtime.onInstalled.addListener((details) => {
    }
    if (details.reason === "update") {
 
-
+      // @ts-nocheck
       const initialExtensionData: ExtensionData = {
-         trackedWindows: {
-    "asd": {
-        "color": "white",
-        "dateAdded": 1761257135370,
-        "groupedTabsInfo": [
-            {
-                "collapsed": false,
-                "color": "grey",
-                "id": 2092834314,
-                "shared": false,
-                "title": "gorup 1",
-                "windowId": 134353339
-            },
-            {
-                "collapsed": false,
-                "color": "blue",
-                "id": 324467991,
-                "shared": false,
-                "title": "goruped 3",
-                "windowId": 134353339
-            },
-            {
-                "collapsed": true,
-                "color": "red",
-                "id": 649247906,
-                "shared": false,
-                "title": "new one",
-                "windowId": 134353339
-            }
-        ],
-        "isOpen": false,
-        "order": -1,
-        "tabs": [
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": -1,
-                "id": 134353382,
-                "pinned": false,
-                "title": "web 1 - Google Search",
-                "url": "https://www.google.com/search?q=web+1&oq=web+1&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTITCAEQLhiDARjHARixAxjRAxiABDITCAIQLhiDARjHARixAxjRAxiABDITCAMQLhiDARjHARixAxjRAxiABDIKCAQQABixAxiABDIHCAUQLhiABDIKCAYQABixAxiABDINCAcQABiDARixAxiABDIKCAgQABixAxiABNIBBzUxNWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 324467991,
-                "id": 134353386,
-                "pinned": false,
-                "title": "web 2 - Google Search",
-                "url": "https://www.google.com/search?q=web+2&oq=web+2&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIPCAEQABhDGLEDGIAEGIoFMgwIAhAAGEMYgAQYigUyDAgDEAAYQxiABBiKBTIHCAQQABiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBCDIxMDhqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 324467991,
-                "id": 134353389,
-                "pinned": false,
-                "title": "web 3 - Google Search",
-                "url": "https://www.google.com/search?q=web+3&oq=web+3&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIPCAEQABhDGLEDGIAEGIoFMgwIAhAAGEMYgAQYigUyDAgDEAAYQxiABBiKBTIMCAQQABhDGIAEGIoFMgwIBRAAGEMYgAQYigUyDwgGEAAYFBiHAhixAxiABDIMCAcQABhDGIAEGIoFMgkICBAAGAoYgAQyDAgJEAAYQxiABBiKBdIBCDEzNjFqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": -1,
-                "id": 134353392,
-                "pinned": false,
-                "title": "web 5 - Google Search",
-                "url": "https://www.google.com/search?q=web+5&oq=web+5&gs_lcrp=EgZjaHJvbWUyDggAEEUYORhDGIAEGIoFMgwIARAjGCcYgAQYigUyDAgCEAAYQxiABBiKBTIMCAMQABhDGIAEGIoFMgwIBBAAGEMYgAQYigUyBggFEEUYPDIGCAYQRRg8MgYIBxBFGDzSAQgyMTk4ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 2092834314,
-                "id": 134353395,
-                "pinned": false,
-                "title": "web 6 - Google Search",
-                "url": "https://www.google.com/search?q=web+6&oq=web+6&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQLhiABBjlBDIHCAIQABiABDIHCAMQABiABDIHCAQQABiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzcxMmowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "",
-                "groupId": 2092834314,
-                "id": 134353398,
-                "pinned": false,
-                "title": "New Tab",
-                "url": "chrome://newtab/"
-            },
-            {
-                "active": false,
-                "favIconUrl": "",
-                "groupId": -1,
-                "id": 134353399,
-                "pinned": false,
-                "title": "New Tab",
-                "url": "chrome://newtab/"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 649247906,
-                "id": 134353400,
-                "pinned": false,
-                "title": "5 - Google Search",
-                "url": "https://www.google.com/search?q=5&oq=5&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIQCAEQLhjHARixAxjRAxiABDIQCAIQLhjHARixAxjRAxiABDIHCAMQABiABDINCAQQABiDARixAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzE1NWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 649247906,
-                "id": 134353401,
-                "pinned": false,
-                "title": "1 - Google Search",
-                "url": "https://www.google.com/search?q=1&oq=1&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIWCAEQLhivARjHARiRAhiABBiKBRiOBTINCAIQABiRAhiABBiKBTIQCAMQLhjHARixAxjRAxiABDIHCAQQABiABDINCAUQABiDARixAxiABDIGCAYQRRg8MgYIBxBFGDzSAQcxMzFqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 649247906,
-                "id": 134353402,
-                "pinned": false,
-                "title": "2 - Google Search",
-                "url": "https://www.google.com/search?q=2&oq=2&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQLhixAxiABDINCAIQLhiDARixAxiABDINCAMQLhiDARixAxiABDINCAQQABiDARixAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzUxMGowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 649247906,
-                "id": 134353403,
-                "pinned": false,
-                "title": "3 - Google Search",
-                "url": "https://www.google.com/search?q=3&oq=3&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTINCAEQABiDARixAxiABDINCAIQABiDARixAxiABDINCAMQABiDARixAxiABDINCAQQABiDARixAxiABDIHCAUQABiABDIGCAYQRRg8MgYIBxBFGDzSAQcxODdqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": 649247906,
-                "id": 134353404,
-                "pinned": false,
-                "title": "4 - Google Search",
-                "url": "https://www.google.com/search?q=4&oq=4&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIKCAEQLhixAxiABDINCAIQABiDARixAxiABDIHCAMQABiABDINCAQQLhjHARjRAxiABDIGCAUQRRg8MgYIBhBFGDwyBggHEEUYPNIBBzI1MGowajeoAgCwAgA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": -1,
-                "id": 134353416,
-                "pinned": false,
-                "title": "1 - Google Search",
-                "url": "https://www.google.com/search?q=1&oq=1&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgwIARAAGEMYgAQYigUyDAgCEAAYQxiABBiKBTIMCAMQABhDGIAEGIoFMgwIBBAAGEMYgAQYigUyDAgFEAAYQxiABBiKBTIGCAYQRRg8MgYIBxBFGDzSAQcxMDBqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "https://www.gstatic.com/images/branding/searchlogo/ico/favicon.ico",
-                "groupId": -1,
-                "id": 134353420,
-                "pinned": false,
-                "title": "2 - Google Search",
-                "url": "https://www.google.com/search?q=2&oq=2&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgoIARAuGLEDGIAEMg0IAhAuGIMBGLEDGIAEMg0IAxAuGIMBGLEDGIAEMg0IBBAAGIMBGLEDGIAEMgYIBRBFGDwyBggGEEUYPDIGCAcQRRg80gEHMTM5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8"
-            },
-            {
-                "active": false,
-                "favIconUrl": "",
-                "groupId": -1,
-                "id": 134353423,
-                "pinned": false,
-                "title": "New Tab",
-                "url": "chrome://newtab/"
-            },
-            {
-                "active": false,
-                "favIconUrl": "",
-                "groupId": -1,
-                "id": 134353340,
-                "pinned": false,
-                "title": "Extensions",
-                "url": "chrome://extensions/"
-            },
-            {
-                "active": true,
-                "favIconUrl": "",
-                "groupId": -1,
-                "id": 134353452,
-                "pinned": false,
-                "title": "Options",
-                "url": "chrome-extension://ahgnjipoiaamhkijphjdmlfpnjhcgmdg/options.html"
-            }
-        ],
-        "windowId": "134353339",
-        "windowName": "asd"
-    },
-    "new": {
-        "windowId": "134353455",
-        "windowName": "new",
-        "color": "white",
-        "isOpen": false,
-        "tabs": [
-            {
-                "id": 134353985,
-                "active": false,
-                "pinned": false,
-                "groupId": -1,
-                "url": "chrome://newtab/",
-                "favIconUrl": "",
-                "title": "New Tab"
-            },
-            {
-                "id": 134353456,
-                "active": false,
-                "pinned": false,
-                "groupId": -1,
-                "url": "chrome://extensions/",
-                "favIconUrl": "",
-                "title": "Extensions"
-            },
-            {
-                "id": 134355240,
-                "active": true,
-                "pinned": false,
-                "groupId": -1,
-                "url": "chrome-extension://ahgnjipoiaamhkijphjdmlfpnjhcgmdg/options.html",
-                "favIconUrl": "",
-                "title": "Options"
-            }
-        ],
-        "groupedTabsInfo": [],
-        "dateAdded": 1761261802641,
-        "order": -1
-    }
-},
-         trackedWindowNames: ["asd", "new"],
+
+         trackedWindows: {},
+         trackedWindowNames: [],
+         trackedWindowIds: [],
          theme: Theme.light,
          optionsPageSort: OptionsPageSort.custom1,
          optionsPageLayout: OptionsPageLayout.card
@@ -273,6 +135,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 
+// @ts-ignore
 chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
 
    if (!extensionData) {
@@ -286,16 +149,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
 
 
    function processMessages() {
-
+      if (!extensionData) return null
 
 
       if (message.signal === "getExtensionData") {
          sendResponse(extensionData)
          return false
       }
-
-
-
+      
       else if (message.signal === "trackOrUntrackButtonClicked") {
          if (message.trackWindow) {
             handleWindowTrack(message.currentWindowId, message.windowName, sendResponse)
@@ -324,6 +185,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
          return false
       }
 
+
       else if (message.signal === "changeOptionsPageSort") {
          extensionData.optionsPageSort = message.newSort
          saveExtensionData(extensionData)
@@ -335,7 +197,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
 
       else if (message.signal === "customOptionsPageSort") {
          
-         const customOrderArray: TrackedWindow = message.customOrderArrayOfTrackedWindows
+         const customOrderArray: TrackedWindow[] = message.customOrderArrayOfTrackedWindows
          
          const fromData = customOrderArray[message.fromIndex]
          const toData = customOrderArray[message.toIndex]
@@ -354,10 +216,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
 
       else if (message.signal === "untrackWindowFromOptionsPage") {
 
-         delete extensionData?.trackedWindows[message.windowName]
+         const untrackedWindow = extensionData.trackedWindows[message.windowName]
+         delete extensionData.trackedWindows[message.windowName]
          extensionData.trackedWindowNames = extensionData.trackedWindowNames.filter(ele => ele !== message.windowName)
 
          saveExtensionData(extensionData)
+         handleShowingOfExtensionBadge(untrackedWindow.windowId)
          updateOptionsPage()
          return false
       }
@@ -379,23 +243,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
 
 
 
-chrome.windows.onFocusChanged.addListener((windowId)=>{
+chrome.windows.onFocusChanged.addListener((windowId: number)=>{
    if (windowId === chrome.windows.WINDOW_ID_NONE) return null
-   console.log("window changed")
 
    if (!extensionData) {
       chrome.storage.local.get("extensionData", (result)=>{
          extensionData = result.extensionData
-         handleShowingOfExtensionBadge(String(windowId))
+         handleShowingOfExtensionBadge(windowId)
       })
    }
    else {
-      handleShowingOfExtensionBadge(String(windowId))
+      handleShowingOfExtensionBadge(windowId)
    }
 })
 
 
-function handleShowingOfExtensionBadge(windowId: string) {
+function handleShowingOfExtensionBadge(windowId: number) {
    if (!extensionData) return null
 
    for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
@@ -409,11 +272,10 @@ function handleShowingOfExtensionBadge(windowId: string) {
    chrome.action.setBadgeText({ text: "" });
 }
 
-function handleWindowTrack(currentWindowId: string, windowName: string, sendResponse: (response: any) => void) {
-
-   chrome.tabs.query({windowId: Number(currentWindowId)}, (allTabs)=>{
-      chrome.tabGroups.query({windowId: Number(currentWindowId)}, (groups) => {
-
+function handleWindowTrack(currentWindowId: number, windowName: string, sendResponse: (response: any) => void) {
+   chrome.tabs.query({windowId: currentWindowId}, (allTabs)=>{
+      chrome.tabGroups.query({windowId: currentWindowId}, (tabsGroupInfo) => {
+         
          if (!extensionData) return null
 
          const usefulTabsData = allTabs.map((ele)=>{
@@ -434,14 +296,16 @@ function handleWindowTrack(currentWindowId: string, windowName: string, sendResp
             "color": "white",
             "isOpen": true,
             "tabs": usefulTabsData,
-            "groupedTabsInfo": groups,
+            "groupedTabsInfo": tabsGroupInfo,
             "dateAdded": Date.now(),
             "order": -1
          }
          
+
          extensionData.trackedWindows[windowName] = trackedWindow
          extensionData.trackedWindowNames.push(windowName)
-         
+         extensionData.trackedWindowIds.push(currentWindowId)
+
          saveExtensionData(extensionData)
          sendResponse(true)
          handleShowingOfExtensionBadge(currentWindowId)
@@ -472,8 +336,19 @@ function handleWindowUntrack(windowName: string, sendResponse: (response: any) =
 
 
 function updateOptionsPage() {
-   if (!extensionData) return null
-   chrome.runtime.sendMessage({signal: "updateOptions", extensionData: extensionData})
+
+   if (!extensionData) {
+      chrome.storage.local.get("extensionData", (result)=>{
+         extensionData = result.extensionData
+         chrome.runtime.sendMessage({signal: "updateOptions", extensionData: extensionData})
+      })
+      return null
+   }
+
+   // the catch is for supressing the error that says no port open to listen to the message
+   // when no options page is open
+   chrome.runtime.sendMessage({ signal: "updateOptions", extensionData: extensionData })
+   .catch(() => {})
 }
 
 
@@ -483,21 +358,38 @@ function updateOptionsPage() {
 
 
 
-const debounceContainer = {};
+const debounceContainer: Record<number, any> = {}
 
-function debounceRequeryOfAllTabs(windowId) {
+function debounceRequeryOfAllTabs(windowId: number) {
 
-   if (!windowId) return;
-
-   clearTimeout(debounceContainer[windowId]);
+   clearTimeout(debounceContainer[windowId])
 
    debounceContainer[windowId] = setTimeout(() => {
 
-      reQueryAllTabsToSave(windowId);
-      delete debounceContainer[windowId];
-   }, 700);
+      reQueryAllTabsToSave(windowId)
+      delete debounceContainer[windowId]
 
+   }, 700);
 }
+
+
+chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
+
+   function start(tab: any) {
+      if (!extensionData) return
+
+      for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
+         if (trackedWindow.windowId === tab.windowId) {
+            debounceRequeryOfAllTabs(tab.windowId)
+         }
+      }
+   }
+
+   if (tab && tab.windowId) {
+      checkAndGetData(start, tab)
+   }
+})
+
 
 chrome.tabs.onRemoved.addListener((tabId, removeInfo)=> {
    if (removeInfo.isWindowClosing === false) {
@@ -509,11 +401,6 @@ chrome.tabs.onMoved.addListener((tabId, moveInfo)=>{
    debounceRequeryOfAllTabs(moveInfo.windowId)
 })
 
-chrome.tabs.onUpdated.addListener((tabId,updateInfo,tab)=>{
-   if (updateInfo.url || updateInfo.status === 'complete' || updateInfo.groupId || updateInfo.title || updateInfo.favIconUrl) {
-      debounceRequeryOfAllTabs(tab.windowId)
-   }
-})
 
 chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
    if (detachInfo.oldPosition) {
@@ -523,52 +410,48 @@ chrome.tabs.onDetached.addListener((tabId,detachInfo)=>{
 
 
 
-function checkAndGetData(forward, ...args) {
 
-   if (extensionData) {
-      forward(...args)
-   }
-   else {
-      chrome.storage.local.get('extensionData', (result) => {
-         console.log("Data was not found thus now set")
-         extensionData = result.extensionData
-         forward(...args)
-      })
-   }
-}
+chrome.windows.onRemoved.addListener((windowId: number)=>{
 
-
-
-chrome.windows.onRemoved.addListener((windowId)=>{
 
    checkAndGetData(forward, windowId)
 
-   function forward(windowId) {
-      for (let [name, trackedWindow] of Object.entries(extensionData.trackedWindows)) {
+   function forward(windowId: number) {
+      if (!extensionData) return
+
+      for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
+
          if (trackedWindow.isOpen === true && trackedWindow.windowId === windowId) {
 
-            extensionData.trackedWindows[`${name}`].isOpen = false
+            extensionData.trackedWindows[trackedWindow.windowName].isOpen = false
             saveExtensionData(extensionData)
+            updateOptionsPage()
+            return null
          }
       }
-      updateOptionsPage()
    }
 })
 
 
 
 
-function reQueryAllTabsToSave(windowId) {
+function reQueryAllTabsToSave(windowId: number) {
 
    checkAndGetData(forward, windowId)
 
-   function forward(windowId) {
+   function forward(windowId: number) {
+      if (!extensionData) return
+
 
       for (let [name,trackedWindow] of Object.entries(extensionData.trackedWindows)) {
 
          if (trackedWindow.windowId === windowId && trackedWindow.isOpen === true) {
          
                chrome.tabs.query({windowId: windowId}, (allTabs)=>{
+                  if (!extensionData) return
+                  
+                  console.log("this is being executed", allTabs)
+
                   extensionData.trackedWindows[name].tabs = allTabs.map((ele)=>{
                      return {
                      'id': ele.id,
@@ -589,20 +472,28 @@ function reQueryAllTabsToSave(windowId) {
 }
 
 
-async function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
+function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
 
-   const createdWindow = await chrome.windows.create({url: trackedWindowToOpen.tabs.map(ele => ele.url)})
-   // wait half a second before doing more operation to let the window to be populated with tabs
-   setTimeout(async ()=>{
-
+   chrome.windows.create({url: trackedWindowToOpen.tabs.map(ele => ele.url)}, async (createdWindow)=>{
+      
       const allTabs = await chrome.tabs.query({windowId: createdWindow.id})
+      // console.log("\n\n\n======= quried tabs ==========")
+      // console.log(allTabs)
+      // console.log("======= quried tabs ==========\n")
+
+      console.log("\n\n\n======= groups tabs ==========")
+      console.log(trackedWindowToOpen.groupedTabsInfo)
+      console.log("======= groups tabs ==========\n")
+
       let groupedTabsId: [][] = []
       let groupIndex = -1
       let lastGroupId = -1
       
       trackedWindowToOpen.tabs.forEach((ele, index)=>{
 
+         console.log(ele.groupId)
          if (ele.groupId === -1) return null
+
          
          if (ele.groupId !== lastGroupId) {
             groupIndex++
@@ -612,6 +503,11 @@ async function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
          groupedTabsId[groupIndex].push(allTabs[index].id)
          lastGroupId = ele.groupId
       })
+
+      console.log("====================")
+      console.log(groupedTabsId)
+      console.log(trackedWindowToOpen.groupedTabsInfo)
+      console.log("====================")
 
 
       for (let i = 0; i < groupedTabsId.length; i++) {
@@ -623,30 +519,38 @@ async function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
             collapsed: trackedWindowToOpen.groupedTabsInfo[i].collapsed
          })
       }
-      
 
-      const usefulTabsData = allTabs.map((ele)=>{
+
+
+  
+      console.log("//here 1", allTabs)
+      const usefulTabsData = allTabs.map((ele, index)=>{
          return {
             "id": ele.id,
             "active": ele.active,
             "pinned": ele.pinned,
             "groupId": ele.groupId,
-            "url": ele.url,
-            "favIconUrl": ele.favIconUrl,
-            "title": ele.title
+            "url": ele.url === "" ? ele.pendingUrl : ele.url,
+            "favIconUrl": ele.favIconUrl === undefined ? trackedWindowToOpen.tabs[index].favIconUrl : ele.favIconUrl,
+            "title": ele.title === "" ? trackedWindowToOpen.tabs[index].title : ele.title
          }
       })
-      const updatedGroups = await chrome.tabGroups.query({windowId: createdWindow.id})   
 
-      extensionData.trackedWindows[trackedWindowToOpen.windowName].groupedTabsInfo = updatedGroups
-      extensionData.trackedWindows[trackedWindowToOpen.windowName].isOpen = true
+      console.log("//here 2", usefulTabsData)
+      const grouped = await chrome.tabGroups.query({windowId: createdWindow.id})
+      console.log("// here 3", grouped)
+      console.log("// here 3", trackedWindowToOpen.groupedTabsInfo)
+
+
       extensionData.trackedWindows[trackedWindowToOpen.windowName].tabs = usefulTabsData
-      extensionData.trackedWindows[trackedWindowToOpen.windowName].windowId = String(createdWindow.id)
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].isOpen = true
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].windowId = createdWindow.id
+
 
       saveExtensionData(extensionData)
       updateOptionsPage()
-      handleShowingOfExtensionBadge(String(createdWindow.id))
-   },500)
+      handleShowingOfExtensionBadge(createdWindow.id)
+   })
 }
 
 
@@ -654,5 +558,4 @@ async function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
    console.warn("========= background.js ERROR =======")  
    console.log(error)
    console.warn("========= background.js ERROR =======")  
-
 }
