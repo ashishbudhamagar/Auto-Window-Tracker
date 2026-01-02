@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { useState } from 'react';
 import noImageImage from '../public/no-image.png';
+import {TrackedWindow} from "../../types"
 
 
 export default function CardLayout(
@@ -13,9 +14,6 @@ export default function CardLayout(
   }
 ) {
 
-  // console.log("Rendering CardLayout with windows:", arrayOfTrackedWindowValues);
-
-
 
 
    return (
@@ -24,8 +22,7 @@ export default function CardLayout(
 
       {
 
-        arrayOfTrackedWindowValues.map((window : any, index: number)=>(
-
+        arrayOfTrackedWindowValues.map((window : TrackedWindow, index: number)=>(
 
           <div
             draggable={determinIfDraggable()}
@@ -66,7 +63,7 @@ export default function CardLayout(
                     window.tabs.length === 0 ? "No tabs" : window.tabs.length === 1 ? "1 tab" : `${window.tabs.length} tabs`
                   }</p>
               </div>
-            
+
               <div className="flex flex-col space-y-4 mb-4 items-start">
 
                 <div className='w-full'>
@@ -130,7 +127,6 @@ export default function CardLayout(
                               ">
                               <img 
                                 src={tab.favIconUrl}
-                                alt=""
                                 className="w-full h-full object-contain" 
                                 onError={(e) => {
                                   e.currentTarget.onerror = null;

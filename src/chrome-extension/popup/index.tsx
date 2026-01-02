@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { ExtensionData, Theme } from "../../types";
 import { IconWindows } from "../../icons";
 import extensionImage192 from "../public/192.png";
-import "../global.css";
+import "../global.css"; 
 
  
 export const Popup = () => {
@@ -33,14 +33,15 @@ export const Popup = () => {
       setThemeIsSet(true)
 
       chrome.windows.getCurrent((currentWindow)=>{
-
+        
         for (let trackedWindow of Object.values(response.trackedWindows)) {
-          if (trackedWindow.windowId == currentWindow.id && trackedWindow.isOpen) {
+          if (trackedWindow.windowId === currentWindow.id && trackedWindow.isOpen) {
             setCurrentWindowTracked(true)
             setCurrentWindowName(trackedWindow.windowName)
             return null
           }
         }
+
         setCurrentWindowTracked(false)
         setCurrentWindowName("")
       })
@@ -48,17 +49,17 @@ export const Popup = () => {
   },[])
 
 
-  async function onTrackWindowButtonClicked() {
+  function onTrackWindowButtonClicked() {
 
+    if (currentWindowName === null) return
+    
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
 
       if (currentWindowTracked === false) {
-        //@ts-ignore
         if (currentWindowName.trim() === "") {
           setError("Name the window")
           return null
         }
-        //@ts-ignore
         if ( response.trackedWindowNames.includes(currentWindowName.trim()) === true) {
           setError("Window with the name already exists")
           return null
@@ -68,15 +69,28 @@ export const Popup = () => {
       setError("")
 
       chrome.windows.getCurrent((currentWindow)=>{
-        chrome.runtime.sendMessage({
 
-          signal: "trackOrUntrackButtonClicked",
-          trackWindow: !currentWindowTracked,
-          currentWindowId: currentWindow.id,
-          //@ts-ignore
-          windowName: currentWindowName.trim()
+        if (currentWindowTracked === false) {
 
-        }, (bool: boolean)=>{ setCurrentWindowTracked(bool)})
+          chrome.runtime.sendMessage({
+            signal: "trackWindowFromPopup",
+            currentWindowId: currentWindow.id,
+            windowName: currentWindowName.trim()
+          }, (windowTracked: boolean)=>{
+            setCurrentWindowTracked(windowTracked)
+          })
+        }
+        else {
+          
+          chrome.runtime.sendMessage({
+            signal: "untrackWindowFromPopup",
+            windowName: currentWindowName.trim()
+          }, (windowTracked: boolean)=>{
+            setCurrentWindowTracked(windowTracked)
+          })
+        }
+
+
 
       })
     })
@@ -102,9 +116,7 @@ export const Popup = () => {
 
 
 
-
-
-  if (themeIsSet === false || currentWindowTracked === null) {
+  if (themeIsSet === false || currentWindowTracked === null || currentWindowName === null) {
       return (
           <div className="bg-[rgb(95,95,95)] w-[350px] h-[325px] flex items-center justify-center">
               <p className="text-gray-400 text-lg flex font-extrabold">
@@ -116,7 +128,7 @@ export const Popup = () => {
 
   return (
 
-      <div className="h-auto w-[350px] flex flex-col bg-white dark:bg-gray-800">
+    <div className="h-auto w-[350px] flex flex-col bg-white dark:bg-gray-800">
 
 
       <header className="p-5 bg-indigo-50 dark:bg-gray-800 border-b-2 border-gray-300 dark:border-gray-700 shadow-md">
@@ -255,6 +267,6 @@ export const Popup = () => {
 
 
 
-      </div>
+    </div>
   );
 };

@@ -26,7 +26,6 @@ const Options = () => {
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
   
   const [searchQuery, setSearchQuery] = useState<string>('')
-
   const [isDragging, setIsDragging] = useState(false)
 
 
@@ -72,14 +71,13 @@ const Options = () => {
 
 
   function onChangeThemeButtonClicked() {
-    // setTheme(newTheme)
     chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=>{
       setTheme(newTheme)
     })
   }
 
+
   function onChangeLayoutButtonClicked() {
-    // setLayout(layout === 'card' ? 'table' : 'card')
     chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout)=>{
       setLayout(newLayout)
     })
@@ -150,18 +148,13 @@ const Options = () => {
   
   
   function onChangeSortButtonClicked(newSort: OptionsPageSort) {
-    // setCurrentSort(newSort)
     chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort)=>{
       setCurrentSort(updatedSort)
     })
   }
 
-
-
-
-
   function onUntrackWindowButtonClicked(windowName : string) {
-    chrome.runtime.sendMessage({signal: "untrackWindowFromOptionsPage", windowName: windowName})
+    chrome.runtime.sendMessage({signal: "untrackWindowFromOptions", windowName: windowName})
   }
 
   function onOpenSavedWindowButtonClicked(windowName: string) {
@@ -255,6 +248,7 @@ const Options = () => {
 
 
   if (theme === null || layout === null ||  currentSort === null) {
+    
   return (
       <div className="min-h-screen w-full bg-[rgb(95,95,95)] flex flex-col items-center justify-center">
         <div className="relative">
