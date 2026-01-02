@@ -1,83 +1,11 @@
-import {ExtensionData, OptionsPageLayout, OptionsPageSort, Theme, TrackedWindow, Tab} from "./types"
-// @ts-ignore
 import { debounce, saveExtensionData } from "./data-manager"
+import {ExtensionData, OptionsPageLayout, OptionsPageSort, Theme, TrackedWindow, Tab} from "./types"
 
-const savedUrls = [
-  // Search & Browsers
-  "https://google.com",
-  "https://bing.com",
-  "https://duckduckgo.com",
-  "https://yahoo.com",
-  "https://baidu.com",
-
-  // Social & Media
-  "https://twitter.com",
-  "https://facebook.com",
-  "https://instagram.com",
-  "https://reddit.com",
-  "https://tiktok.com",
-
-  // News & Info
-  "https://cnn.com",
-  "https://bbc.com",
-  "https://nytimes.com",
-  "https://theguardian.com",
-  "https://reuters.com",
-
-  // Tech & Dev
-  "https://github.com",
-  "https://gitlab.com",
-  "https://stackoverflow.com",
-  "https://developer.chrome.com",
-  "https://codepen.io",
-
-  // Learning
-  "https://w3schools.com",
-  "https://freecodecamp.org",
-  "https://coursera.org",
-  "https://udemy.com",
-  "https://khanacademy.org",
-
-  // AI & Research
-  "https://openai.com",
-  "https://huggingface.co",
-  "https://deepmind.com",
-  "https://arxiv.org",
-  "https://paperswithcode.com",
-
-  // Entertainment
-  "https://youtube.com",
-  "https://netflix.com",
-  "https://spotify.com",
-  "https://twitch.tv",
-  "https://disneyplus.com",
-
-  // Shopping & Tools
-  "https://amazon.com",
-  "https://ebay.com",
-  "https://walmart.com",
-  "https://bestbuy.com",
-  "https://etsy.com",
-
-  // Productivity
-  "https://notion.so",
-  "https://slack.com",
-  "https://discord.com",
-  "https://zoom.us",
-  "https://trello.com",
-
-  // Tech News & Blogs
-  "https://techcrunch.com",
-  "https://wired.com",
-  "https://arstechnica.com",
-  "https://thenextweb.com",
-  "https://news.ycombinator.com"
-]
 
 
 
 let extensionData: ExtensionData | null = null
-const debounceSaveData = debounce(saveExtensionData, 25000)
+const debounceSaveData = debounce(saveExtensionData, 15000)
 
 
 function checkIfDataExistAndRunFunction(forward: any, ...args: any) {
@@ -109,32 +37,19 @@ chrome.runtime.onInstalled.addListener((details) => {
          optionsPageSort: OptionsPageSort.nameAsc,
          optionsPageLayout: OptionsPageLayout.card
       }
-      chrome.action.setBadgeTextColor({color: "white"})
-      chrome.action.setBadgeBackgroundColor({ color: "#3CB371" })
-      chrome.storage.local.set({ extensionData: structuredClone(initialExtensionData)})
-   }
-   else if (details.reason === "update") {
-
-      const initialExtensionData: ExtensionData = {
-         trackedWindows: {},
-         trackedWindowNames: [],
-         trackedWindowIds: [],
-         theme: Theme.light,
-         optionsPageSort: OptionsPageSort.nameAsc,
-         optionsPageLayout: OptionsPageLayout.card
-      }
+      
+      extensionData = initialExtensionData
 
       chrome.action.setBadgeTextColor({color: "white"})
       chrome.action.setBadgeBackgroundColor({color: "green"})
       chrome.storage.local.set({ extensionData: structuredClone(initialExtensionData)})
+   }
+   else if (details.reason === "update") {
 
-
-      // chrome.storage.local.get("extensionData", (result) => {
-      //    extensionData = result.extensionData
-      //    chrome.action.setBadgeTextColor({color: "white"})
-      //    chrome.action.setBadgeBackgroundColor({ color: "green" })
-      //    chrome.storage.local.set({ extensionData: structuredClone(extensionData)})
-      // })
+      chrome.storage.local.get("extensionData", (result) => {
+         extensionData = result.extensionData
+         chrome.storage.local.set({ extensionData: structuredClone(extensionData)})
+      })
    }
 })
 
@@ -210,23 +125,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse)=>{
       }
 
 
-      else if (message.signal === "customOptionsPageSort") {
-         
-         const customOrderArray: TrackedWindow[] = message.customOrderArrayOfTrackedWindows
-         
-         const fromData = customOrderArray[message.fromIndex]
-         const toData = customOrderArray[message.toIndex]
-         customOrderArray[message.fromIndex] = toData
-         customOrderArray[message.toIndex] = fromData
 
-         for (let i = 0; i < customOrderArray.length; i++) {
-            extensionData.trackedWindows[customOrderArray[i].windowName].order = i
-         }
-
-         saveExtensionData(extensionData)
-         updateOptionsPage()
-         return false
-      }
    }
 })
 
@@ -238,17 +137,14 @@ function handleWindowTrack(currentWindowId: number, windowName: string, sendResp
 
          if (!extensionData) return null
 
-
          const usefulTabsData: Tab[] = allTabs.map((ele: any)=>{
             return {
                "id": ele.id,
-               "active": ele.active,
                "pinned": ele.pinned,
                "groupId": ele.groupId,
                "url": ele.url,
                "favIconUrl": ele.favIconUrl,
                "title": ele.title,
-               // "active": false
             }
          })
 
@@ -260,7 +156,8 @@ function handleWindowTrack(currentWindowId: number, windowName: string, sendResp
             "tabs": usefulTabsData,
             "groupedTabsInfo": tabsGroupInfo,
             "dateAdded": Date.now(),
-            "order": -1
+            "order": -1,
+            "activeTabId": allTabs.find((tab: any) => tab.active === true)?.id ?? allTabs[0]?.id ?? -1
          }
          
 
@@ -328,7 +225,6 @@ chrome.tabs.onCreated.addListener((tab) => {
 
       const newTab: Tab = {
          "id": tab.id,
-         "active": tab.active,
          "pinned": tab.pinned,
          "groupId": tab.groupId,
          "url": tab.url || tab.pendingUrl || "",
@@ -443,7 +339,6 @@ chrome.tabs.onAttached.addListener((tabId, attachInfo) => {
 
          const tabToAttach: Tab = {
             "id": attachedTab.id,
-            "active": attachedTab.active,
             "pinned": attachedTab.pinned,
             "groupId": attachedTab.groupId,
             "url": attachedTab.url || "",
@@ -485,11 +380,22 @@ chrome.tabs.onDetached.addListener((tabId, detachInfo) => {
 
 
 
-// chrome.tabs.onActivated.addListener((activeInfo) => {
-//   // Fired when the active tab in a window changes
-//   console.log(4)
+chrome.tabs.onActivated.addListener((activeInfo) => {
 
-// });
+   checkIfDataExistAndRunFunction(onActivated, activeInfo)
+
+
+   function onActivated(activeInfo: any) {
+      if (!extensionData) return
+      if (!extensionData.trackedWindowIds.includes(activeInfo.windowId)) return
+
+      const trackedWindow: TrackedWindow | null = getTrackedWindowByWindowId(activeInfo.windowId)
+      if (!trackedWindow) return
+
+      trackedWindow.activeTabId = activeInfo.tabId
+      debounceSaveData(extensionData)
+   }
+})
 
 
 
@@ -508,7 +414,7 @@ chrome.windows.onRemoved.addListener((windowId: number) => {
          if (trackedWindow.isOpen && trackedWindow.windowId === windowId) {
    
             trackedWindow.isOpen = false
-            extensionData.trackedWindowIds.filter(ele => ele !== windowId)
+            extensionData.trackedWindowIds = extensionData.trackedWindowIds.filter(ele => ele !== windowId)
    
             saveExtensionData(extensionData)
             updateOptionsPage()
@@ -558,7 +464,7 @@ function updateOptionsPage() {
 
 function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
 
-   chrome.windows.create({url: trackedWindowToOpen.tabs.map(ele => ele.url)}, async (createdWindow: any)=>{
+   chrome.windows.create({url: trackedWindowToOpen.tabs.map(ele => ele.url), focused: true}, async (createdWindow: any)=>{
       
       if (!extensionData) return
 
@@ -566,60 +472,69 @@ function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow) {
       extensionData.trackedWindowIds.push(createdWindow.id)
       extensionData.trackedWindows[trackedWindowToOpen.windowName].isOpen = true
 
+
       const allTabs = await chrome.tabs.query({windowId: createdWindow.id})
 
-      setTimeout(async () => {
-         
-         let groupedTabsId: [][] = []
-         let groupIndex = -1
-         let lastGroupId = -1
-         
-         trackedWindowToOpen.tabs.forEach((ele, index) => {
+      const activeTabIndex = trackedWindowToOpen.tabs.findIndex(((t:any) => t.id === trackedWindowToOpen.activeTabId))
 
-            if (ele.groupId === -1) return null
+      if (activeTabIndex >= 0 && activeTabIndex < allTabs.length) {
 
-            if (ele.groupId !== lastGroupId) {
-               groupIndex++
-               groupedTabsId[groupIndex] = []
-            }
+         const tabId = allTabs[activeTabIndex].id
+         extensionData.trackedWindows[trackedWindowToOpen.windowName].activeTabId = tabId!
+         if (tabId) chrome.tabs.update(tabId, {active: true})
 
-            groupedTabsId[groupIndex].push(allTabs[index].id)
-            lastGroupId = ele.groupId
-         })
+      }
 
 
-         for (let i = 0; i < groupedTabsId.length; i++) {
-            const newGroupId = await chrome.tabs.group({tabIds: groupedTabsId[i]})
+      let groupedTabsId: any[][] = []
+      let groupIndex = -1
+      let lastGroupId = -1
+      
+      trackedWindowToOpen.tabs.forEach((ele, index) => {
 
-            await chrome.tabGroups.update(newGroupId, {
-               title: trackedWindowToOpen.groupedTabsInfo[i].title,
-               color: trackedWindowToOpen.groupedTabsInfo[i].color,
-               collapsed: trackedWindowToOpen.groupedTabsInfo[i].collapsed
-            })
+         if (ele.groupId === -1) return null
+
+         if (ele.groupId !== lastGroupId) {
+            groupIndex++
+            groupedTabsId[groupIndex] = []
          }
-         
-         const tabGroupedInfo = await chrome.tabGroups.query({windowId: createdWindow.id})
-         const usefulTabsData = allTabs.map((ele, index)=>{
-            return {
-               "id": ele.id,
-               "active": ele.active,
-               "pinned": trackedWindowToOpen.tabs[index].pinned,
-               "groupId": ele.groupId,
-               "url": ele.url === "" ? ele.pendingUrl : ele.url,
-               "favIconUrl": ele.favIconUrl === undefined ? trackedWindowToOpen.tabs[index].favIconUrl : ele.favIconUrl,
-               "title": ele.title === "" ? trackedWindowToOpen.tabs[index].title : ele.title
-            }
+
+         groupedTabsId[groupIndex].push(allTabs[index].id)
+         lastGroupId = ele.groupId
+      })
+
+
+      for (let i = 0; i < groupedTabsId.length; i++) {
+         const newGroupId = await chrome.tabs.group({tabIds: groupedTabsId[i]})
+
+         await chrome.tabGroups.update(newGroupId, {
+            title: trackedWindowToOpen.groupedTabsInfo[i].title,
+            color: trackedWindowToOpen.groupedTabsInfo[i].color,
+            collapsed: trackedWindowToOpen.groupedTabsInfo[i].collapsed
          })
+      }
+      
+      const tabGroupedInfo = await chrome.tabGroups.query({windowId: createdWindow.id})
 
-         extensionData.trackedWindows[trackedWindowToOpen.windowName].tabs = usefulTabsData
-         extensionData.trackedWindows[trackedWindowToOpen.windowName].groupedTabsInfo = tabGroupedInfo
+      // @ts-ignore
+      const usefulTabsData: Tab[] = allTabs.map((ele, index)=>{
+         return {
+            "id": ele.id!,
+            "pinned": trackedWindowToOpen.tabs[index].pinned,
+            "groupId": ele.groupId,
+            "url": ele.url === "" ? ele.pendingUrl : ele.url,
+            "favIconUrl": ele.favIconUrl === undefined ? trackedWindowToOpen.tabs[index].favIconUrl : ele.favIconUrl,
+            "title": ele.title === "" ? trackedWindowToOpen.tabs[index].title : ele.title
+         }
+      })
 
-         saveExtensionData(extensionData)
-         updateOptionsPage()
-         handleShowingOfExtensionBadge(createdWindow.id)
-      }, 0)
 
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].tabs = usefulTabsData
+      extensionData.trackedWindows[trackedWindowToOpen.windowName].groupedTabsInfo = tabGroupedInfo
+
+      saveExtensionData(extensionData)
+      handleShowingOfExtensionBadge(createdWindow.id)
+      updateOptionsPage()
    })
 }
-
 

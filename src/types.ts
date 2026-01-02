@@ -23,13 +23,13 @@ export interface TrackedWindow {
   tabs: Tab[]
   groupedTabsInfo: any
   dateAdded: number
-  order: number
+  order: number,
+  activeTabId: number
 }
 
 
 export interface Tab {
   "id": number,
-  "active": boolean,
   "pinned": boolean,
   "groupId": number,
   "url": string,
