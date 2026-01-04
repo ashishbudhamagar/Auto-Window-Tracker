@@ -19,6 +19,8 @@ export const Popup = () => {
 
   useEffect(()=>{
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData) =>{
+      console.log("extension data", response)
+
       if (response.theme === Theme.dark) {
         if (!document.documentElement.classList.contains(Theme.dark)) {
           document.documentElement.classList.add(Theme.dark)
@@ -35,10 +37,11 @@ export const Popup = () => {
       chrome.windows.getCurrent((currentWindow)=>{
         
         for (let trackedWindow of Object.values(response.trackedWindows)) {
+
           if (trackedWindow.windowId === currentWindow.id && trackedWindow.isOpen) {
             setCurrentWindowTracked(true)
             setCurrentWindowName(trackedWindow.windowName)
-            return null
+            return null // exist the function
           }
         }
 
@@ -47,6 +50,15 @@ export const Popup = () => {
       })
     })
   },[])
+
+
+  useEffect(() => {
+    return () => {
+      if (tooltipRef.current) {
+        clearTimeout(tooltipRef.current);
+      }
+    };
+  }, []);
 
 
   function onTrackWindowButtonClicked() {
@@ -60,9 +72,12 @@ export const Popup = () => {
           setError("Name the window")
           return null
         }
-        if ( response.trackedWindowNames.includes(currentWindowName.trim()) === true) {
-          setError("Window with the name already exists")
-          return null
+
+        for (let trackedWindow of Object.values(response.trackedWindows)) {
+          if (trackedWindow.windowName === currentWindowName.trim()) {
+            setError("Window with the name already exists")
+            return null
+          }
         }
       }
 
@@ -73,7 +88,7 @@ export const Popup = () => {
         if (currentWindowTracked === false) {
 
           chrome.runtime.sendMessage({
-            signal: "trackWindowFromPopup",
+            signal: "trackWindow",
             currentWindowId: currentWindow.id,
             windowName: currentWindowName.trim()
           }, (windowTracked: boolean)=>{
@@ -196,7 +211,10 @@ export const Popup = () => {
               placeholder={currentWindowTracked ? "Window already tracked" : "Enter a name for this window..."}
               disabled={currentWindowTracked}
               value={currentWindowName ? currentWindowName : ""}
-              onChange={(e) => setCurrentWindowName(e.target.value)}
+              onChange={(e) => {
+                setCurrentWindowName(e.target.value)
+                if (error) setError(null)
+              }}
               />
           </div>
           

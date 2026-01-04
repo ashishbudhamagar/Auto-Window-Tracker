@@ -1,4 +1,8 @@
-export function saveExtensionData(dataToSave) {
+import {ExtensionData} from "./types"
+
+
+
+export function saveExtensionData(dataToSave: ExtensionData) {
 
     chrome.storage.local.set({extensionData: dataToSave}, ()=>{
         if (chrome.runtime.lastError) {
@@ -7,9 +11,7 @@ export function saveExtensionData(dataToSave) {
         else {
             // console.log("=========== DataSavedToLocal ===========")
             // console.log("=========== DataSavedToLocal ===========")
-            // console.log("=========== DataSavedToLocal ===========")
             // console.log(dataToSave.trackedWindows)
-            // console.log("=========== DataSavedToLocal ===========")
             // console.log("=========== DataSavedToLocal ===========")
             // console.log("=========== DataSavedToLocal ===========")
         }
@@ -17,10 +19,11 @@ export function saveExtensionData(dataToSave) {
 }
 
 
-export function debounce(callback, delay) { 
-    let timeout = null
 
-    return (...args)=>{
+export function debounce(callback: any, delay: number) { 
+    let timeout: any  = null
+
+    return (...args: any)=>{
 
         clearTimeout(timeout)   
         timeout = setTimeout(()=>{

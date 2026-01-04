@@ -7,13 +7,16 @@ import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLay
 import CardLayout from "./CardLayout";
 import TableLayout from "./TableLayout";
 
+document.documentElement.style.zoom = "85%"
+
 
 const Options = () => {
 
   const sortingOptions: OptionsPageSort[] = [
     OptionsPageSort.nameAsc, OptionsPageSort.nameDes,
     OptionsPageSort.statusOpen, OptionsPageSort.statusSaved,
-    OptionsPageSort.custom1, OptionsPageSort.custom2, OptionsPageSort.custom3
+    OptionsPageSort.dateAsc, OptionsPageSort.dateDec,
+    OptionsPageSort.draggable1, OptionsPageSort.draggable2, OptionsPageSort.draggable3
   ]
 
   const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null);
@@ -41,13 +44,18 @@ const Options = () => {
       setLayout(response.optionsPageLayout)
     })
 
-    chrome.runtime.onMessage.addListener((message) => {
-      
-      if (message.signal !== "updateOptions") return
+    
+    chrome.runtime.onMessage.addListener(listenerToUpdateOptionsPage)
 
+    function listenerToUpdateOptionsPage(message:any) {
+      if (message.signal !== "updateOptions") return
       const trackedWindowValues: TrackedWindow[] = Object.values(message.extensionData.trackedWindows)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
-    })
+    }
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(listenerToUpdateOptionsPage)
+    }
   },[])
 
 
@@ -104,36 +112,74 @@ const Options = () => {
   function applyOptionsPageSort() {
     if (!currentSort) return
 
-    const cloneOriginalData = structuredClone(originalArrayOfTrackedWindowValues)
-    let sorted = cloneOriginalData
-
+    const cloneOriginalDataOfTrackedWindows = structuredClone(originalArrayOfTrackedWindowValues)
+    let sorted = cloneOriginalDataOfTrackedWindows
+    
     switch (currentSort) {
+
       case OptionsPageSort.nameAsc:
-        sorted = cloneOriginalData.sort((a,b)=> a.windowName.localeCompare(b.windowName))
+        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> a.windowName.localeCompare(b.windowName))
         break
       case OptionsPageSort.nameDes:
-        sorted = cloneOriginalData.sort((a,b)=> b.windowName.localeCompare(a.windowName))
+        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> b.windowName.localeCompare(a.windowName))
         break
+
       case OptionsPageSort.statusOpen:
-        sorted = cloneOriginalData.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0))
+        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0))
         break
       case OptionsPageSort.statusSaved:
-        sorted = cloneOriginalData.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0))
+        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0))
         break
 
-      case OptionsPageSort.custom1:
-      case OptionsPageSort.custom2:
-      case OptionsPageSort.custom3:
+      case OptionsPageSort.dateAsc:
+        sorted = sorted.sort((a,b) => b.dateAdded - a.dateAdded)
+        break
+            case OptionsPageSort.dateDec:
+        sorted = sorted.sort((a,b) => a.dateAdded - b.dateAdded)
+        break
 
-        if (cloneOriginalData.every(ele => ele.order === -1)) {
-          sorted = cloneOriginalData.sort((a,b) => a.dateAdded - b.dateAdded)
-          break
+      case OptionsPageSort.draggable1:
+      case OptionsPageSort.draggable2:
+      case OptionsPageSort.draggable3:
+
+
+        if (currentSort === OptionsPageSort.draggable1) {
+
+          if (cloneOriginalDataOfTrackedWindows.every(trackedWindow => trackedWindow.draggableOrder1 === -1)) {
+            sorted = cloneOriginalDataOfTrackedWindows.sort((a,b) => a.dateAdded - b.dateAdded)
+            break
+          }
+
+          const allWithOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder1 !== -1)
+          const allWithNoOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder1 === -1)
+          sorted = [...allWithOrder.sort((a,b) => a.draggableOrder1 - b.draggableOrder1), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
+
         }
+        else if (currentSort === OptionsPageSort.draggable2) {
+          
+          if (cloneOriginalDataOfTrackedWindows.every(trackedWindow => trackedWindow.draggableOrder2 === -1)) {
+            sorted = cloneOriginalDataOfTrackedWindows.sort((a,b) => a.dateAdded - b.dateAdded)
+            break
+          }
 
-        const allWithOrder = cloneOriginalData.filter(ele => ele.order !== -1)
-        const allWithNoOrder = cloneOriginalData.filter(ele => ele.order === -1)
 
-        sorted = [...allWithOrder.sort((a,b) => a.order - b.order), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
+          const allWithOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder2 !== -1)
+          const allWithNoOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder2 === -1)
+          sorted = [...allWithOrder.sort((a,b) => a.draggableOrder2 - b.draggableOrder2), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
+          
+        }
+        else if (currentSort === OptionsPageSort.draggable3) {
+
+          if (cloneOriginalDataOfTrackedWindows.every(trackedWindow => trackedWindow.draggableOrder3 === -1)) {
+            sorted = cloneOriginalDataOfTrackedWindows.sort((a,b) => a.dateAdded - b.dateAdded)
+            break
+          }
+
+          const allWithOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder3 !== -1)
+          const allWithNoOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder3 === -1)
+          sorted = [...allWithOrder.sort((a,b) => a.draggableOrder3 - b.draggableOrder3), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
+        }
+        
         break
       default:
         break
@@ -175,7 +221,7 @@ const Options = () => {
 
 
   function determinIfDraggable() {
-    if (currentSort === OptionsPageSort.custom1 || currentSort === OptionsPageSort.custom2 || currentSort === OptionsPageSort.custom3) {
+    if (currentSort === OptionsPageSort.draggable1 || currentSort === OptionsPageSort.draggable2 || currentSort === OptionsPageSort.draggable3) {
       return searchQuery === "" ? true : false
     }
     return false
@@ -188,21 +234,21 @@ const Options = () => {
     if (fromIndex < 0 || toIndex < 0 || fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
 
     chrome.runtime.sendMessage({
-      signal: "customOptionsPageSort",
-      customOrderArrayOfTrackedWindows: arrayOfTrackedWindowValues,
+      signal: "handleDraggableOptionsPageSort",
+      arrayOfTrackedWindowValues: arrayOfTrackedWindowValues,
       fromIndex: fromIndex,
       toIndex: toIndex
     })
   }
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+  function handleDragStart(e: React.DragEvent<HTMLDivElement>, index: number) {
     setIsDragging(true)
     e.currentTarget.setAttribute("data-card-index", String(index))
     e.dataTransfer.setData("cardIndex", String(index))
     e.currentTarget.style.opacity = "0"
   }
 
-  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+  function handleDragEnd(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault()
     setIsDragging(false)
     e.currentTarget.removeAttribute("data-card-index")
@@ -210,26 +256,26 @@ const Options = () => {
     e.currentTarget.style.opacity = "1"
   }
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>, index: number) {
     e.preventDefault()
     if (e.currentTarget.getAttribute("data-card-index") === String(index)) return
 
     const element = e.currentTarget
     setTimeout(() => {
       element.style.transform = "scale(0.90)"
-    }, 60)
+    }, 100)
   }
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault()
 
     const element = e.currentTarget
     setTimeout(() => {
       element.style.removeProperty("transform")
-    }, 60)
+    }, 100)
   }
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+  function handleDrop(e: React.DragEvent<HTMLDivElement>, index: number) {
     e.preventDefault()
 
     const element = e.currentTarget
@@ -266,7 +312,6 @@ const Options = () => {
       </div>
     )
   }
-  document.documentElement.style.zoom = "85%"
 
 
 
