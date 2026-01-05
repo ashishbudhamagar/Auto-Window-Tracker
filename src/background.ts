@@ -112,8 +112,9 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             
             if (!extensionData) return null
             
-            const allTabs: chrome.tabs.Tab[] = await chrome.tabs.query({windowId: currentWindowId})
-            const tabsGroupInfo: any[] = await chrome.tabGroups.query({windowId: currentWindowId})
+            const allTabs = await chrome.tabs.query({windowId: currentWindowId})
+            const tabsGroupInfo = await chrome.tabGroups.query({windowId: currentWindowId})
+            
             
             const usefulTabsData: Tab[] = allTabs.map((tab: any)=>{
                return {
@@ -240,19 +241,20 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                }
             }
             
-            console.log(1, groupedTabsId)
             
-            
+
             for (let i = 0; i < groupedTabsId.length; i++) {
                
                const newGroupId = await chrome.tabs.group({tabIds: groupedTabsId[i]})
-               const groupedTabsInfo = trackedWindowToOpen.groupedTabsInfo[i]
+               const groupedTab = trackedWindowToOpen.groupedTabsInfo[i]
                
-               await chrome.tabGroups.update(newGroupId, {
-                  title: groupedTabsInfo.title,
-                  color: groupedTabsInfo.color,
-                  collapsed: groupedTabsInfo.collapsed
-               })
+               if (groupedTab) {
+                  await chrome.tabGroups.update(newGroupId, {
+                     title: groupedTab.title,
+                     color: groupedTab.color,
+                     collapsed: groupedTab.collapsed
+                  })
+               }
             }
             
             
@@ -264,7 +266,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                   "id": tab.id!,
                   "title": tab.title || trackedWindowToOpen.tabs[index].title || "Loading...",
                   "url": (tab.url || tab.pendingUrl) || trackedWindowToOpen.tabs[index].url,
-                  "favIconUrl": tab?.favIconUrl ?? trackedWindowToOpen.tabs[index]?.favIconUrl,
+                  "favIconUrl": tab.favIconUrl ?? trackedWindowToOpen.tabs[index].favIconUrl ?? null,
                   "groupId": tab.groupId,
                   "pinned": trackedWindowToOpen.tabs[index].pinned,
                   "muted": tab.mutedInfo?.muted ?? false
@@ -482,8 +484,8 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
          if ("mutedInfo" in updateInfo) {
             updateTab.muted = updateInfo.mutedInfo!.muted!
          }
-
-
+         
+         
          if ("groupId" in updateInfo) {
             
             if (updateInfo.groupId === -1) {
@@ -596,35 +598,85 @@ chrome.tabs.onAttached.addListener(async (tabId, attachInfo) => {
 
 
 chrome.tabs.onDetached.addListener(async (tabId, detachInfo) => {
-
+   
    await waitForExtensionDataToBeSet()
-
-
+   
+   
    if (!extensionData) return
    if (!extensionData.openedTrackedWindowIds.includes(detachInfo.oldWindowId)) return
-
+   
    const trackedWindow = getTrackedWindowByWindowId(detachInfo.oldWindowId)
    if (!trackedWindow) return
-
+   
    trackedWindow.tabs = trackedWindow.tabs.filter(t => t.id !== tabId)
-
+   
    debounceSaveExtensionData(extensionData)
    updateOptionsPage()
 })
 
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
-
+   
    await waitForExtensionDataToBeSet()
-
-
+   
+   
    if (!extensionData) return
    if (!extensionData.openedTrackedWindowIds.includes(activeInfo.windowId)) return
-
+   
    const trackedWindow: TrackedWindow | null = getTrackedWindowByWindowId(activeInfo.windowId)
    if (!trackedWindow) return
-
+   
    trackedWindow.activeTabId = activeInfo.tabId
    debounceSaveExtensionData(extensionData)
+})
+
+
+
+chrome.tabGroups.onUpdated.addListener(async (group) => {
+   
+   await waitForExtensionDataToBeSet()
+   
+   if (!extensionData) return
+   if (!extensionData.openedTrackedWindowIds.includes(group.windowId)) return
+   
+   const trackedWindow = getTrackedWindowByWindowId(group.windowId)
+   if (!trackedWindow) return
+
+   const replaceIndex = trackedWindow.groupedTabsInfo.findIndex((ele) => ele.id === group.id)
+
+   if (replaceIndex === -1) {
+      trackedWindow.groupedTabsInfo.push(group)
+   }
+   else {
+      trackedWindow.groupedTabsInfo[replaceIndex] = group
+   }
+   
+   debounceSaveExtensionData(extensionData)
+   updateOptionsPage()
+})
+
+
+
+chrome.tabGroups.onRemoved.addListener(async (group) => {
+   
+   await waitForExtensionDataToBeSet()
+   
+   if (!extensionData) return
+   if (!extensionData.openedTrackedWindowIds.includes(group.windowId)) return
+   
+   const trackedWindow = getTrackedWindowByWindowId(group.windowId)
+   if (!trackedWindow) return
+
+   try {
+      await chrome.windows.get(group.windowId)
+   } catch (error) {
+      // error means the window is closing
+      return
+   }
+
+   trackedWindow.groupedTabsInfo = trackedWindow.groupedTabsInfo.filter(groupedTab => groupedTab.id !== group.id)
+
+   debounceSaveExtensionData(extensionData)
+   updateOptionsPage()
 })
 

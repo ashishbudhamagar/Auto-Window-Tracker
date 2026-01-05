@@ -1,11 +1,11 @@
 
 export interface ExtensionData {
-
+  
   trackedWindows: Record<string, TrackedWindow>
   optionsPageLayout: OptionsPageLayout
   optionsPageSort: OptionsPageSort
   theme: Theme
-
+  
   // this property exists so I dont have to use Object.values(obj).windowId everytime 
   // I need a list of tracked window ids (better preformance)
   // Also this keeps ids of open windows only
@@ -18,7 +18,7 @@ export interface TrackedWindow {
   color: string
   isOpen: boolean
   tabs: Tab[]
-  groupedTabsInfo: any
+  groupedTabsInfo: any[]
   dateAdded: number
   activeTabId: number
   draggableOrder1: number,
@@ -48,7 +48,7 @@ export enum OptionsPageSort {
   draggable1 = "Draggable: Layout 1",
   draggable2 = "Draggable: Layout 2",
   draggable3 = "Draggable: Layout 3",
-
+  
 }
 
 export enum OptionsPageLayout {
@@ -60,3 +60,13 @@ export enum Theme {
   light = "light",
   dark = "dark"
 }
+
+
+// export interface GroupedTabs {
+//   "id": number,
+//   "title": string,
+//   "color": string,
+//   "collapsed": boolean,
+//   "windowId": number,
+//   "shared": boolean
+// }
