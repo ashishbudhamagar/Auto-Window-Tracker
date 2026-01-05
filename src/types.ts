@@ -34,7 +34,7 @@ export interface Tab {
   "favIconUrl": string | null,
   "groupId": number,
   "pinned": boolean,
-  "muted": boolean | null
+  "muted": boolean
 }
 
 
