@@ -34,6 +34,7 @@ const Options = () => {
 
   useEffect(()=>{
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
+      if (!response) return
 
       const trackedWindowValues: TrackedWindow[] = Object.values(response.trackedWindows)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)

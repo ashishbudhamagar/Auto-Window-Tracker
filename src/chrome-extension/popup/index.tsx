@@ -19,7 +19,7 @@ export const Popup = () => {
 
   useEffect(()=>{
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData) =>{
-      console.log("extension data", response)
+      if (!response) return
 
       if (response.theme === Theme.dark) {
         if (!document.documentElement.classList.contains(Theme.dark)) {
@@ -58,7 +58,7 @@ export const Popup = () => {
         clearTimeout(tooltipRef.current);
       }
     };
-  }, []);
+  }, [])
 
 
   function onTrackWindowButtonClicked() {
@@ -66,6 +66,8 @@ export const Popup = () => {
     if (currentWindowName === null) return
     
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
+      if (!response) return
+
 
       if (currentWindowTracked === false) {
         if (currentWindowName.trim() === "") {

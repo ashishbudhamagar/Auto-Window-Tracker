@@ -17,6 +17,7 @@ async function waitForExtensionDataToBeSet(): Promise<void> {
    extensionDataLoadingPromise = new Promise((resolve) => {
       chrome.storage.local.get("extensionData", (result) => {
          extensionData = result.extensionData
+         extensionDataLoadingPromise = null
          resolve()
       })
    })
@@ -51,7 +52,6 @@ chrome.runtime.onInstalled.addListener((details) => {
       
       chrome.storage.local.get("extensionData", (result) => {
          extensionData = result.extensionData
-         chrome.storage.local.set({ extensionData: structuredClone(extensionData)})
       })
       
       // const initialExtensionData: ExtensionData = {
@@ -114,6 +114,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             
             const allTabs = await chrome.tabs.query({windowId: currentWindowId})
             const tabsGroupInfo = await chrome.tabGroups.query({windowId: currentWindowId})
+
+            console.log("grouped tabs ", tabsGroupInfo)
+
+
             
             
             const usefulTabsData: Tab[] = allTabs.map((tab: any)=>{
@@ -174,8 +178,8 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             delete extensionData.trackedWindows[windowName]
             extensionData.openedTrackedWindowIds = extensionData.openedTrackedWindowIds.filter(ele=> ele !== removedTrackedWindowId)
             
-            saveExtensionData(extensionData)
             sendResponse(false)
+            saveExtensionData(extensionData)
             handleShowingOfExtensionBadge(removedTrackedWindowId)
             updateOptionsPage()
          }
@@ -183,7 +187,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
       
       
       else if (message.signal === "openSavedWindow") {
-         handleOpenSavedWindow(message.trackedWindowToOpen);
+         handleOpenSavedWindow(message.trackedWindowToOpen)
          return false
          
          
@@ -206,6 +210,8 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             let groupedTabsId: any[][] = []
             let groupIndex = -1
             let lastGroupId = -1
+
+            let orderedGroupedInfo = []
             
             
             // refused to use forEach as a regualr for loop is slightly quicker
@@ -216,15 +222,15 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                
                
                if (oldTab.pinned) {
-                  chrome.tabs.update(newTabId, {pinned: true})
+                  await chrome.tabs.update(newTabId, {pinned: true})
                }
                if (oldTab.muted) {
-                  chrome.tabs.update(newTabId, {muted: true})
+                  await chrome.tabs.update(newTabId, {muted: true})
                }
                if (oldTab.id === trackedWindowToOpen.activeTabId) {
                   const tabId = newTabId
                   extensionData.trackedWindows[trackedWindowToOpen.windowName].activeTabId = tabId
-                  chrome.tabs.update(tabId, {active: true})
+                  await chrome.tabs.update(tabId, {active: true})
                }
                
                
@@ -234,6 +240,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                   if (oldTab.groupId !== lastGroupId) {
                      groupIndex++
                      groupedTabsId[groupIndex] = []
+                     orderedGroupedInfo.push(trackedWindowToOpen.groupedTabsInfo.find(ele => ele.id === oldTab.groupId))
                   }
                   
                   groupedTabsId[groupIndex].push(newTabId)
@@ -246,13 +253,13 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             for (let i = 0; i < groupedTabsId.length; i++) {
                
                const newGroupId = await chrome.tabs.group({tabIds: groupedTabsId[i]})
-               const groupedTab = trackedWindowToOpen.groupedTabsInfo[i]
+               const groupedTabProperties = orderedGroupedInfo[i]
                
-               if (groupedTab) {
+               if (groupedTabProperties) {
                   await chrome.tabGroups.update(newGroupId, {
-                     title: groupedTab.title,
-                     color: groupedTab.color,
-                     collapsed: groupedTab.collapsed
+                     title: groupedTabProperties.title,
+                     color: groupedTabProperties.color,
+                     collapsed: groupedTabProperties.collapsed
                   })
                }
             }
@@ -260,16 +267,19 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             
             const newGroupedTabsInfo = await chrome.tabGroups.query({windowId: createdWindowId})
             const updatedTabs: chrome.tabs.Tab[] = await chrome.tabs.query({windowId: createdWindowId})
+
+
+
             
             const usefulTabsData: Tab[] = updatedTabs.map((tab, index)=>{
                return {
                   "id": tab.id!,
-                  "title": tab.title || trackedWindowToOpen.tabs[index].title || "Loading...",
+                  "title": trackedWindowToOpen.tabs[index].title || "Loading...",
                   "url": (tab.url || tab.pendingUrl) || trackedWindowToOpen.tabs[index].url,
                   "favIconUrl": tab.favIconUrl ?? trackedWindowToOpen.tabs[index].favIconUrl ?? null,
                   "groupId": tab.groupId,
                   "pinned": trackedWindowToOpen.tabs[index].pinned,
-                  "muted": tab.mutedInfo?.muted ?? false
+                  "muted": trackedWindowToOpen.tabs[index].muted ?? false
                }
             })
             
@@ -346,7 +356,12 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
 
 async function updateOptionsPage() {
    await waitForExtensionDataToBeSet()
-   chrome.runtime.sendMessage({ signal: "updateOptions", extensionData: extensionData })
+   
+   try {
+      chrome.runtime.sendMessage({ signal: "updateOptions", extensionData: extensionData })
+   } catch (error) {
+      // options page not open      
+   }
 }
 
 
@@ -436,13 +451,14 @@ chrome.tabs.onCreated.addListener(async (tab) => {
    const newTab: Tab = {
       "id": tab.id!,
       "title": tab.title || "Loading...",
-      "url": tab.pendingUrl!,
+      "url": (tab.pendingUrl || tab.url)!,
       "favIconUrl": tab.favIconUrl ?? null,
       "groupId": tab.groupId,
       "pinned": tab.pinned,
       "muted": tab.mutedInfo?.muted ?? false
    }
    
+
    trackedWindow.tabs.splice(tab.index, 0, newTab)
    
    debounceSaveExtensionData(extensionData)
@@ -679,4 +695,5 @@ chrome.tabGroups.onRemoved.addListener(async (group) => {
    debounceSaveExtensionData(extensionData)
    updateOptionsPage()
 })
+
 
