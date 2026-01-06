@@ -1,13 +1,14 @@
-import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow } from "../../types";
-import { useEffect, useState } from "react";
-import extensionImage192 from "../public/192.png";
-import "../global.css";
-import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLayout } from "../../icons";
+import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow, Tab } from "../../types"
+import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLayout } from "../../icons"
+import { useEffect, useState } from "react"
+import extensionImage192 from "../public/192.png"
+import "../global.css"
 
-import CardLayout from "./CardLayout";
-import TableLayout from "./TableLayout";
+import CardLayout from "./CardLayout"
+import TableLayout from "./TableLayout"
 
-document.documentElement.style.zoom = "85%"
+
+document.documentElement.style.zoom = "80%"
 
 
 const Options = () => {
@@ -19,22 +20,21 @@ const Options = () => {
     OptionsPageSort.draggable1, OptionsPageSort.draggable2, OptionsPageSort.draggable3
   ]
 
-  const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null);
+  const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null)
 
-  const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState<any[]>([]);
-  const [originalArrayOfTrackedWindowValues, setOriginalArrayOfTrackedWindowValues] = useState<any[]>([]);
+  const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState<TrackedWindow[]>([])
+  const [originalArrayOfTrackedWindowValues, setOriginalArrayOfTrackedWindowValues] = useState<TrackedWindow[]>([])
 
-  const [layout, setLayout] = useState<OptionsPageLayout | null>(null);
+  const [layout, setLayout] = useState<OptionsPageLayout | null>(null)
   const [theme, setTheme] = useState<Theme | null>(null)
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
   
-  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
 
 
-  useEffect(()=>{
-    chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
-      if (!response) return
+  useEffect(() => {
+    chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData) => {
 
       const trackedWindowValues: TrackedWindow[] = Object.values(response.trackedWindows)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
@@ -48,7 +48,7 @@ const Options = () => {
     
     chrome.runtime.onMessage.addListener(listenerToUpdateOptionsPage)
 
-    function listenerToUpdateOptionsPage(message:any) {
+    function listenerToUpdateOptionsPage(message: any) {
       if (message.signal !== "updateOptions") return
       const trackedWindowValues: TrackedWindow[] = Object.values(message.extensionData.trackedWindows)
       setOriginalArrayOfTrackedWindowValues(trackedWindowValues)
@@ -57,7 +57,7 @@ const Options = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(listenerToUpdateOptionsPage)
     }
-  },[])
+  }, [])
 
 
 
@@ -65,41 +65,38 @@ const Options = () => {
     if (!theme) return
 
     if (theme === Theme.dark) {
-      if (!document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.add('dark');
+      if (!document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.add("dark")
       }
-      document.documentElement.style.backgroundColor = "#111827";
+      document.documentElement.style.backgroundColor = "#111827"
     }
     else {
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
+      if (document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.remove("dark")
       }
-      document.documentElement.style.backgroundColor = "#f9fafb";
+      document.documentElement.style.backgroundColor = "#f9fafb"
     }
   }, [theme])
 
 
   function onChangeThemeButtonClicked() {
-    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme)=>{
+    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme) => {
       setTheme(newTheme)
     })
   }
 
 
   function onChangeLayoutButtonClicked() {
-    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout)=>{
+    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout) => {
       setLayout(newLayout)
     })
 
     setSpinLayoutIcon(true)
-    setTimeout(
-      ()=> setSpinLayoutIcon(false), 650
-    )
+    setTimeout(() => setSpinLayoutIcon(false), 600)
   }
 
 
   function onSearch(text: string) {
-
     setSearchQuery(text)
     const searched = text.trim()
 
@@ -107,80 +104,58 @@ const Options = () => {
       applyOptionsPageSort()
       return
     }
-    setArrayOfTrackedWindowValues(originalArrayOfTrackedWindowValues.filter(ele=> ele.windowName.toLowerCase().startsWith(searched.toLowerCase())))
+    setArrayOfTrackedWindowValues(
+      originalArrayOfTrackedWindowValues.filter(trackedWindow => trackedWindow.windowName.toLowerCase().startsWith(searched.toLowerCase()))
+    )
   }
 
+
+    
   function applyOptionsPageSort() {
+        
     if (!currentSort) return
 
-    const cloneOriginalDataOfTrackedWindows = structuredClone(originalArrayOfTrackedWindowValues)
-    let sorted = cloneOriginalDataOfTrackedWindows
+    const cloned = structuredClone(originalArrayOfTrackedWindowValues)
+    let sorted = cloned
     
     switch (currentSort) {
 
       case OptionsPageSort.nameAsc:
-        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> a.windowName.localeCompare(b.windowName))
+        sorted = cloned.sort((a, b) => a.windowName.localeCompare(b.windowName))
         break
       case OptionsPageSort.nameDes:
-        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> b.windowName.localeCompare(a.windowName))
+        sorted = cloned.sort((a, b) => b.windowName.localeCompare(a.windowName))
         break
 
       case OptionsPageSort.statusOpen:
-        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> (b.isOpen?1:0)-(a.isOpen?1:0))
+        sorted = cloned.sort((a, b) => (b.isOpen ? 1 : 0) - (a.isOpen ? 1 : 0))
         break
       case OptionsPageSort.statusSaved:
-        sorted = cloneOriginalDataOfTrackedWindows.sort((a,b)=> (a.isOpen?1:0)-(b.isOpen?1:0))
+        sorted = cloned.sort((a, b) => (a.isOpen ? 1 : 0) - (b.isOpen ? 1 : 0))
         break
 
       case OptionsPageSort.dateAsc:
-        sorted = sorted.sort((a,b) => b.dateAdded - a.dateAdded)
+        sorted = cloned.sort((a, b) => b.dateAdded - a.dateAdded)
         break
-            case OptionsPageSort.dateDec:
-        sorted = sorted.sort((a,b) => a.dateAdded - b.dateAdded)
+      case OptionsPageSort.dateDec:
+        sorted = cloned.sort((a, b) => a.dateAdded - b.dateAdded)
         break
 
       case OptionsPageSort.draggable1:
       case OptionsPageSort.draggable2:
       case OptionsPageSort.draggable3:
 
+        const orderKey = currentSort === OptionsPageSort.draggable1 ? "draggableOrder1" : currentSort === OptionsPageSort.draggable2 ? "draggableOrder2" : "draggableOrder3"
 
-        if (currentSort === OptionsPageSort.draggable1) {
-
-          if (cloneOriginalDataOfTrackedWindows.every(trackedWindow => trackedWindow.draggableOrder1 === -1)) {
-            sorted = cloneOriginalDataOfTrackedWindows.sort((a,b) => a.dateAdded - b.dateAdded)
-            break
-          }
-
-          const allWithOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder1 !== -1)
-          const allWithNoOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder1 === -1)
-          sorted = [...allWithOrder.sort((a,b) => a.draggableOrder1 - b.draggableOrder1), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
-
+        if (cloned.every(trackedWindow => trackedWindow[orderKey] === -1)) {
+          sorted = cloned.sort((a, b) => a.dateAdded - b.dateAdded)
+          break
         }
-        else if (currentSort === OptionsPageSort.draggable2) {
-          
-          if (cloneOriginalDataOfTrackedWindows.every(trackedWindow => trackedWindow.draggableOrder2 === -1)) {
-            sorted = cloneOriginalDataOfTrackedWindows.sort((a,b) => a.dateAdded - b.dateAdded)
-            break
-          }
 
+        const withOrder = cloned.filter(trackedWindow => trackedWindow[orderKey] !== -1)
+        const withoutOrder = cloned.filter(trackedWindow => trackedWindow[orderKey] === -1)
 
-          const allWithOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder2 !== -1)
-          const allWithNoOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder2 === -1)
-          sorted = [...allWithOrder.sort((a,b) => a.draggableOrder2 - b.draggableOrder2), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
-          
-        }
-        else if (currentSort === OptionsPageSort.draggable3) {
-
-          if (cloneOriginalDataOfTrackedWindows.every(trackedWindow => trackedWindow.draggableOrder3 === -1)) {
-            sorted = cloneOriginalDataOfTrackedWindows.sort((a,b) => a.dateAdded - b.dateAdded)
-            break
-          }
-
-          const allWithOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder3 !== -1)
-          const allWithNoOrder = cloneOriginalDataOfTrackedWindows.filter(trackedWindow => trackedWindow.draggableOrder3 === -1)
-          sorted = [...allWithOrder.sort((a,b) => a.draggableOrder3 - b.draggableOrder3), ...allWithNoOrder.sort((a,b) => a.dateAdded - b.dateAdded)]
-        }
-        
+        sorted = [...withOrder.sort((a, b) => a[orderKey] - b[orderKey]), ...withoutOrder.sort((a, b) => a.dateAdded - b.dateAdded)]
         break
       default:
         break
@@ -189,50 +164,48 @@ const Options = () => {
     setArrayOfTrackedWindowValues(sorted)
   }
 
-  useEffect(()=>{
+
+  useEffect(() => {
     applyOptionsPageSort()
   }, [currentSort, originalArrayOfTrackedWindowValues])
   
   
   function onChangeSortButtonClicked(newSort: OptionsPageSort) {
-    chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort)=>{
+    chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort) => {
       setCurrentSort(updatedSort)
     })
   }
 
-  function onUntrackWindowButtonClicked(windowName : string) {
+  function onUntrackWindowButtonClicked(windowName: string) {
     chrome.runtime.sendMessage({signal: "untrackWindowFromOptions", windowName: windowName})
   }
 
   function onOpenSavedWindowButtonClicked(windowName: string) {
-
-    let trackedWindowToOpen: TrackedWindow | null = null
-
-    for (let trackedWindow of originalArrayOfTrackedWindowValues) {
-      if (trackedWindow.windowName === windowName) {
-        trackedWindowToOpen = trackedWindow
-        break
-      }
-    }
-
+    const trackedWindowToOpen = originalArrayOfTrackedWindowValues.find(tw => tw.windowName === windowName)
     if (!trackedWindowToOpen) return
+    
     chrome.runtime.sendMessage({signal: "openSavedWindow", trackedWindowToOpen: trackedWindowToOpen})
   }
 
 
-
   function determinIfDraggable() {
-    if (currentSort === OptionsPageSort.draggable1 || currentSort === OptionsPageSort.draggable2 || currentSort === OptionsPageSort.draggable3) {
-      return searchQuery === "" ? true : false
+    const isDraggableSort = currentSort === OptionsPageSort.draggable1 || currentSort === OptionsPageSort.draggable2 || currentSort === OptionsPageSort.draggable3
+    return isDraggableSort && searchQuery === ""
+  }
+
+  function preventLinkClickIfChromeSpeicalLink(e:any, tab: Tab) {
+
+    if (tab.url.includes("chrome://")) {
+      e.preventDefault()
     }
-    return false
   }
 
 
   function handleDragAndDrop(fromIndex: number, toIndex: number) {
 
     if (fromIndex === toIndex) return
-    if (fromIndex < 0 || toIndex < 0 || fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
+    if (fromIndex < 0 || toIndex < 0) return
+    if (fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
 
     chrome.runtime.sendMessage({
       signal: "handleDraggableOptionsPageSort",
@@ -242,14 +215,14 @@ const Options = () => {
     })
   }
 
-  function handleDragStart(e: React.DragEvent<HTMLDivElement>, index: number) {
+  function handleDragStart(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
     setIsDragging(true)
     e.currentTarget.setAttribute("data-card-index", String(index))
     e.dataTransfer.setData("cardIndex", String(index))
     e.currentTarget.style.opacity = "0"
   }
 
-  function handleDragEnd(e: React.DragEvent<HTMLDivElement>) {
+  function handleDragEnd(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>) {
     e.preventDefault()
     setIsDragging(false)
     e.currentTarget.removeAttribute("data-card-index")
@@ -257,7 +230,7 @@ const Options = () => {
     e.currentTarget.style.opacity = "1"
   }
 
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>, index: number) {
+  function handleDragOver(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
     e.preventDefault()
     if (e.currentTarget.getAttribute("data-card-index") === String(index)) return
 
@@ -267,7 +240,7 @@ const Options = () => {
     }, 100)
   }
 
-  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>) {
     e.preventDefault()
 
     const element = e.currentTarget
@@ -276,7 +249,7 @@ const Options = () => {
     }, 100)
   }
 
-  function handleDrop(e: React.DragEvent<HTMLDivElement>, index: number) {
+  function handleDrop(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
     e.preventDefault()
 
     const element = e.currentTarget
@@ -287,16 +260,18 @@ const Options = () => {
     const from = Number(e.dataTransfer.getData("cardIndex"))
     e.currentTarget.removeAttribute("data-card-index")
     e.dataTransfer.clearData()
-    const to = index
 
-    handleDragAndDrop(from, to)
+    handleDragAndDrop(from, index)
   }
 
 
+  const activeWindowCount = arrayOfTrackedWindowValues.filter(trackedWindow => trackedWindow.isOpen).length
+  const savedWindowCount = arrayOfTrackedWindowValues.filter(trackedWindow => !trackedWindow.isOpen).length
+  const totalTrackedWindowCount = arrayOfTrackedWindowValues.length
 
-  if (theme === null || layout === null ||  currentSort === null) {
-    
-  return (
+
+  if (theme === null || layout === null || currentSort === null) {
+    return (
       <div className="min-h-screen w-full bg-[rgb(95,95,95)] flex flex-col items-center justify-center">
         <div className="relative">
           <IconBookmark className="h-12 w-12 text-blue-500 mb-4 relative z-10"/>
@@ -306,100 +281,120 @@ const Options = () => {
           <p className="text-gray-400/90 text-sm">Loading data...</p>
         </div>
         <div className="mt-6 flex space-x-1">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
         </div>
       </div>
     )
   }
 
 
-
   return (
-    <div className="h-full w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
+    <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-100 to-slate-50 
+    dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
-      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
-        <div className="flex justify-between py-6 items-center max-w-7xl mx-auto px-6 md:px-8">
-          <div className="flex items-center space-x-3 group">
-            <div className="relative p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-              <img src={extensionImage192} className="h-8 w-8 object-cover object-center scale-150"/>
+      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-50">
+        <div className="flex flex-col sm:flex-row justify-between py-4 sm:py-6 items-center max-w-7xl mx-auto px-5 gap-4">
 
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+          <div className="flex items-center space-x-3">
+            <div className="relative p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+              <img
+                src={extensionImage192} 
+                className="h-6 w-6 sm:h-8 sm:w-8 object-cover object-center scale-150"
+              />
             </div>
             <div>
-              <h1 className="font-bold text-2xl text-gray-900 dark:text-gray-100 tracking-tight">
+              <h1 className="font-bold text-xl sm:text-2xl text-gray-600 dark:text-gray-300 ">
                 Auto Window Tracker
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Manage your browser sessions</p>
+              <p className="hidden sm:block text-sm text-gray-500 dark:text-gray-400 font-medium">
+                Manage your browser sessions
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
 
-            <div className="flex items-center space-x-6 px-4 py-3 bg-gray-100 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl border border-white/20 dark:border-gray-700/30 shadow-sm">
+            <div className="flex items-center space-x-3 sm:space-x-6 px-3 sm:px-4 py-2 sm:py-3 
+            bg-gray-100 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl border border-white/20
+             dark:border-gray-700/30 shadow-sm">
 
-
-              <span className="flex items-center">
-                <span className="text-sm ml-1 text-green-500 dark:text-green-600 font-semibold">{arrayOfTrackedWindowValues.filter(ele => ele.isOpen).length} active</span>
+              <span className="text-xs sm:text-sm text-green-500 dark:text-green-600 font-semibold">
+                {activeWindowCount} active
               </span>
 
-              <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+              <span className="w-px h-4 sm:h-6 bg-gray-300 dark:bg-gray-600" />
 
-               <span className="flex items-center">
-                <span className="text-sm ml-1 text-blue-500 dark:text-blue-600 font-semibold">{arrayOfTrackedWindowValues.filter(ele => !ele.isOpen).length} saved</span>
+              <span className="text-xs sm:text-sm text-blue-500 dark:text-blue-600 font-semibold">
+                {savedWindowCount} saved
               </span>
 
-              <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
+              <span className="w-px h-4 sm:h-6 bg-gray-300 dark:bg-gray-600" />
 
-              <div className="flex items-center">
-                  <span className="text-sm ml-1 text-gray-500 dark:text-gray-400 font-semibold">{arrayOfTrackedWindowValues.length} {arrayOfTrackedWindowValues.length === 1 ? "window" : "windows"}</span>
-              </div>
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-semibold">
+                {totalTrackedWindowCount} {totalTrackedWindowCount === 1 ? "window" : "windows"}
+              </span>
 
             </div>
 
             <button 
-              className="group relative flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="relative flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 
+              rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 
+              dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30
+               shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               onClick={onChangeThemeButtonClicked}
             >
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              {theme === "light" ? 
-                <IconLightMode className="h-6 w-6 text-blue-600 relative z-10 transition-transform group-hover:rotate-180 duration-500"/> : 
-                <IconDarkMode className="h-6 w-6 text-blue-400 relative z-10 transition-transform group-hover:rotate-180 duration-500"/>
+              {theme === Theme.light 
+                ? <IconLightMode className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 transition-transform 
+                hover:rotate-180 duration-500"/> 
+                : <IconDarkMode className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400 transition-transform 
+                hover:rotate-180 duration-500"/>
               }
             </button>
+
           </div>
+
         </div>
       </header>
 
 
 
-      <main className="pt-12 pb-10 mx-auto px-6 sm:px-8 lg:px-10 transition-all duration-500 max-w-7xl">
+      <main className="pt-8 sm:pt-12 pb-10 mx-auto px-2 sm:px-5 transition-all 
+      duration-500 max-w-7xl">
 
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg w-full flex py-8 items-center justify-between rounded-2xl mb-10 shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30 flex-col lg:flex-row gap-6">
-          <div className="w-full lg:flex-1 px-6">
-            <div className="relative w-full max-w-2xl mx-auto lg:mx-0">
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg w-full flex 
+        py-6 sm:py-8 items-center justify-between rounded-2xl mb-8 sm:mb-10 shadow-xl 
+        dark:shadow-2xl border border-white/20 dark:border-gray-700/30 flex-col lg:flex-row gap-6">
+          
+          <div className="w-full lg:flex-1 px-4 sm:px-6">
+            <div className="relative w-full mx-auto lg:mx-0">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-                <svg className="h-6 w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
               <input 
-                type="text" 
+                type="text"
                 placeholder="Search windows by name..."
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
-                className="block w-full pl-12 pr-12 py-4 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 
-                  bg-gray-100 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 
-                  transition-shadow duration-300  focus:outline-none shadow-sm focus:shadow-lg text-lg font-medium
-                  border border-gray-200 dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
+                className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-gray-700 
+                dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-gray-100 
+                dark:bg-gray-700/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 
+                dark:focus:ring-blue-400/50 duration-300 focus:outline-none shadow-sm
+                focus:shadow-lg text-base sm:text-lg font-medium border border-gray-200 
+                dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
               />
               {searchQuery && (
                 <button 
+                  type="button"
                   onClick={() => onSearch("")}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors group"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 
+                  hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
                 >
-                  <div className="p-1 rounded-full group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
+                  <div className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 
+                  transition-colors">
                     <IconX className="h-5 w-5" />
                   </div>
                 </button>
@@ -407,115 +402,108 @@ const Options = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4 px-6 w-full lg:w-auto">
-            <div className="flex items-center space-x-3 bg-white/80 dark:bg-transparent backdrop-blur-sm rounded-xl border-[1px] px-4 py-3  border-gray-200 dark:border-gray-600/50 shadow-sm"
-            >
-              <label htmlFor="sort" className="text-sm font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">Sort by:</label>
+          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 
+          sm:space-x-4 px-4 sm:px-6 w-full lg:w-auto">
+
+            <div className="flex items-center space-x-3 bg-white/80 dark:bg-transparent 
+            backdrop-blur-sm rounded-xl border px-4 py-2 sm:py-3 border-gray-200 
+            dark:border-gray-600/50 shadow-sm w-full sm:w-auto">
+              <label className="text-sm font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                Sort by:
+              </label>
               <select
-                id="sort" 
-                className="bg-gray-100 dark:bg-gray-600 rounded-md text-gray-700 dark:text-gray-200 border-0 focus:ring-0 focus:outline-none py-1 pl-2 pr-8 appearance-none cursor-pointer font-medium"
+                className="bg-gray-100 dark:bg-gray-600 rounded-md text-gray-700 
+                dark:text-gray-200 border-0 focus:ring-0 focus:outline-none py-1 pl-2 pr-8 
+                appearance-none cursor-pointer font-medium w-full sm:w-auto"
                 value={currentSort}
-                onChange={(e)=>onChangeSortButtonClicked(e.target.value as OptionsPageSort)}
+                onChange={(e) => onChangeSortButtonClicked(e.target.value as OptionsPageSort)}
               >
-                {sortingOptions.map((option, index) => (
-                  <option value={option} key={index} className="bg-white dark:bg-gray-800">{option}</option>
+                {sortingOptions.map((option) => (
+                  <option value={option} key={option} className="bg-white dark:bg-gray-800">
+                    {option}
+                  </option>
                 ))}
               </select>
             </div>
             
             <button 
-              className={`group relative flex items-center justify-center p-2 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg
-                bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-blue-500/25
-                ${layout === 'card' 
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-blue-500/25' 
-                  : 'bg-white/80 text-gray-600 dark:bg-gray-700/80 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-600 border border-gray-200/50 dark:border-gray-600/50'}`}
               onClick={onChangeLayoutButtonClicked}
+              disabled={spinLayoutIcon}
+              className={`
+                hover:cursor-pointer
+                relative flex items-center justify-center p-2 rounded-xl transition-all
+                duration-300 transform  shadow-lg w-full sm:w-auto hover:scale-105
+                bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-blue-500/25
+                group ${spinLayoutIcon ? "shrink-and-grow" : ""}
+                `}
             >
-              <IconLayout className={`h-[30px] w-[30px] transition-transform group-hover:rotate-12 duration-300 ${spinLayoutIcon ? 'animate-spin-once' : ''}`} />
-              {layout === 'card' && (
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-              )}
+                <IconLayout className={`h-[24px] w-[24px] sm:h-[30px] sm:w-[30px] transition-transform 
+                 duration-300 ${spinLayoutIcon ? "spin-once" : "group-hover:rotate-[20deg]"}`} />
             </button>
+
           </div>
         </div>
 
 
 
-        {
-
-          arrayOfTrackedWindowValues.length === 0 ? 
+        {arrayOfTrackedWindowValues.length === 0 ? (
           
-          
-          (
-            <div className="flex flex-col justify-center items-center min-h-[400px] p-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30">
-              <div className="relative mb-6">
-                <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-full p-8 shadow-inner">
-                  <IconBookmark className="h-16 w-16 text-gray-400 dark:text-gray-500" />
-                </div>
-              </div>
-              <div className="text-center space-y-4 max-w-lg">
-                <h3 className="font-bold text-2xl text-gray-800 dark:text-gray-200">No Windows Tracked Yet</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
-                  Auto track your windows to organize, <strong className="underline">save memory</strong> and quickly reopen your saved window sessions.
-                </p>
-              </div>
+          <div className="flex flex-col justify-center items-center min-h-[300px] 
+          sm:min-h-[400px] p-6 sm:p-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg 
+          rounded-2xl shadow-xl dark:shadow-2xl border border-white/20 dark:border-gray-700/30">
+     
+            <div className="text-center space-y-4 max-w-lg">
+              <h2 className="font-bold text-xl sm:text-2xl text-gray-800 dark:text-gray-200">
+                No Windows Tracked Yet
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg leading-relaxed">
+                Auto track your windows to organize, <strong className="underline">save memory</strong> and quickly reopen your saved window
+              </p>
             </div>
-          )
+          </div>
 
-          :
+        ) : layout === OptionsPageLayout.card ? (
           
-          (
-            layout === 'card' ? 
+          <CardLayout
+            arrayOfTrackedWindowValues={arrayOfTrackedWindowValues}
+            onOpenSavedWindowButtonClicked={onOpenSavedWindowButtonClicked}
+            onUntrackWindowButtonClicked={onUntrackWindowButtonClicked}
+            IconExternal={IconExternal}
+            IconX={IconX}
+            determinIfDraggable={determinIfDraggable}
+            handleDragStart={handleDragStart}
+            handleDragEnd={handleDragEnd}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            handleDrop={handleDrop}
+            isDragging={isDragging}
+            preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
+          />
+
+        ) : (
           
-            <CardLayout {
-              ... {
-                arrayOfTrackedWindowValues,
-                onOpenSavedWindowButtonClicked,
-                onUntrackWindowButtonClicked,
-                IconExternal,
-                IconX,
-                currentSort,
-                determinIfDraggable,
-                handleDragStart,
-                handleDragEnd,
-                handleDragOver,
-                handleDragLeave,
-                handleDrop,
-                isDragging,
-                setIsDragging
-              }
-            } /> 
-            
-            :
-            
-            <TableLayout {
-              ...{
-                arrayOfTrackedWindowValues,
-                onOpenSavedWindowButtonClicked,
-                onUntrackWindowButtonClicked,
-                IconExternal,
-                IconX,
-                currentSort,
-                determinIfDraggable,
-                handleDragStart,
-                handleDragEnd,
-                handleDragOver,
-                handleDragLeave,
-                handleDrop,
-                isDragging,
-                setIsDragging
-              }
-            }/>
-          )
+          <TableLayout
+            arrayOfTrackedWindowValues={arrayOfTrackedWindowValues}
+            onOpenSavedWindowButtonClicked={onOpenSavedWindowButtonClicked}
+            onUntrackWindowButtonClicked={onUntrackWindowButtonClicked}
+            IconExternal={IconExternal}
+            IconX={IconX}
+            determinIfDraggable={determinIfDraggable}
+            handleDragStart={handleDragStart}
+            handleDragEnd={handleDragEnd}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            handleDrop={handleDrop}
+            isDragging={isDragging}
+            preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
+          />
 
-        }
-
+        )}
 
       </main>
     </div>
   )
-};
+}
 
 
 export default Options
-
