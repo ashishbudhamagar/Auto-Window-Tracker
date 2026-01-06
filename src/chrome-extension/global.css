@@ -47,13 +47,26 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
   100% { transform: scale(1); }
 }
 
+
+@keyframes shrink-and-grow {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+
 @keyframes spin-once {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-.animate-spin-once {
-  animation: spin-once 0.6s ease-in-out;
+.spin-once {
+  animation: spin-once 0.5s ease-out;
+}
+
+.shrink-and-grow {
+  animation: shrink-and-grow 0.3s ease-in-out;
+
 }
 
 

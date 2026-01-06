@@ -5,7 +5,7 @@ import { TrackedWindow, Tab } from "../../types"
 export default function CardLayout({
   arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
   IconExternal, IconX, determinIfDraggable, handleDragStart, handleDragEnd, handleDragOver, 
-  handleDragLeave, handleDrop, isDragging, preventLinkClickIfChromeSpeicalLink
+  handleDragLeave, handleDrop, isDragging, preventLinkClickIfChromeSpeicalLink, savedWindowIsOpening
 }: any) {
   
   
@@ -95,9 +95,9 @@ export default function CardLayout({
               
               
               {trackedWindow.tabs.length > 4 && (
-                <div className="w-[100%] max-h-[88px] overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl">
+                <div className="w-full max-h-[88px] overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl">
 
-                  <div className="w-[98.5%] h-full flex flex-wrap my-[2.1px] items-center gap-x-[12px] gap-y-[12px] py-2 pl-[15px]">
+                  <div className="w-full h-full flex flex-wrap my-[2.1px] items-center gap-x-[12px] gap-y-[12px] py-2 pl-[15px]">
                     {trackedWindow.tabs.slice(4).map((tab: Tab) => (
                       <a
                         key={tab.id}
@@ -108,10 +108,10 @@ export default function CardLayout({
                         className="relative"
                       >
                         <div className={`w-7 h-7 rounded-lg overflow-hidden
-                         border-2 border-transparent  dark:border-gray-600 dark:bg-gray-700 
-                         shadow-sm hover:scale-125 hover:shadow-lg transition-transform duration-300
-                         hover:border-blue-300 dark:hover:border-blue-500 
-                          ${tab.url.includes("github") ? "bg-gray-500" : "bg-white"}
+                         border-[4px] border-transparent  
+                         shadow-sm hover:scale-125 hover:shadow-md transition-transform duration-300
+                         hover:border-blue-400 dark:hover:border-blue-300 dark:bg-gray-500 
+                          ${tab.url.includes("github") ? "bg-gray-500" : "bg-white dark:bg-gray-800"}
                          `}>
                           <img 
                             src={tab.favIconUrl ?? noImageImage}
@@ -150,6 +150,7 @@ export default function CardLayout({
               </button>
 
               <button
+
                 className={`group flex items-center space-x-2 py-3 px-4 rounded-xl transition-all 
                   duration-300 flex-1 justify-center font-medium hover:shadow-md
                   ${trackedWindow.isOpen
@@ -160,12 +161,12 @@ export default function CardLayout({
                      dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 `}`
                 }
 
-                disabled={trackedWindow.isOpen}
+                disabled={savedWindowIsOpening  || trackedWindow.isOpen}
                 onClick={() => onOpenSavedWindowButtonClicked(trackedWindow.windowName)}
               >
                 <IconExternal className="h-4 w-4 group-hover:scale-[1.2] transition-transform duration-300" />
                 <span className="text-sm">
-                  {trackedWindow.isOpen ? "Active" : "Open"}
+                  {savedWindowIsOpening ? "Opening..." : trackedWindow.isOpen ? "Active" : "Open"}
                 </span>
               </button>
             </div>

@@ -8,7 +8,7 @@ import CardLayout from "./CardLayout"
 import TableLayout from "./TableLayout"
 
 
-document.documentElement.style.zoom = "80%"
+document.documentElement.style.zoom = "75%"
 
 
 const Options = () => {
@@ -31,6 +31,8 @@ const Options = () => {
   
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
+
+  const [savedWindowIsOpening, setSavedWindowIsOpening] = useState<boolean>(false)
 
 
   useEffect(() => {
@@ -183,8 +185,12 @@ const Options = () => {
   function onOpenSavedWindowButtonClicked(windowName: string) {
     const trackedWindowToOpen = originalArrayOfTrackedWindowValues.find(tw => tw.windowName === windowName)
     if (!trackedWindowToOpen) return
-    
-    chrome.runtime.sendMessage({signal: "openSavedWindow", trackedWindowToOpen: trackedWindowToOpen})
+
+    setSavedWindowIsOpening(true)
+
+    chrome.runtime.sendMessage({signal: "openSavedWindow", trackedWindowToOpen: trackedWindowToOpen},(response:boolean) =>{
+      setSavedWindowIsOpening(response)
+    })
   }
 
 
@@ -291,7 +297,7 @@ const Options = () => {
 
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-100 to-slate-50 
+    <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 
     dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
       <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-50">
@@ -360,12 +366,14 @@ const Options = () => {
 
 
 
-      <main className="pt-8 sm:pt-12 pb-10 mx-auto px-2 sm:px-5 transition-all 
+      <main className="pt-8 pb-8 mx-auto px-2 sm:px-5 transition-all 
       duration-500 max-w-7xl">
 
         <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg w-full flex 
-        py-6 sm:py-8 items-center justify-between rounded-2xl mb-8 sm:mb-10 shadow-xl 
-        dark:shadow-2xl border border-white/20 dark:border-gray-700/30 flex-col lg:flex-row gap-6">
+        py-6 sm:py-8 items-center justify-between rounded-2xl shadow-xl 
+        dark:shadow-2xl border border-white/20 dark:border-gray-700/30 flex-col lg:flex-row gap-6
+            mb-10
+        ">
           
           <div className="w-full lg:flex-1 px-4 sm:px-6">
             <div className="relative w-full mx-auto lg:mx-0">
@@ -478,6 +486,7 @@ const Options = () => {
             handleDrop={handleDrop}
             isDragging={isDragging}
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
+            savedWindowIsOpening={savedWindowIsOpening}
           />
 
         ) : (
@@ -496,6 +505,7 @@ const Options = () => {
             handleDrop={handleDrop}
             isDragging={isDragging}
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
+            savedWindowIsOpening={savedWindowIsOpening}
           />
 
         )}
