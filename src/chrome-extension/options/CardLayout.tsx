@@ -141,7 +141,9 @@ export default function CardLayout({
                 className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500
                  dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all 
                  duration-300 border border-red-200/50 dark:border-red-700/50 hover:border-red-300
-                  dark:hover:border-red-600 hover:shadow-md flex-1 justify-center font-medium"
+                  dark:hover:border-red-600 hover:shadow-md flex-1 justify-center font-medium  hover:scale-105
+                  "
+                  
 
                 onClick={() => onUntrackWindowButtonClicked(trackedWindow.windowName)}
               >
@@ -152,11 +154,12 @@ export default function CardLayout({
               <button
 
                 className={`group flex items-center space-x-2 py-3 px-4 rounded-xl transition-all 
-                  duration-300 flex-1 justify-center font-medium hover:shadow-md
+                  duration-300 flex-1 justify-center font-medium hover:shadow-md border border-blue-100
+                  hover:scale-105
                   ${trackedWindow.isOpen
                     ? `text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200
-                     dark:border-gray-700 bg-green-100 dark:bg-gray-800/50`
-                    : `text-blue-600 dark:text-blue-500 bg-indigo-100 hover:bg-blue-200 bg-blue-900/30
+                     dark:border-gray-700 bg-green-50 dark:bg-gray-800/50`
+                    : `text-blue-600 dark:text-blue-500 bg-indigo-50 hover:bg-blue-200 bg-blue-900/30
                      dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 
                      dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 `}`
                 }
