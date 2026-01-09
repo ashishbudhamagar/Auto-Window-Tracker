@@ -199,6 +199,30 @@ const Options = () => {
     return isDraggableSort && searchQuery === ""
   }
 
+
+
+  async function onWindowNameChange(newWindowName: string, oldWindowName: string) {
+
+    const response: ExtensionData = await chrome.runtime.sendMessage({signal: "getExtensionData"})
+
+    let uniqueName = true
+    for (let trackedWindow of Object.values(response.trackedWindows)) {
+      if (trackedWindow.windowName === newWindowName) {
+        uniqueName = false
+        break
+      }
+    }
+
+    if (!uniqueName) {
+      return false
+    }
+
+    chrome.runtime.sendMessage({signal: "changeWindowNameFromOptionsPage", newWindowName: newWindowName, oldWindowName: oldWindowName})
+    return true
+  }
+
+
+
   function preventLinkClickIfChromeSpeicalLink(e:any, tab: Tab) {
 
     if (tab.url.includes("chrome://")) {
@@ -300,7 +324,7 @@ const Options = () => {
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 
     dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
-      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30 sticky top-0">
+      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
         <div className="flex flex-col sm:flex-row justify-between py-4 sm:py-6 items-center max-w-7xl mx-auto px-5 gap-4">
 
           <div className="flex items-center space-x-3">
@@ -484,6 +508,7 @@ const Options = () => {
             isDragging={isDragging}
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
             savedWindowIsOpening={savedWindowIsOpening}
+            onWindowNameChange={onWindowNameChange}
           />
 
         ) : (
@@ -503,6 +528,7 @@ const Options = () => {
             isDragging={isDragging}
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
             savedWindowIsOpening={savedWindowIsOpening}
+            onWindowNameChange={onWindowNameChange}
           />
 
         )}

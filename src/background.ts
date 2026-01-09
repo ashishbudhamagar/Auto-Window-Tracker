@@ -311,6 +311,16 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          sendResponse(extensionData.optionsPageSort)
          return false
       }
+
+      else if (message.signal === "changeWindowNameFromOptionsPage") {
+         const trackedWindowData = extensionData.trackedWindows[message.oldWindowName]
+         trackedWindowData.windowName = message.newWindowName
+         delete extensionData.trackedWindows[message.oldWindowName]
+         extensionData.trackedWindows[message.newWindowName] = trackedWindowData
+
+         saveExtensionData(extensionData)
+         updateOptionsPage()
+      }
       
       
       else if (message.signal === "handleDraggableOptionsPageSort") {

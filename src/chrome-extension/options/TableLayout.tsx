@@ -3,8 +3,7 @@ import { useState, useEffect } from "react"
 import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
 import GroupedTabs from "./GroupedTabs"
-
-
+import EditableHeader from "./EditableHeader"
 
 
 export default function TableLayout({  
@@ -21,7 +20,8 @@ export default function TableLayout({
   handleDrop, 
   isDragging, 
   preventLinkClickIfChromeSpeicalLink,
-  savedWindowIsOpening
+  savedWindowIsOpening,
+  onWindowNameChange
 }: any) {
 
   const [activeWindowIndex, setActiveWindowIndex] = useState<number>(0)
@@ -52,7 +52,7 @@ export default function TableLayout({
     from-indigo-50 to-white bg-gradient-to-tr dark:from-gray-900/60 dark:to-gray-800/60
      dark:bg-gray-800/70 rounded-2xl shadow-xl">
 
-      <div className="h-[450px] md:h-[460px] md:w-[280px] flex-shrink-0 bg-white
+      <div className="h-[400px] md:h-[500px] md:w-[280px] flex-shrink-0 bg-white
       dark:bg-gray-700/40 flex flex-col backdrop-blur-sm pt-5 pb-3 rounded-xl shadow-md
       ">
 
@@ -139,13 +139,9 @@ export default function TableLayout({
           
           <div className={`flex items-center space-x-4 border-l-4 pl-4 w-full md:w-auto min-w-0 ${activeWindow.isOpen ? 'border-green-500' : 'border-blue-500'}`}>
             <div className="min-w-0 flex-1">
-              <h2
-                className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1
-                 break-words line-clamp-4 pr-4 md:pr-10"
-                title={activeWindow.windowName}
-              >
-                {activeWindow.windowName}
-              </h2>
+
+              <EditableHeader windowName={activeWindow.windowName} onWindowNameChange={onWindowNameChange}/>
+              
               <div className="flex items-center text-xs md:text-sm space-x-3">
                 <span className={`font-semibold ${activeWindow.isOpen ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
                   {activeWindow.isOpen ? 'Active Window' : 'Saved Window'}

@@ -1,13 +1,18 @@
 import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
 import GroupedTabs from './GroupedTabs'
+import EditableHeader from './EditableHeader'
+
 
 export default function CardLayout({
   arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
   IconExternal, IconX, determinIfDraggable, handleDragStart, handleDragEnd, handleDragOver, 
-  handleDragLeave, handleDrop, isDragging, preventLinkClickIfChromeSpeicalLink, savedWindowIsOpening
+  handleDragLeave, handleDrop, isDragging, preventLinkClickIfChromeSpeicalLink, savedWindowIsOpening,
+  onWindowNameChange
 }: any) {
   
+
+
   
 
 
@@ -39,11 +44,10 @@ export default function CardLayout({
           <div>
 
             <div className="flex justify-between items-center mb-2">
-              <h2
-                className="text-2xl font-bold text-gray-800 dark:text-gray-100 truncate w-full pr-8 sm:pr-8 lg:pr-4"
-              >
-                {trackedWindow.windowName}
-              </h2>
+              <EditableHeader
+                windowName={trackedWindow.windowName}
+                onWindowNameChange={onWindowNameChange}
+              />
               <span className={`
                 flex items-center px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold
                 ${trackedWindow.isOpen
@@ -102,7 +106,7 @@ export default function CardLayout({
               
               
               {trackedWindow.tabs.length > 4 && (
-                <div className="w-full max-h-[88px] overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl">
+                <div className="w-full overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl">
 
                   <div className="w-full h-full flex flex-wrap my-[2.1px] items-center gap-x-[12px] gap-y-[12px] py-2 pl-[15px]">
                     {trackedWindow.tabs.slice(4).map((tab: Tab) => (

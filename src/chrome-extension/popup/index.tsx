@@ -66,8 +66,6 @@ export const Popup = () => {
     if (currentWindowName === null) return
     
     chrome.runtime.sendMessage({signal: "getExtensionData"}, (response: ExtensionData)=>{
-      if (!response) return
-
 
       if (currentWindowTracked === false) {
         if (currentWindowName.trim() === "") {
