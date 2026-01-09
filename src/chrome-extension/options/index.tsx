@@ -63,6 +63,7 @@ const Options = () => {
 
 
 
+
   useEffect(() => {
     if (!theme) return
 
@@ -163,13 +164,20 @@ const Options = () => {
         break
     }
 
+
+    if (searchQuery.trim() !== "") {
+      sorted = sorted.filter(trackedWindow => trackedWindow.windowName.toLowerCase().startsWith(searchQuery.toLowerCase()))
+    }
+
+    
+
     setArrayOfTrackedWindowValues(sorted)
   }
 
 
   useEffect(() => {
     applyOptionsPageSort()
-  }, [currentSort, originalArrayOfTrackedWindowValues])
+  }, [currentSort, originalArrayOfTrackedWindowValues, searchQuery])
   
   
   function onChangeSortButtonClicked(newSort: OptionsPageSort) {
