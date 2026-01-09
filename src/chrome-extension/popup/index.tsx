@@ -183,7 +183,7 @@ export const Popup = () => {
             
             {showToolTip && (
             <div 
-              className="absolute top-full mt-3 right-0 z-20 w-36 p-2 text-xs font-semibold text-center border border-gray-400 bg-gray-200 text-gray-600 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-400 rounded-lg shadow-xl"
+              className="absolute top-full mt-3 right-0 w-36 p-2 text-xs font-semibold text-center border border-gray-400 bg-gray-200 text-gray-600 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-400 rounded-lg shadow-xl"
             >
                 Show All Tracked Windows
                 <span className="absolute -top-1 right-4 w-2 h-2 bg-gray-200 dark:bg-gray-800 rotate-45 border-t border-l border-gray-400 dark:border-gray-400" />

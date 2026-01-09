@@ -280,7 +280,7 @@ const Options = () => {
     return (
       <div className="min-h-screen w-full bg-[rgb(95,95,95)] flex flex-col items-center justify-center">
         <div className="relative">
-          <IconBookmark className="h-12 w-12 text-blue-500 mb-4 relative z-10"/>
+          <IconBookmark className="h-12 w-12 text-blue-500 mb-4 relative"/>
         </div>
         <div className="text-center space-y-2">
           <p className="text-gray-400 font-semibold text-lg">Auto Window Tracker</p>
@@ -300,7 +300,7 @@ const Options = () => {
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 
     dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
-      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-50">
+      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30 sticky top-0">
         <div className="flex flex-col sm:flex-row justify-between py-4 sm:py-6 items-center max-w-7xl mx-auto px-5 gap-4">
 
           <div className="flex items-center space-x-3">
@@ -314,9 +314,6 @@ const Options = () => {
               <h1 className="font-bold text-xl sm:text-2xl text-gray-600 dark:text-gray-300 ">
                 Auto Window Tracker
               </h1>
-              <p className="hidden sm:block text-sm text-gray-500 dark:text-gray-400 font-medium">
-                Manage your browser sessions
-              </p>
             </div>
           </div>
 
@@ -377,7 +374,7 @@ const Options = () => {
           
           <div className="w-full lg:flex-1 px-4 sm:px-6">
             <div className="relative w-full mx-auto lg:mx-0">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <svg className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>

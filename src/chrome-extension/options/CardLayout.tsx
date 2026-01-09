@@ -1,6 +1,6 @@
 import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
-
+import GroupedTabs from './GroupedTabs'
 
 export default function CardLayout({
   arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
@@ -40,7 +40,7 @@ export default function CardLayout({
 
             <div className="flex justify-between items-center mb-2">
               <h2
-                className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100 truncate w-full pr-8 sm:pr-8 lg:pr-4"
+                className="text-2xl font-bold text-gray-800 dark:text-gray-100 truncate w-full pr-8 sm:pr-8 lg:pr-4"
               >
                 {trackedWindow.windowName}
               </h2>
@@ -55,12 +55,19 @@ export default function CardLayout({
               </span>
             </div>
             
-            <div className="flex items-center mb-5 space-x-3">
+            <div className="flex items-center  space-x-3">
               <span className="border-2 h-1 w-1 py-[4px] px-[6px] mt-[2px] rounded-lg border-gray-400" />
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium">
                 {trackedWindow.tabs.length === 1 ? "1 tab" : `${trackedWindow.tabs.length} tabs`}
               </p>
             </div>
+            
+            <div className="mt-4 mb-2">
+              <GroupedTabs trackedWindow={trackedWindow} isCardsLayout={true} ></GroupedTabs>
+
+            </div>
+
+            
             
             <div className="flex flex-col space-y-4 mb-4 items-start">
             
@@ -110,7 +117,7 @@ export default function CardLayout({
                         <div className={`w-7 h-7 rounded-lg overflow-hidden
                          border-[4px] border-transparent  
                          shadow-sm hover:scale-125 hover:shadow-md transition-transform duration-300
-                         hover:border-blue-400 dark:hover:border-blue-300 dark:bg-gray-500 
+                         hover:border-blue-400 dark:hover:border-blue-500 dark:bg-gray-500 
                           ${tab.url.includes("github") ? "bg-gray-500" : "bg-white dark:bg-gray-800"}
                          `}>
                           <img 

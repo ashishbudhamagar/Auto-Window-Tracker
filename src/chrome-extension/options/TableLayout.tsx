@@ -1,21 +1,9 @@
 // @ts-nocheck
 import { useState, useEffect } from "react"
-import noImageImage from '../public/no-image.png';
+import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
+import GroupedTabs from "./GroupedTabs"
 
-
-
-const groupColorMap: Record<string, string> = {
-  grey: "bg-gray-300",
-  blue: "bg-blue-300",
-  red: "bg-red-300",
-  yellow: "bg-yellow-300",
-  green: "bg-green-300",
-  pink: "bg-pink-300",
-  purple: "bg-purple-300",
-  cyan: "bg-cyan-300",
-  orange: "bg-orange-300"
-}
 
 
 
@@ -64,8 +52,8 @@ export default function TableLayout({
     from-indigo-50 to-white bg-gradient-to-tr dark:from-gray-900/60 dark:to-gray-800/60
      dark:bg-gray-800/70 rounded-2xl shadow-xl">
 
-      <div className="h-[400px] md:h-[460px] md:w-[280px] flex-shrink-0 bg-white
-      dark:bg-gray-800 flex flex-col backdrop-blur-sm pt-5 pb-3 rounded-xl shadow-md
+      <div className="h-[450px] md:h-[460px] md:w-[280px] flex-shrink-0 bg-white
+      dark:bg-gray-700/40 flex flex-col backdrop-blur-sm pt-5 pb-3 rounded-xl shadow-md
       ">
 
         <div className="px-6">
@@ -89,12 +77,12 @@ export default function TableLayout({
               onClick={() => setActiveWindowIndex(index)}
               className={`
                 w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl transition-all duration-300
-                flex flex-col items-start gap-1 md:gap-2 relative overflow-hidden shadow-md border-l-4 
+                flex flex-col items-start gap-1 md:gap-2 relative overflow-hidden shadow-md border-l-4  
                 ${trackedWindow.isOpen
                   ? "border-green-400 dark:border-green-700/70 "
                   : "border-blue-400 dark:border-blue-700/70"
                 }
-                ${index === activeWindowIndex ? "scale-[1.02] md:scale-105 bg-gray-300/40 dark:bg-gray-600/60 border-b-4" : " hover:bg-gray-200 dark:hover:bg-gray-700/70 bg-white/60 dark:bg-gray-800/10"}
+                ${index === activeWindowIndex ? "scale-[1.02] md:scale-105 bg-gray-300/40 dark:bg-gray-700/90 border-b-4" : " hover:bg-gray-200 dark:hover:bg-gray-700/70 bg-white/60 dark:bg-gray-800/10"}
               `}
             >
               <div className="flex items-center justify-between w-full">
@@ -130,9 +118,11 @@ export default function TableLayout({
 
 
 
-      <div className="shadow-xl dark:shadow-2xl h-full min-h-[500px] rounded-xl 
+      <div className="shadow-xl h-full min-h-[500px] rounded-xl 
       flex flex-col flex-grow bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm 
-      overflow-hidden border border-gray-200/30 dark:border-gray-700/30
+      overflow-hidden
+      
+      border border-gray-200/30 dark:border-gray-700/30
       from-indigo-100/60 to-gray-100 via-gray-100/50 bg-gradient-to-bl
       dark:from-gray-800/60 dark:to-gray-900/60 dark:via-gray-800/50
       
@@ -142,8 +132,8 @@ export default function TableLayout({
 
         <div className="px-4 py-6 flex flex-col
         md:flex-row justify-between items-center border-b-2 border-gray-300
-         dark:border-gray-600/50 dark:from-gray-800/80 dark:to-gray-700/80 
-         backdrop-blur-sm sticky top-0 z-10 gap-4 overflow-hidden min-h-[80px]
+         dark:border-gray-600/50 dark:bg-gray-700/80
+         backdrop-blur-sm sticky gap-4 overflow-hidden min-h-[80px]
          mb-4
          ">
           
@@ -203,35 +193,10 @@ export default function TableLayout({
 
         </div>
         
-        {
-          activeWindow.groupedTabsInfo.length !== 0 ?
-          <div className="flex flex-col mb-4 pb-4 border-b-2 border-gray-300 mx-4
-         ">
-          
-            <p className="text-lg font-bold mb-2">
-              Tab Groups
-            </p>
-
-            <div className="flex flex-row gap-3 font-semibold text-[16px] text-gray-700">
-
-              {
-                activeWindow.groupedTabsInfo.map((tabGroup, index)=>(
-                  <div
-                  key={index}
-                  className={`${groupColorMap[tabGroup.color]} rounded-lg py-1 px-3`}
-                  >
-                  {tabGroup.title === "" ? <strong>*unname*</strong> : tabGroup.title}
-                  </div>
-                ))
-              }
-
-            </div>
-        </div>
-        :
-        null
-          
-        }
         
+        <div className="mb-4">
+          <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} ></GroupedTabs>
+        </div>
        
 
 
