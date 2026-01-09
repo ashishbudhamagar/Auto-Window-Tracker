@@ -161,28 +161,29 @@ export default function TableLayout({
                text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 
                transition-all duration-300 border-2 border-red-200 dark:border-red-700/50 
                hover:border-red-300 dark:hover:border-red-600 font-semibold  hover:shadow-md
-                transform hover:scale-105 flex-1 md:flex-none justify-center"
+                transform hover:scale-105 flex-1 md:flex-none justify-center group"
             >
-              <IconX className="h-4 w-4 md:h-5 md:w-5 hover:rotate-90 transition-transform duration-300" />
+              <IconX className="h-4 w-4 md:h-5 md:w-5 group-hover:rotate-90 transition-transform duration-300" />
               <span className="text-xs md:text-sm">Untrack</span>
             </button>
 
             <button
-              disabled={activeWindow.isOpen}
+              disabled={savedWindowIsOpening || activeWindow.isOpen}
               onClick={() => onOpenSavedWindowButtonClicked(activeWindow.windowName)}
               className={`
                 flex items-center space-x-2 py-2 md:py-3 px-3 md:px-5 rounded-xl 
                 transition-all duration-300 font-semibold  hover:shadow-md
-                transform hover:scale-105 flex-1 md:flex-none justify-center
+                transform hover:scale-105 flex-1 md:flex-none justify-center group
                 ${activeWindow.isOpen
                   ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border-2 border-gray-200 dark:border-gray-700 bg-green-50 dark:bg-gray-800" 
                   : "text-blue-600 dark:text-blue-400 bg-indigo-100 dark:bg-blue-900/30 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/40 dark:hover:to-blue-800/40 border-2 border-blue-200 dark:border-blue-700/50 hover:border-blue-300 dark:hover:border-blue-600"
                 }
               `}
             >
-              <IconExternal className="h-4 w-4 md:h-5 md:w-5 hover:scale-110 transition-transform duration-300" />
+              <IconExternal className="h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform duration-300" />
               <span className="text-xs md:text-sm whitespace-nowrap">
-                {activeWindow.isOpen ? "Already Active" : "Open Window"}
+                {savedWindowIsOpening ? "Opening..." : activeWindow.isOpen ? "Already Active" : "Open Window"}
+
               </span>
             </button>
           </div>
@@ -204,6 +205,7 @@ export default function TableLayout({
                 title={tab.url}
                 href={tab.url}
                 target="_blank"
+                onClick={preventLinkClickIfChromeSpeicalLink}
                 rel="noopener noreferrer"
                 className="flex items-center p-2 md:p-3 rounded-xl border-2 border-gray-200 
                 dark:border-gray-700 group

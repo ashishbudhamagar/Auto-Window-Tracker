@@ -91,7 +91,11 @@ export default function CardLayout({
                     <div className="flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-md overflow-hidden
                      dark:border-gray-600/50">
                       <img
-                        src={tab.favIconUrl ?? noImageImage}
+                        src={tab.favIconUrl || noImageImage}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = noImageImage;
+                        }}
                         className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700 p-[5px] rounded-xl"
                       />
                     </div>
@@ -122,10 +126,14 @@ export default function CardLayout({
                          border-[4px] border-transparent  
                          shadow-sm hover:scale-125 hover:shadow-md transition-transform duration-300
                          hover:border-blue-400 dark:hover:border-blue-500 dark:bg-gray-500 
-                          ${tab.url.includes("github") ? "bg-gray-500" : "bg-white dark:bg-gray-800"}
+                          ${tab?.url.includes("github") ? "bg-gray-500" : "bg-white dark:bg-gray-800"}
                          `}>
                           <img 
-                            src={tab.favIconUrl ?? noImageImage}
+                            src={tab.favIconUrl || noImageImage}
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = noImageImage;
+                            }}
                             onClick={(e)=>{preventLinkClickIfChromeSpeicalLink(e,tab)}}
                             className="w-full h-full object-contain" 
                           />

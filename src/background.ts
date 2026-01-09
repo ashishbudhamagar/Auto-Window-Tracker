@@ -320,6 +320,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
 
          saveExtensionData(extensionData)
          updateOptionsPage()
+         return false
       }
       
       

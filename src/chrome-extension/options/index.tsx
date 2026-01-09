@@ -224,7 +224,6 @@ const Options = () => {
 
 
   function preventLinkClickIfChromeSpeicalLink(e:any, tab: Tab) {
-
     if (tab.url.includes("chrome://")) {
       e.preventDefault()
     }

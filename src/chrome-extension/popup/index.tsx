@@ -120,6 +120,7 @@ export const Popup = () => {
   function onShowTrackedWindowMouseLeave() {
     if (tooltipRef.current) {
       clearTimeout(tooltipRef.current)
+      tooltipRef.current = null
       setShowToolTip(false)
     }
   }

@@ -1,7 +1,3 @@
-// @ts-nocheck
-import { TrackedWindow } from "../../types"
-
-
 const groupColorMap: Record<string, string> = {
   grey: "bg-gray-300",
   blue: "bg-blue-300",
@@ -17,7 +13,7 @@ const groupColorMap: Record<string, string> = {
 
 
 
-export default function GroupedTabs({trackedWindow, isCardsLayout}) {
+export default function GroupedTabs({trackedWindow, isCardsLayout}: any)  {
 
     return (
 
@@ -34,9 +30,9 @@ export default function GroupedTabs({trackedWindow, isCardsLayout}) {
                 <div className="flex flex-row items-center gap-3 font-semibold text-[16px]
                  text-gray-600/80 overflow-x-auto">
 
-                    {trackedWindow.groupedTabsInfo.map((tabGroup, index)=>(
+                    {trackedWindow.groupedTabsInfo.map((tabGroup: any)=>(
                         <div
-                        key={index}
+                        key={tabGroup.id}
                         className={`${groupColorMap[tabGroup.color]} rounded-lg py-0.5 px-1.5 text-nowrap flex items-center h-fit`}
                         >
                             {tabGroup.title === "" ? <strong>*unnamed*</strong> : tabGroup.title}
