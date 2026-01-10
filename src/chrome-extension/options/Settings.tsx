@@ -21,7 +21,10 @@ export default function Settings({
 
     const [settingsOpen, setSettingsOpen] = useState(false)
     const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
+    const [zoomLevelInSettings, setZoomLevelInSettings] = useState(zoomLevel)
+
     const settingsRef = useRef<HTMLDivElement>(null)
+    const timeOutRef = useRef<NodeJS.Timeout | null>(null)
 
 
     useEffect(() => {
@@ -47,6 +50,22 @@ export default function Settings({
         setSpinLayoutIcon(!spinLayoutIcon)
         setTimeout(() => setSpinLayoutIcon(false), 400)
     }    
+
+
+
+    function onZoomLevelChangeInSettings(newZoomLevel: number) {
+        let roundedZoomLevel = Math.round(newZoomLevel * 10) / 10
+
+        setZoomLevelInSettings(roundedZoomLevel)
+
+        if (timeOutRef.current) {
+            clearTimeout(timeOutRef.current)
+        }
+
+        timeOutRef.current = setTimeout(() => {
+            onZoomLevelChange(roundedZoomLevel)
+        }, 400)
+    }
         
 
 
@@ -169,8 +188,8 @@ export default function Settings({
 
 
                     <button
-                        onClick={() => onZoomLevelChange(Math.max(-1, zoomLevel - 0.1))}
-                        disabled={zoomLevel <= -1}
+                        onClick={() => onZoomLevelChangeInSettings(Math.max(-1, zoomLevelInSettings - 0.1))}
+                        disabled={zoomLevelInSettings <= -1}
                         className="w-6 h-6 flex items-center justify-center rounded 
                         bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500
                         disabled:opacity-40 disabled:cursor-not-allowed
@@ -179,11 +198,11 @@ export default function Settings({
                         <ChevronLeft className="w-4 h-4" />
                     </button>
 
-                    <span className="w-6 text-center text-sm font-medium">{zoomLevel}</span>
+                    <span className="w-6 text-center text-sm font-medium">{zoomLevelInSettings}</span>
 
                     <button
-                        onClick={() => onZoomLevelChange(Math.min(1, zoomLevel + 0.1))}
-                        disabled={zoomLevel >= 1}
+                        onClick={() => onZoomLevelChangeInSettings(Math.min(1, zoomLevelInSettings + 0.1))}
+                        disabled={zoomLevelInSettings >= 1}
                         className="w-6 h-6 flex items-center justify-center rounded 
                         bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500
                         disabled:opacity-40 disabled:cursor-not-allowed

@@ -167,8 +167,7 @@ const Options = () => {
   }
 
   function onZoomLevelChange(zoomLevel: number) {
-    let roundedZoomLevel = Math.round(zoomLevel * 10) / 10
-    chrome.runtime.sendMessage({signal: "changeOptionsPageZoomLevel", zoomLevel: roundedZoomLevel}, (newZoomLevel: number) => {
+    chrome.runtime.sendMessage({signal: "changeOptionsPageZoomLevel", zoomLevel: zoomLevel}, (newZoomLevel: number) => {
       setZoomLevel(newZoomLevel)
     })
   }
