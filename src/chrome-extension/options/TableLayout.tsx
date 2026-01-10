@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from "react"
 import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
@@ -17,12 +16,13 @@ export default function TableLayout({
   handleDragEnd, 
   handleDragOver, 
   handleDragLeave, 
-  handleDrop, 
-  isDragging, 
+  handleDrop,
+  isDragging,
   preventLinkClickIfChromeSpeicalLink,
   savedWindowIsOpening,
   onWindowNameChange,
-  tabGroupsHiddenForTable
+  tabGroupsHiddenForTable,
+  coloredTabGroups
 }: any) {
 
   const [activeWindowIndex, setActiveWindowIndex] = useState<number>(0)
@@ -65,7 +65,7 @@ export default function TableLayout({
         </div>
 
         <div className="overflow-y-auto space-y-3 py-2 w-full custom-scrollbar">
-          {arrayOfTrackedWindowValues.map((trackedWindow, index) => (
+          {arrayOfTrackedWindowValues.map((trackedWindow: TrackedWindow, index: number) => (
             <button
               key={trackedWindow.windowName}
               title={trackedWindow.windowName}
@@ -77,6 +77,7 @@ export default function TableLayout({
               onDrop={(e) => handleDrop(e, index)}
               onClick={() => setActiveWindowIndex(index)}
               className={`
+                ${isDragging ? "dragging" : ""} 
                 w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl transition-all duration-300
                 flex flex-col items-start gap-1 md:gap-2 relative overflow-hidden shadow-md border-l-4  
                 ${trackedWindow.isOpen
@@ -193,7 +194,7 @@ export default function TableLayout({
         
         
         <div className="mb-4">
-          <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} tabGroupsHidden={tabGroupsHiddenForTable}></GroupedTabs>
+          <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} tabGroupsHidden={tabGroupsHiddenForTable} coloredTabGroups={coloredTabGroups} />
         </div>
        
 

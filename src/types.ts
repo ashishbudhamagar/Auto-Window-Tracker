@@ -13,6 +13,8 @@ export interface ExtensionData {
   optionsPageSort: OptionsPageSort
   optionsPageHideTabGroupsForCards: boolean
   optionsPageHideTabGroupsForTable: boolean
+  optionsPageColoredTabGroups: boolean
+  optionsPageZoomLevel: number
 }
 
 export interface TrackedWindow {

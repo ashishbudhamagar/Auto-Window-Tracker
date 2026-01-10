@@ -9,7 +9,7 @@ import TableLayout from "./TableLayout"
 import Settings from "./Settings"
 
 
-document.documentElement.style.zoom = "75%"
+const DEAFULT_ZOOM_LEVEL: number = 75
 
 
 const Options = () => {
@@ -32,7 +32,8 @@ const Options = () => {
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
   const [tabGroupsHiddenForCards, setTabGroupsHiddenForCards] = useState<boolean | null>(null)
   const [tabGroupsHiddenForTable, setTabGroupsHiddenForTable] = useState<boolean | null>(null)
-  
+  const [coloredTabGroups, setColoredTabGroups] = useState<boolean | null>(null)
+  const [zoomLevel, setZoomLevel] = useState<number | null>(null)
 
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
@@ -52,6 +53,8 @@ const Options = () => {
       setLayout(response.optionsPageLayout)
       setTabGroupsHiddenForCards(response.optionsPageHideTabGroupsForCards)
       setTabGroupsHiddenForTable(response.optionsPageHideTabGroupsForTable)
+      setColoredTabGroups(response.optionsPageColoredTabGroups)
+      setZoomLevel(response.optionsPageZoomLevel)
     })
 
     
@@ -91,15 +94,24 @@ const Options = () => {
 
 
 
+  useEffect(() => {
+    if (zoomLevel === null) return
 
-  function onChangeLayoutButtonClicked() {
-    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout) => {
-      setLayout(newLayout)
-    })
 
-    setSpinLayoutIcon(true)
-    setTimeout(() => setSpinLayoutIcon(false), 600)
-  }
+    if (zoomLevel === 0) {
+      document.documentElement.style.zoom = String(DEAFULT_ZOOM_LEVEL) + "%"
+      return
+    }
+
+
+    const step = zoomLevel * 10
+    const changeBy = step * 5
+    const finalZoomLevel = DEAFULT_ZOOM_LEVEL + changeBy
+    console.log("finalZoomLevel", finalZoomLevel)
+    document.documentElement.style.zoom = String(finalZoomLevel) + "%"
+
+  }, [zoomLevel])
+
 
 
   function onSearch(text: string) {
@@ -116,18 +128,55 @@ const Options = () => {
   }
 
 
+
+  // ============ setting related start =================
+
+  function onChangeLayoutButtonClicked() {
+    chrome.runtime.sendMessage({signal: "changeOptionsPageLayout"}, (newLayout: OptionsPageLayout) => {
+      setLayout(newLayout)
+    })
+
+    setSpinLayoutIcon(true)
+    setTimeout(() => setSpinLayoutIcon(false), 600)
+  }
+    
+  function onChangeSortButtonClicked(newSort: OptionsPageSort) {
+    chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort) => {
+      setCurrentSort(updatedSort)
+    })
+  }
+
+
   function onChangeThemeButtonClicked() {
     chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme) => {
         setTheme(newTheme)
     })
   }
 
-  function onToggleTabGroupsButtonClicked(isForCards: "table" | "cards") {
-    chrome.runtime.sendMessage({signal: "toggleHideTabGroups", isForCards: isForCards}, ({newHideTabGroupsForCards, newHideTabGroupsForTable}) => {
+  function onToggleTabGroupsButtonClicked(isForTableOrCards: "table" | "cards") {
+    chrome.runtime.sendMessage({signal: "toggleHideTabGroups", isForTableOrCards: isForTableOrCards}, ({newHideTabGroupsForCards, newHideTabGroupsForTable}) => {
       setTabGroupsHiddenForCards(newHideTabGroupsForCards)
       setTabGroupsHiddenForTable(newHideTabGroupsForTable)
     })
   }
+
+  function onToggleColoredTabGroupsButtonClicked() {
+    chrome.runtime.sendMessage({signal: "toggleColoredTabGroups"}, (newColoredTabGroups: boolean) => {
+      setColoredTabGroups(newColoredTabGroups)
+    })
+  }
+
+  function onZoomLevelChange(zoomLevel: number) {
+    let roundedZoomLevel = Math.round(zoomLevel * 10) / 10
+    chrome.runtime.sendMessage({signal: "changeOptionsPageZoomLevel", zoomLevel: roundedZoomLevel}, (newZoomLevel: number) => {
+      setZoomLevel(newZoomLevel)
+    })
+  }
+
+
+  // ============ setting related end =================
+
+
 
     
   function applyOptionsPageSort() {
@@ -195,12 +244,7 @@ const Options = () => {
     applyOptionsPageSort()
   }, [currentSort, originalArrayOfTrackedWindowValues, searchQuery])
   
-  
-  function onChangeSortButtonClicked(newSort: OptionsPageSort) {
-    chrome.runtime.sendMessage({signal: "changeOptionsPageSort", newSort: newSort}, (updatedSort: OptionsPageSort) => {
-      setCurrentSort(updatedSort)
-    })
-  }
+
 
   function onUntrackWindowButtonClicked(windowName: string) {
     chrome.runtime.sendMessage({signal: "untrackWindowFromOptions", windowName: windowName})
@@ -323,7 +367,11 @@ const Options = () => {
   const totalTrackedWindowCount = arrayOfTrackedWindowValues.length
 
 
-  if (theme === null || layout === null || currentSort === null || tabGroupsHiddenForCards === null || tabGroupsHiddenForTable === null) {
+  if (theme === null || layout === null || currentSort === null || 
+    tabGroupsHiddenForCards === null || tabGroupsHiddenForTable === null || 
+    coloredTabGroups === null || zoomLevel === null
+  ) {
+
     return (
       <div className="min-h-screen w-full bg-[rgb(95,95,95)] flex flex-col items-center justify-center">
         <div className="relative">
@@ -344,7 +392,7 @@ const Options = () => {
 
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 
+    <div className="min-h-screen w-[] bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 
     dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
       <header className="relative z-20 bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
@@ -393,8 +441,12 @@ const Options = () => {
                 theme={theme} 
                 hideTabGroupsCards={tabGroupsHiddenForCards} 
                 hideTabGroupsTable={tabGroupsHiddenForTable}
+                coloredTabGroups={coloredTabGroups}
+                zoomLevel={zoomLevel}
                 onChangeThemeButtonClicked={onChangeThemeButtonClicked}
                 onToggleTabGroupsButtonClicked={onToggleTabGroupsButtonClicked}
+                onToggleColoredTabGroupsButtonClicked={onToggleColoredTabGroupsButtonClicked}
+                onZoomLevelChange={onZoomLevelChange}
               
               />
             </div>
@@ -529,6 +581,7 @@ const Options = () => {
             savedWindowIsOpening={savedWindowIsOpening}
             onWindowNameChange={onWindowNameChange}
             tabGroupsHiddenForCards={tabGroupsHiddenForCards}
+            coloredTabGroups={coloredTabGroups}
           />
 
         ) : (
@@ -550,6 +603,7 @@ const Options = () => {
             savedWindowIsOpening={savedWindowIsOpening}
             onWindowNameChange={onWindowNameChange}
             tabGroupsHiddenForTable={tabGroupsHiddenForTable}
+            coloredTabGroups={coloredTabGroups}
           />
 
         )}

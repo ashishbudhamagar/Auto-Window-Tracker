@@ -1,7 +1,7 @@
+import { Settings as SettingsIcon, ChevronLeft, ChevronRight } from "lucide-react"
+import { useEffect, useState, useRef } from "react"
 import { Theme } from "../../types"
-import { useState } from "react"
 
-import { Settings as SettingsIcon } from "lucide-react"
 
 
 
@@ -10,27 +10,50 @@ export default function Settings({
     theme,
     hideTabGroupsCards,
     hideTabGroupsTable,
+    coloredTabGroups,
+    zoomLevel,
     onChangeThemeButtonClicked,
-    onToggleTabGroupsButtonClicked
+    onToggleTabGroupsButtonClicked,
+    onToggleColoredTabGroupsButtonClicked,
+    onZoomLevelChange
 
 }: any) {
 
-
     const [settingsOpen, setSettingsOpen] = useState(false)
     const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
+    const settingsRef = useRef<HTMLDivElement>(null)
+
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
+                setSettingsOpen(false)
+            }
+        }
+
+        if (settingsOpen) {
+            document.addEventListener("mousedown", handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [settingsOpen])
+
 
 
     function onSettingsButtonClicked() {
         setSettingsOpen(!settingsOpen)
         setSpinLayoutIcon(!spinLayoutIcon)
         setTimeout(() => setSpinLayoutIcon(false), 400)
-    }
+    }    
+        
 
 
 
-
+    
     return (
-    <div className="relative inline-block group">
+    <div ref={settingsRef} className="relative inline-block group">
         <button
         disabled={spinLayoutIcon}
         onClick={onSettingsButtonClicked}
@@ -116,6 +139,68 @@ export default function Settings({
                     />
                 </button>
             </div>
+
+            <div className="flex flex-row items-center justify-between w-full
+            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
+            ">
+                <p className="text-sm">Colored tab groups</p>
+                <button
+                    onClick={onToggleColoredTabGroupsButtonClicked}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-300
+                        ${coloredTabGroups ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"}`}
+                >
+                    <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full 
+                        shadow transition-transform duration-300
+                        ${coloredTabGroups ? "translate-x-5" : "translate-x-0"}`}
+                    />
+                </button>
+            </div>
+
+
+            
+
+
+            <div className="flex flex-row items-center justify-between w-full
+            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
+            ">
+                <p className="text-sm">Page scale</p>
+
+                <div className="flex items-center gap-2">
+
+
+                    <button
+                        onClick={() => onZoomLevelChange(Math.max(-1, zoomLevel - 0.1))}
+                        disabled={zoomLevel <= -1}
+                        className="w-6 h-6 flex items-center justify-center rounded 
+                        bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500
+                        disabled:opacity-40 disabled:cursor-not-allowed
+                        transition-colors duration-200"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <span className="w-6 text-center text-sm font-medium">{zoomLevel}</span>
+
+                    <button
+                        onClick={() => onZoomLevelChange(Math.min(1, zoomLevel + 0.1))}
+                        disabled={zoomLevel >= 1}
+                        className="w-6 h-6 flex items-center justify-center rounded 
+                        bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500
+                        disabled:opacity-40 disabled:cursor-not-allowed
+                        transition-colors duration-200"
+                    >
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
+
+
+                </div>
+            </div>
+
+
+
+
+
+
         </div>
 
 

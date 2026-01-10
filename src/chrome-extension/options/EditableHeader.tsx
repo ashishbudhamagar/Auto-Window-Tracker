@@ -58,6 +58,7 @@ export default function EditableHeader({ windowName, onWindowNameChange }: any) 
         <div className="flex items-center w-full">
           <input
             autoFocus
+            spellCheck={false}
             type="text"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}

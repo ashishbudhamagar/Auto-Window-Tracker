@@ -1,3 +1,4 @@
+
 // @ts-ignore
 const groupColorMap: Record<string, string> = {
   grey: "bg-gray-300",
@@ -14,7 +15,7 @@ const groupColorMap: Record<string, string> = {
 
 
 
-export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidden}: any)  {
+export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidden, coloredTabGroups}: any)  {
 
     if (isCardsLayout && tabGroupsHidden) {
         return null
@@ -32,7 +33,7 @@ export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidd
 
             <div className={`flex flex-col pb-4 ${isCardsLayout ? "border-b-0" : "border-b-2 mx-4"} border-gray-300  dark:border-gray-600/50`}>
                 
-                <p className={`text-lg ${isCardsLayout ? "font-semibold" :"font-bold " } mb-2 text-gray-600/90 dark:text-gray-200`}>
+                <p className={` ${isCardsLayout ? "text-[16px]" : "text-lg" } font-bold mb-2 text-gray-600/90 dark:text-gray-200`}>
                     Tab Groups
                 </p>
                 
@@ -42,7 +43,13 @@ export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidd
                     {trackedWindow.groupedTabsInfo.map((tabGroup: any)=>(
                         <div
                         key={tabGroup.id}
-                        className={`bg-gray-200 rounded-lg px-1.5 text-nowrap flex items-center h-fit`}
+                        className={`
+                            rounded-lg py-0.5 px-2 text-nowrap flex items-center h-fit
+                            
+                            ${isCardsLayout ? "text-sm font-medium" : ""}
+                            ${coloredTabGroups ? groupColorMap[tabGroup.color] : "bg-gray-200 dark:bg-gray-700"}
+
+                            `}
                         >
                             {tabGroup.title === "" ? "<unnamed>" : tabGroup.title}
                         </div>

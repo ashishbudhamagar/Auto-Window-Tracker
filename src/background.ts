@@ -30,7 +30,6 @@ async function waitForExtensionDataToBeSet(): Promise<void> {
 
 chrome.runtime.onInstalled.addListener((details) => {
    if (details.reason === "install") {
-      
       const initialExtensionData: ExtensionData = {
          trackedWindows: {},
          openedTrackedWindowIds: [],
@@ -39,6 +38,8 @@ chrome.runtime.onInstalled.addListener((details) => {
          optionsPageLayout: OptionsPageLayout.card,
          optionsPageHideTabGroupsForCards: false,
          optionsPageHideTabGroupsForTable: false,
+         optionsPageColoredTabGroups: false,
+         optionsPageZoomLevel: 0,
       }
       
       extensionData = initialExtensionData
@@ -46,6 +47,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       chrome.storage.local.set({ extensionData: structuredClone(initialExtensionData)})
       chrome.action.setBadgeTextColor({color: "white"})
       chrome.action.setBadgeBackgroundColor({color: "green"})
+      
    } 
 
 
@@ -54,8 +56,6 @@ chrome.runtime.onInstalled.addListener((details) => {
    // if I update the extension, hence the user extension will also be updated,
    // if the debounce doesnt get to save the data, the changes made to the tabs will not reflect
    // if it somehow later
-
-   // another issue, github favUrlIcon on light mode disaapears in the backgorund
    else if (details.reason === "update") {
       
       chrome.action.setBadgeTextColor({color: "white"})
@@ -64,6 +64,7 @@ chrome.runtime.onInstalled.addListener((details) => {
       chrome.storage.local.get("extensionData", (result) => {
          extensionData = result.extensionData
       })
+
    }
 })
 
@@ -306,6 +307,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          sendResponse(extensionData.optionsPageSort)
          return false
       }
+      
 
       else if (message.signal === "changeWindowNameFromOptionsPage") {
          const trackedWindowData = extensionData.trackedWindows[message.oldWindowName]
@@ -318,16 +320,16 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          return false
       }
 
+
       else if (message.signal === "toggleHideTabGroups") {
 
 
-         message.isForCards ?
-         extensionData.optionsPageHideTabGroupsForCards = !extensionData.optionsPageHideTabGroupsForCards
-            :
-         extensionData.optionsPageHideTabGroupsForTable = !extensionData.optionsPageHideTabGroupsForTable
-         
-
-         console.log("tba groups", extensionData)
+         if (message.isForTableOrCards === "cards") {
+            extensionData.optionsPageHideTabGroupsForCards = !extensionData.optionsPageHideTabGroupsForCards
+         }
+         else {
+            extensionData.optionsPageHideTabGroupsForTable = !extensionData.optionsPageHideTabGroupsForTable
+         }
          
          saveExtensionData(extensionData)
          sendResponse({
@@ -338,9 +340,28 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          return false
       }
 
-      
-      
-      
+
+      else if (message.signal === "toggleColoredTabGroups") {
+
+         extensionData.optionsPageColoredTabGroups = !extensionData.optionsPageColoredTabGroups
+         
+         saveExtensionData(extensionData)
+         sendResponse(extensionData.optionsPageColoredTabGroups)
+         updateOptionsPage()
+         return false
+      }
+
+
+      else if (message.signal === "changeOptionsPageZoomLevel") {
+
+         extensionData.optionsPageZoomLevel = message.zoomLevel
+
+         saveExtensionData(extensionData)
+         sendResponse(extensionData.optionsPageZoomLevel)
+         return false
+      }
+
+
       else if (message.signal === "handleDraggableOptionsPageSort") {
          
          const customOrder: TrackedWindow[] = message.arrayOfTrackedWindowValues

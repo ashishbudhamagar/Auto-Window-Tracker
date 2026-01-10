@@ -5,10 +5,23 @@ import EditableHeader from './EditableHeader'
 
 
 export default function CardLayout({
-  arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
-  IconExternal, IconX, determinIfDraggable, handleDragStart, handleDragEnd, handleDragOver, 
-  handleDragLeave, handleDrop, isDragging, preventLinkClickIfChromeSpeicalLink, savedWindowIsOpening,
-  onWindowNameChange, tabGroupsHiddenForCards
+  arrayOfTrackedWindowValues,
+  onOpenSavedWindowButtonClicked,
+  onUntrackWindowButtonClicked,
+  IconExternal,
+  IconX,
+  determinIfDraggable,
+  handleDragStart,
+  handleDragEnd,
+  handleDragOver, 
+  handleDragLeave,
+  handleDrop,
+  isDragging,
+  preventLinkClickIfChromeSpeicalLink,
+  savedWindowIsOpening,
+  onWindowNameChange,
+  tabGroupsHiddenForCards,
+  coloredTabGroups
 }: any) {
   
 
@@ -67,7 +80,7 @@ export default function CardLayout({
             </div>
             
             <div className="mt-4 mb-2">
-              <GroupedTabs trackedWindow={trackedWindow} isCardsLayout={true} tabGroupsHidden={tabGroupsHiddenForCards} />
+              <GroupedTabs trackedWindow={trackedWindow} isCardsLayout={true} tabGroupsHidden={tabGroupsHiddenForCards} coloredTabGroups={coloredTabGroups} />
 
             </div>
 
@@ -112,7 +125,7 @@ export default function CardLayout({
               {trackedWindow.tabs.length > 4 && (
                 <div className="w-full overflow-y-auto bg-gray-200 dark:bg-gray-600/50 rounded-xl">
 
-                  <div className="w-full h-full flex flex-wrap my-[2.1px] items-center gap-x-[12px] gap-y-[12px] py-2 pl-[15px]">
+                  <div className="w-full max-h-[84px] flex flex-wrap my-[2.1px] items-center gap-x-[12px] gap-y-[12px] py-2 pl-[15px]">
                     {trackedWindow.tabs.slice(4).map((tab: Tab) => (
                       <a
                         key={tab.id}
