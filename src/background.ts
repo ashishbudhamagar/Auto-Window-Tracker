@@ -36,7 +36,9 @@ chrome.runtime.onInstalled.addListener((details) => {
          openedTrackedWindowIds: [],
          theme: Theme.light,
          optionsPageSort: OptionsPageSort.dateAsc,
-         optionsPageLayout: OptionsPageLayout.card
+         optionsPageLayout: OptionsPageLayout.card,
+         optionsPageHideTabGroupsForCards: false,
+         optionsPageHideTabGroupsForTable: false,
       }
       
       extensionData = initialExtensionData
@@ -110,10 +112,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             const allTabs = await chrome.tabs.query({windowId: currentWindowId})
             const tabsGroupInfo = await chrome.tabGroups.query({windowId: currentWindowId})
 
-            console.log("grouped tabs ", tabsGroupInfo)
-
-
-            
             
             const usefulTabsData: Tab[] = allTabs.map((tab: any)=>{
                return {
@@ -146,9 +144,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             
             extensionData.trackedWindows[windowName] = trackedWindow
             extensionData.openedTrackedWindowIds.push(currentWindowId)
-            
-            console.log("======== Window is Tracked =========")
-            console.log(extensionData.trackedWindows[windowName])
             
             
             saveExtensionData(extensionData)
@@ -322,6 +317,28 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          updateOptionsPage()
          return false
       }
+
+      else if (message.signal === "toggleHideTabGroups") {
+
+
+         message.isForCards ?
+         extensionData.optionsPageHideTabGroupsForCards = !extensionData.optionsPageHideTabGroupsForCards
+            :
+         extensionData.optionsPageHideTabGroupsForTable = !extensionData.optionsPageHideTabGroupsForTable
+         
+
+         console.log("tba groups", extensionData)
+         
+         saveExtensionData(extensionData)
+         sendResponse({
+            newHideTabGroupsForCards: extensionData.optionsPageHideTabGroupsForCards,
+            newHideTabGroupsForTable: extensionData.optionsPageHideTabGroupsForTable}
+         )
+         updateOptionsPage()
+         return false
+      }
+
+      
       
       
       else if (message.signal === "handleDraggableOptionsPageSort") {
@@ -410,9 +427,6 @@ chrome.windows.onRemoved.addListener(async (windowId: number) => {
          
          trackedWindow.isOpen = false
          extensionData.openedTrackedWindowIds = extensionData.openedTrackedWindowIds.filter(ele => ele !== windowId)
-         
-         // console.log("======== Tracked Window Closed  =========")
-         // console.log(trackedWindow)
          
          saveExtensionData(extensionData)
          updateOptionsPage()
@@ -508,18 +522,15 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
                try {
                   await chrome.windows.get(tab.windowId)
                   updateTab.groupId = updateInfo.groupId
-                  console.log("tab removed from groups")
                   
                } catch (error) {
                   // error means a tracked window with groups is closing
                   // so do nothing
-                  console.log("window is closing")
                   return null
                }
             }
             else {
                updateTab.groupId = updateInfo.groupId!
-               console.log("group made or tab added to group")
             }
             
          }

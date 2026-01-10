@@ -1,3 +1,4 @@
+// @ts-ignore
 const groupColorMap: Record<string, string> = {
   grey: "bg-gray-300",
   blue: "bg-blue-300",
@@ -13,7 +14,15 @@ const groupColorMap: Record<string, string> = {
 
 
 
-export default function GroupedTabs({trackedWindow, isCardsLayout}: any)  {
+export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidden}: any)  {
+
+    if (isCardsLayout && tabGroupsHidden) {
+        return null
+    }
+
+    if (!isCardsLayout && tabGroupsHidden) {
+        return null
+    }
 
     return (
 
@@ -33,9 +42,9 @@ export default function GroupedTabs({trackedWindow, isCardsLayout}: any)  {
                     {trackedWindow.groupedTabsInfo.map((tabGroup: any)=>(
                         <div
                         key={tabGroup.id}
-                        className={`${groupColorMap[tabGroup.color]} rounded-lg py-0.5 px-1.5 text-nowrap flex items-center h-fit`}
+                        className={`bg-gray-200 rounded-lg px-1.5 text-nowrap flex items-center h-fit`}
                         >
-                            {tabGroup.title === "" ? <strong>*unnamed*</strong> : tabGroup.title}
+                            {tabGroup.title === "" ? "<unnamed>" : tabGroup.title}
                         </div>
                     ))}
 

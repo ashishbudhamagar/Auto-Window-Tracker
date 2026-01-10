@@ -1,11 +1,12 @@
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow, Tab } from "../../types"
-import { IconBookmark, IconX, IconExternal, IconDarkMode, IconLightMode, IconLayout } from "../../icons"
+import { IconBookmark, IconX, IconExternal, IconLayout } from "../../icons"
 import { useEffect, useState } from "react"
 import extensionImage192 from "../public/192.png"
 import "../global.css"
 
 import CardLayout from "./CardLayout"
 import TableLayout from "./TableLayout"
+import Settings from "./Settings"
 
 
 document.documentElement.style.zoom = "75%"
@@ -20,19 +21,23 @@ const Options = () => {
     OptionsPageSort.draggable1, OptionsPageSort.draggable2, OptionsPageSort.draggable3
   ]
 
-  const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null)
-
+  
   const [arrayOfTrackedWindowValues, setArrayOfTrackedWindowValues] = useState<TrackedWindow[]>([])
   const [originalArrayOfTrackedWindowValues, setOriginalArrayOfTrackedWindowValues] = useState<TrackedWindow[]>([])
+  
 
+  const [currentSort, setCurrentSort] = useState<OptionsPageSort | null>(null)
   const [layout, setLayout] = useState<OptionsPageLayout | null>(null)
   const [theme, setTheme] = useState<Theme | null>(null)
   const [spinLayoutIcon, setSpinLayoutIcon] = useState(false)
+  const [tabGroupsHiddenForCards, setTabGroupsHiddenForCards] = useState<boolean | null>(null)
+  const [tabGroupsHiddenForTable, setTabGroupsHiddenForTable] = useState<boolean | null>(null)
   
+
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
-
   const [savedWindowIsOpening, setSavedWindowIsOpening] = useState<boolean>(false)
+
 
 
   useEffect(() => {
@@ -45,6 +50,8 @@ const Options = () => {
       setTheme(response.theme)
       setCurrentSort(response.optionsPageSort)
       setLayout(response.optionsPageLayout)
+      setTabGroupsHiddenForCards(response.optionsPageHideTabGroupsForCards)
+      setTabGroupsHiddenForTable(response.optionsPageHideTabGroupsForTable)
     })
 
     
@@ -82,11 +89,7 @@ const Options = () => {
   }, [theme])
 
 
-  function onChangeThemeButtonClicked() {
-    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme) => {
-      setTheme(newTheme)
-    })
-  }
+
 
 
   function onChangeLayoutButtonClicked() {
@@ -112,6 +115,19 @@ const Options = () => {
     )
   }
 
+
+  function onChangeThemeButtonClicked() {
+    chrome.runtime.sendMessage({signal: "changeTheme"}, (newTheme: Theme) => {
+        setTheme(newTheme)
+    })
+  }
+
+  function onToggleTabGroupsButtonClicked(isForCards: "table" | "cards") {
+    chrome.runtime.sendMessage({signal: "toggleHideTabGroups", isForCards: isForCards}, ({newHideTabGroupsForCards, newHideTabGroupsForTable}) => {
+      setTabGroupsHiddenForCards(newHideTabGroupsForCards)
+      setTabGroupsHiddenForTable(newHideTabGroupsForTable)
+    })
+  }
 
     
   function applyOptionsPageSort() {
@@ -307,7 +323,7 @@ const Options = () => {
   const totalTrackedWindowCount = arrayOfTrackedWindowValues.length
 
 
-  if (theme === null || layout === null || currentSort === null) {
+  if (theme === null || layout === null || currentSort === null || tabGroupsHiddenForCards === null || tabGroupsHiddenForTable === null) {
     return (
       <div className="min-h-screen w-full bg-[rgb(95,95,95)] flex flex-col items-center justify-center">
         <div className="relative">
@@ -331,7 +347,7 @@ const Options = () => {
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-50 via-indigo-200 to-slate-50 
     dark:from-[#0f1934] dark:via-[#121f40] dark:to-[#101827] transition-all duration-500">
 
-      <header className="bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
+      <header className="relative z-20 bg-white/80 dark:bg-gray-900/70 backdrop-blur-lg shadow-lg dark:shadow-2xl border-b border-white/20 dark:border-gray-700/30">
         <div className="flex flex-col sm:flex-row justify-between py-4 sm:py-6 items-center max-w-7xl mx-auto px-5 gap-4">
 
           <div className="flex items-center space-x-3">
@@ -348,7 +364,7 @@ const Options = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center justify-center space-x-2 sm:space-x-4">
 
             <div className="flex items-center space-x-3 sm:space-x-6 px-3 sm:px-4 py-2 sm:py-3 
             bg-gray-100 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl border border-white/20
@@ -372,20 +388,16 @@ const Options = () => {
 
             </div>
 
-            <button 
-              className="relative flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 
-              rounded-xl bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 
-              dark:hover:bg-gray-700/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/30
-               shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              onClick={onChangeThemeButtonClicked}
-            >
-              {theme === Theme.light 
-                ? <IconLightMode className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 transition-transform 
-                hover:rotate-180 duration-500"/> 
-                : <IconDarkMode className="h-5 w-5 sm:h-6 sm:w-6 text-blue-400 transition-transform 
-                hover:rotate-180 duration-500"/>
-              }
-            </button>
+            <div>
+              <Settings
+                theme={theme} 
+                hideTabGroupsCards={tabGroupsHiddenForCards} 
+                hideTabGroupsTable={tabGroupsHiddenForTable}
+                onChangeThemeButtonClicked={onChangeThemeButtonClicked}
+                onToggleTabGroupsButtonClicked={onToggleTabGroupsButtonClicked}
+              
+              />
+            </div>
 
           </div>
 
@@ -516,6 +528,7 @@ const Options = () => {
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
             savedWindowIsOpening={savedWindowIsOpening}
             onWindowNameChange={onWindowNameChange}
+            tabGroupsHiddenForCards={tabGroupsHiddenForCards}
           />
 
         ) : (
@@ -536,6 +549,7 @@ const Options = () => {
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
             savedWindowIsOpening={savedWindowIsOpening}
             onWindowNameChange={onWindowNameChange}
+            tabGroupsHiddenForTable={tabGroupsHiddenForTable}
           />
 
         )}

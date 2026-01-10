@@ -2,14 +2,17 @@
 export interface ExtensionData {
   
   trackedWindows: Record<string, TrackedWindow>
-  optionsPageLayout: OptionsPageLayout
-  optionsPageSort: OptionsPageSort
-  theme: Theme
   
   // this property exists so I dont have to use Object.values(obj).windowId everytime 
   // I need a list of tracked window ids (better preformance)
   // Also this keeps ids of open windows only
   openedTrackedWindowIds: number[]
+
+  theme: Theme
+  optionsPageLayout: OptionsPageLayout
+  optionsPageSort: OptionsPageSort
+  optionsPageHideTabGroupsForCards: boolean
+  optionsPageHideTabGroupsForTable: boolean
 }
 
 export interface TrackedWindow {

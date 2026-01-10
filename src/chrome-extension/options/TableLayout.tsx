@@ -21,7 +21,8 @@ export default function TableLayout({
   isDragging, 
   preventLinkClickIfChromeSpeicalLink,
   savedWindowIsOpening,
-  onWindowNameChange
+  onWindowNameChange,
+  tabGroupsHiddenForTable
 }: any) {
 
   const [activeWindowIndex, setActiveWindowIndex] = useState<number>(0)
@@ -192,7 +193,7 @@ export default function TableLayout({
         
         
         <div className="mb-4">
-          <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} ></GroupedTabs>
+          <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} tabGroupsHidden={tabGroupsHiddenForTable}></GroupedTabs>
         </div>
        
 

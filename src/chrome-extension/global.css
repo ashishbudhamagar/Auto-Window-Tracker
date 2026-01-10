@@ -58,11 +58,26 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 @keyframes spin-once {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+  
 }
+
 
 .spin-once {
   animation: spin-once 0.5s ease-out;
 }
+
+
+@keyframes spin-once-less {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(135deg); }
+}
+
+.spin-once-less {
+  animation: spin-once-less 0.3s ease-in-out;
+}
+
+
+
 
 .shrink-and-grow {
   animation: shrink-and-grow 0.3s ease-in-out;

@@ -8,7 +8,7 @@ export default function CardLayout({
   arrayOfTrackedWindowValues, onOpenSavedWindowButtonClicked, onUntrackWindowButtonClicked,
   IconExternal, IconX, determinIfDraggable, handleDragStart, handleDragEnd, handleDragOver, 
   handleDragLeave, handleDrop, isDragging, preventLinkClickIfChromeSpeicalLink, savedWindowIsOpening,
-  onWindowNameChange
+  onWindowNameChange, tabGroupsHiddenForCards
 }: any) {
   
 
@@ -67,7 +67,7 @@ export default function CardLayout({
             </div>
             
             <div className="mt-4 mb-2">
-              <GroupedTabs trackedWindow={trackedWindow} isCardsLayout={true} ></GroupedTabs>
+              <GroupedTabs trackedWindow={trackedWindow} isCardsLayout={true} tabGroupsHidden={tabGroupsHiddenForCards} />
 
             </div>
 
