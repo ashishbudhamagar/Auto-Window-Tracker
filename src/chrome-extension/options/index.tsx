@@ -377,41 +377,6 @@ const Options = () => {
 
 
 
-
-  function handleDragStart(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
-    setIsDragging(true)
-    e.currentTarget.setAttribute("data-card-index", String(index))
-    e.dataTransfer.setData("cardIndex", String(index))
-    e.currentTarget.style.opacity = "0"
-  }
-
-  function handleDragEnd(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>) {
-    e.preventDefault()
-    setIsDragging(false)
-    e.currentTarget.removeAttribute("data-card-index")
-    e.dataTransfer.clearData()
-    e.currentTarget.style.opacity = "1"
-  }
-
-  function handleDragOver(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
-    e.preventDefault()
-    if (e.currentTarget.getAttribute("data-card-index") === String(index)) return
-
-    const element = e.currentTarget
-    setTimeout(() => {
-      element.style.transform = "scale(0.90)"
-    }, 100)
-  }
-
-  function handleDragLeave(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>) {
-    e.preventDefault()
-
-    const element = e.currentTarget
-    setTimeout(() => {
-      element.style.removeProperty("transform")
-    }, 100)
-  }
-
   function handleDrop(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
     e.preventDefault()
 
