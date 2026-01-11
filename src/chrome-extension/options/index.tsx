@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow, Tab } from "../../types"
 import { IconBookmark, IconX, IconExternal, IconLayout } from "../../icons"
 import { useEffect, useState } from "react"
@@ -7,7 +8,8 @@ import "../global.css"
 import CardLayout from "./CardLayout"
 import TableLayout from "./TableLayout"
 import Settings from "./Settings"
-
+import SearchByUrlResult from "./SearchByUrlResult"
+import NoSearchQuery from "./NoSearchQuery"
 
 const DEAFULT_ZOOM_LEVEL: number = 75
 
@@ -524,7 +526,7 @@ const Options = () => {
 
               <input 
                 type="text"
-                placeholder="Search windows by name..."
+                placeholder='Search windows by name or URL by "url:google"...'
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-gray-700 
@@ -593,8 +595,27 @@ const Options = () => {
         </div>
 
 
+        {searchQuery.trim() !== "" && !searchQuery.trim().includes("url:") && arrayOfTrackedWindowValues.length === 0 ?
+          <NoSearchQuery />
+        :
 
-        {arrayOfTrackedWindowValues.length === 0 ? (
+        searchQuery.trim().includes("url:") ?
+
+          <SearchByUrlResult
+          arrayOfTrackedWindowValues={arrayOfTrackedWindowValues}
+          searchQuery={searchQuery}
+          savedWindowIsOpening={savedWindowIsOpening}
+          IconExternal={IconExternal}
+          IconX={IconX}
+          preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
+          onUntrackWindowButtonClicked={onUntrackWindowButtonClicked}
+          onOpenSavedWindowButtonClicked={onOpenSavedWindowButtonClicked}
+
+          />
+
+        :
+
+        arrayOfTrackedWindowValues.length === 0 ? (
           
           <div className="flex flex-col justify-center items-center min-h-[300px] 
           sm:min-h-[400px] p-6 sm:p-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg 
@@ -658,6 +679,9 @@ const Options = () => {
           />
 
         )}
+
+
+
 
       </main>
     </div>

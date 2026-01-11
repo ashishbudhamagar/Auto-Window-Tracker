@@ -219,8 +219,8 @@ export default function CardLayout({
                   hover:scale-105
                   ${trackedWindow.isOpen
                     ? `text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200
-                     dark:border-gray-700 bg-green-50 dark:bg-gray-800/50`
-                    : `text-blue-600 dark:text-blue-500 bg-indigo-50 hover:bg-blue-200 bg-blue-900/30
+                     dark:border-gray-700 bg-green-100/80 dark:bg-gray-800/50`
+                    : `text-blue-600 dark:text-blue-500 bg-indigo-50/80 hover:bg-blue-200 
                      dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 
                      dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 `}`
                 }
