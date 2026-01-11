@@ -526,13 +526,13 @@ const Options = () => {
 
               <input 
                 type="text"
-                placeholder='Search windows by name or URL by "url:google"...'
+                placeholder='Search by window name or by URL: "url:google"...'
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-gray-700 
                 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-gray-100 
                 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl outline-none ring-0 focus:ring-2 
-                focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-shadow duration-300 
+                focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-shadow duration-300 
                 shadow-sm focus:shadow-lg text-base sm:text-lg font-medium border border-gray-200 
                 dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
               />
@@ -676,6 +676,7 @@ const Options = () => {
             onWindowNameChange={onWindowNameChange}
             tabGroupsHiddenForTable={tabGroupsHiddenForTable}
             coloredTabGroups={coloredTabGroups}
+            searchQuery={searchQuery}
           />
 
         )}

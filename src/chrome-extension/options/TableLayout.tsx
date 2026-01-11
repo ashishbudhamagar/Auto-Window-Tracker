@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from "react"
 import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
@@ -23,24 +24,35 @@ export default function TableLayout({
   savedWindowIsOpening,
   onWindowNameChange,
   tabGroupsHiddenForTable,
-  coloredTabGroups
+  coloredTabGroups,
+  //@ts-ignore
+  searchQuery
 }: any) {
 
   const [activeWindowIndex, setActiveWindowIndex] = useState<number>(0)
-  const activeWindow: TrackedWindow = arrayOfTrackedWindowValues[activeWindowIndex]
+  const [activeWindow, setActiveWindow] = useState<TrackedWindow>(arrayOfTrackedWindowValues[activeWindowIndex])
+  console.log(activeWindowIndex)
+
+
 
   useEffect(() => {
+
     if (activeWindowIndex >= arrayOfTrackedWindowValues.length) {
-      if (arrayOfTrackedWindowValues.length -1 > 0) {
-        setActiveWindowIndex(arrayOfTrackedWindowValues.length - 1)
-      }
+      setActiveWindowIndex(arrayOfTrackedWindowValues.length-1)
+      setActiveWindow(arrayOfTrackedWindowValues[arrayOfTrackedWindowValues.length-1])
     }
-  }, [arrayOfTrackedWindowValues.length])
+  }, [arrayOfTrackedWindowValues])
 
 
   function getTabCountText(count: number): string {
     if (count === 1) return "1 tab"
     return `${count} tabs`
+  }
+
+
+  function onTableTackedWindowClicked(index: number) {
+    setActiveWindowIndex(index)
+    setActiveWindow(arrayOfTrackedWindowValues[index])
   }
 
 
@@ -76,7 +88,7 @@ export default function TableLayout({
               onDragOver={(e) => handleDragOver(e, index)}
               onDragLeave={(e) => handleDragLeave(e)}
               onDrop={(e) => handleDrop(e, index)}
-              onClick={() => setActiveWindowIndex(index)}
+              onClick={() => onTableTackedWindowClicked(index)}
               className={`
                   w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl 
                   

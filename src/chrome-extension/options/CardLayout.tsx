@@ -69,11 +69,11 @@ export default function CardLayout({
             backdrop-blur-lg h-auto w-full rounded-2xl px-5 sm:px-6 py-5 sm:py-6 flex flex-col justify-between gap-2
             
             transition-all ease-out will-change-transform
-            ${isDragging ? "duration-500" : "duration-[800ms]"}
+            ${isDragging ? "duration-500" : "duration-[700ms]"}
             ${isDragging && draggedItemIndex !== index ? 'opacity-40' : 'opacity-100'}
             
             hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
-            transition-[opacity,transform,box-shadow] ease-out duration-500 overflow-hidden 
+            transition-[opacity,transform,box-shadow] ease-out overflow-hidden 
             border border-white/20 dark:border-gray-700/30 border-l-4
             bg-white dark:bg-gray-800
             ${trackedWindow.isOpen ? "border-l-green-500 dark:border-l-green-600" : "border-l-blue-500 dark:border-l-blue-600"}
