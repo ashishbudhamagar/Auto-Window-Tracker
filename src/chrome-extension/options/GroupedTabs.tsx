@@ -33,12 +33,12 @@ export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidd
 
             <div className={`flex flex-col pb-4 ${isCardsLayout ? "border-b-0" : "border-b-2 mx-4"} border-gray-300  dark:border-gray-600/50`}>
                 
-                <p className={` ${isCardsLayout ? "text-[16px]" : "text-lg" } font-bold mb-2 text-gray-600/90 dark:text-gray-200`}>
+                <p className={` ${isCardsLayout ? "text-[16px]" : "text-lg" } font-bold mb-2 text-gray-700/80 dark:text-gray-200`}>
                     Tab Groups
                 </p>
                 
                 <div className="flex flex-row items-center gap-3 font-semibold text-[16px]
-                 text-gray-600/80 overflow-x-auto">
+                 text-gray-600/90 overflow-x-auto">
 
                     {trackedWindow.groupedTabsInfo.map((tabGroup: any)=>(
                         <div
@@ -46,7 +46,7 @@ export default function GroupedTabs({trackedWindow, isCardsLayout, tabGroupsHidd
                         className={`
                             rounded-lg py-0.5 px-2 text-nowrap flex items-center h-fit
                             
-                            ${isCardsLayout ? "text-sm font-medium" : ""}
+                            ${isCardsLayout ? "font-medium" : ""}
                             ${coloredTabGroups ? groupColorMap[tabGroup.color] : "bg-gray-200 dark:bg-gray-700"}
 
                             `}

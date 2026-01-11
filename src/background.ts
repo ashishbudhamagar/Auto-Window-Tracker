@@ -40,6 +40,7 @@ chrome.runtime.onInstalled.addListener((details) => {
          optionsPageHideTabGroupsForTable: false,
          optionsPageColoredTabGroups: false,
          optionsPageZoomLevel: 0,
+         optionsPageCardsColumns: "auto"
       }
       
       extensionData = initialExtensionData
@@ -307,7 +308,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          sendResponse(extensionData.optionsPageSort)
          return false
       }
-      
+
 
       else if (message.signal === "changeWindowNameFromOptionsPage") {
          const trackedWindowData = extensionData.trackedWindows[message.oldWindowName]
@@ -358,6 +359,30 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
 
          saveExtensionData(extensionData)
          sendResponse(extensionData.optionsPageZoomLevel)
+         return false
+      }
+
+      else if (message.signal === "changeOptionsPageCardsColumns") {
+
+         if (message.incOrDec === "dec") {
+            
+            extensionData.optionsPageCardsColumns =
+               extensionData.optionsPageCardsColumns === "auto" ? 5
+               :
+               extensionData.optionsPageCardsColumns - 1
+         }
+         else {
+            extensionData.optionsPageCardsColumns =
+            // this will always be int and not string because the options page checks it
+            // @ts-ignore
+               extensionData.optionsPageCardsColumns < 5 ? extensionData.optionsPageCardsColumns + 1
+               :
+               "auto"
+
+         }
+
+         saveExtensionData(extensionData)
+         sendResponse(extensionData.optionsPageCardsColumns)
          return false
       }
 

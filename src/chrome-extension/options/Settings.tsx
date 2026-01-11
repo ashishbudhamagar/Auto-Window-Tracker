@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Settings as SettingsIcon, ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 import { Theme } from "../../types"
@@ -12,10 +13,12 @@ export default function Settings({
     hideTabGroupsTable,
     coloredTabGroups,
     zoomLevel,
+    cardsColumns,
     onChangeThemeButtonClicked,
     onToggleTabGroupsButtonClicked,
     onToggleColoredTabGroupsButtonClicked,
-    onZoomLevelChange
+    onZoomLevelChange,
+    onCardsColumnsChange
 
 }: any) {
 
@@ -70,7 +73,10 @@ export default function Settings({
 
 
 
-    
+
+
+
+
     return (
     <div ref={settingsRef} className="relative inline-block group">
         <button
@@ -99,7 +105,7 @@ export default function Settings({
         <div
         className={`
             absolute right-0 top-full mt-2
-            h-[300px] w-[270px]
+            h-auto w-[330px]
             bg-white dark:bg-gray-800
             rounded-lg shadow-lg
             transition-all duration-300 z-50 p-4
@@ -114,7 +120,7 @@ export default function Settings({
             <div className="flex flex-row items-center justify-between w-full
             bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
             ">
-                <p className="text-sm">Theme (Dark mode)</p>
+                <p className="text-sm">Dark mode</p>
                 <button
                     onClick={onChangeThemeButtonClicked}
                     className={`relative w-11 h-6 rounded-full transition-colors duration-300
@@ -127,37 +133,7 @@ export default function Settings({
                 </button>
             </div>
 
-            <div className="flex flex-row items-center justify-between w-full
-            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
-            ">
-                <p className="text-sm">Hide tab groups (cards)</p>
-                <button
-                    onClick={() => onToggleTabGroupsButtonClicked("cards")}
-                    className={`relative w-11 h-6 rounded-full transition-colors duration-300
-                        ${hideTabGroupsCards ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"}`}
-                >
-                    <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full 
-                        shadow transition-transform duration-300
-                        ${hideTabGroupsCards ? "translate-x-5" : "translate-x-0"}`}
-                    />
-                </button>
-            </div>
 
-            <div className="flex flex-row items-center justify-between w-full
-            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
-            ">
-                <p className="text-sm">Hide tab groups (table)</p>
-                <button
-                    onClick={() => onToggleTabGroupsButtonClicked("table")}
-                    className={`relative w-11 h-6 rounded-full transition-colors duration-300
-                        ${hideTabGroupsTable ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"}`}
-                >
-                    <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full 
-                        shadow transition-transform duration-300
-                        ${hideTabGroupsTable ? "translate-x-5" : "translate-x-0"}`}
-                    />
-                </button>
-            </div>
 
             <div className="flex flex-row items-center justify-between w-full
             bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
@@ -175,6 +151,80 @@ export default function Settings({
                 </button>
             </div>
 
+
+
+
+            <div className="flex flex-row items-center justify-between w-full
+            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
+            ">
+                <p className="text-sm">Hide tab groups (table)</p>
+                <button
+                    onClick={() => onToggleTabGroupsButtonClicked("table")}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-300
+                        ${hideTabGroupsTable ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"}`}
+                >
+                    <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full 
+                        shadow transition-transform duration-300
+                        ${hideTabGroupsTable ? "translate-x-5" : "translate-x-0"}`}
+                    />
+                </button>
+            </div>
+
+
+
+            <div className="flex flex-row items-center justify-between w-full
+            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
+            ">
+                <p className="text-sm">Hide tab groups (cards)</p>
+                <button
+                    onClick={() => onToggleTabGroupsButtonClicked("cards")}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-300
+                        ${hideTabGroupsCards ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"}`}
+                >
+                    <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full 
+                        shadow transition-transform duration-300
+                        ${hideTabGroupsCards ? "translate-x-5" : "translate-x-0"}`}
+                    />
+                </button>
+            </div>
+
+
+
+            <div className="flex flex-row items-center justify-between w-full
+            bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
+            ">
+                <p className="text-sm">Columns number (Cards)</p>
+
+                <div className="flex items-center gap-2">
+
+
+                    <button
+                        onClick={() => onCardsColumnsChange("dec")}
+                        disabled={typeof cardsColumns === "number" && cardsColumns <= 1}
+                        className="w-6 h-6 flex items-center justify-center rounded 
+                        bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500
+                        disabled:opacity-40 disabled:cursor-not-allowed
+                        transition-colors duration-200"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <p className={`${cardsColumns === "auto" ? "w-8" : "w-6"} text-center text-sm font-medium`}>{cardsColumns}</p>
+
+                    <button
+                        onClick={() => onCardsColumnsChange("inc")}
+                        disabled={typeof cardsColumns === "string"}
+                        className="w-6 h-6 flex items-center justify-center rounded 
+                        bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500
+                        disabled:opacity-40 disabled:cursor-not-allowed
+                        transition-colors duration-200"
+                    >
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
+
+
+                </div>
+            </div>
 
             
 

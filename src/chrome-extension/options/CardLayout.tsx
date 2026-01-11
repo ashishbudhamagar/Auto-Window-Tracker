@@ -4,6 +4,16 @@ import GroupedTabs from './GroupedTabs'
 import EditableHeader from './EditableHeader'
 
 
+  
+const COLUMN_CLASSES: Record<string, string> = {
+  "1": "grid-cols-1",
+  "2": "grid-cols-2",
+  "3": "grid-cols-3",
+  "4": "grid-cols-4",
+  "5": "grid-cols-5"
+}
+
+
 export default function CardLayout({
   arrayOfTrackedWindowValues,
   onOpenSavedWindowButtonClicked,
@@ -21,17 +31,23 @@ export default function CardLayout({
   savedWindowIsOpening,
   onWindowNameChange,
   tabGroupsHiddenForCards,
-  coloredTabGroups
+  coloredTabGroups,
+  cardsColumns
 }: any) {
   
 
 
-  
 
 
   return (
     
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-6 sm:gap-8 mb-16"> 
+    <div className={`
+      grid
+      ${cardsColumns === "auto" ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : COLUMN_CLASSES[cardsColumns] }
+
+      gap-6 sm:gap-8 mb-16
+    
+    `}>
     
       {arrayOfTrackedWindowValues.map((trackedWindow: TrackedWindow, index: number) => (
         
@@ -168,7 +184,7 @@ export default function CardLayout({
 
 
 
-          <div className="flex space-x-3">
+          <div className={`flex ${cardsColumns === 5 ? "flex-col space-y-2" : "space-x-3"}`}>
               <button 
                 className="group flex items-center space-x-2 py-3 px-4 rounded-xl text-red-500
                  dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all 

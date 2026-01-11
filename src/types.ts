@@ -15,6 +15,7 @@ export interface ExtensionData {
   optionsPageHideTabGroupsForTable: boolean
   optionsPageColoredTabGroups: boolean
   optionsPageZoomLevel: number
+  optionsPageCardsColumns: number | "auto"
 }
 
 export interface TrackedWindow {

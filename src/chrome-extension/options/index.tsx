@@ -34,6 +34,7 @@ const Options = () => {
   const [tabGroupsHiddenForTable, setTabGroupsHiddenForTable] = useState<boolean | null>(null)
   const [coloredTabGroups, setColoredTabGroups] = useState<boolean | null>(null)
   const [zoomLevel, setZoomLevel] = useState<number | null>(null)
+  const [cardsColumns, setCardsColumns] = useState<number | "auto" | null>(null)
 
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
@@ -55,6 +56,7 @@ const Options = () => {
       setTabGroupsHiddenForTable(response.optionsPageHideTabGroupsForTable)
       setColoredTabGroups(response.optionsPageColoredTabGroups)
       setZoomLevel(response.optionsPageZoomLevel)
+      setCardsColumns(response.optionsPageCardsColumns)
     })
 
     
@@ -105,9 +107,13 @@ const Options = () => {
 
 
     const step = zoomLevel * 10
-    const changeBy = step * 5
+    let changeBy = step * 5
+
+    if (zoomLevel < 0) {
+      changeBy = changeBy / 2
+    }
+
     const finalZoomLevel = DEAFULT_ZOOM_LEVEL + changeBy
-    console.log("finalZoomLevel", finalZoomLevel)
     document.documentElement.style.zoom = String(finalZoomLevel) + "%"
 
   }, [zoomLevel])
@@ -169,6 +175,12 @@ const Options = () => {
   function onZoomLevelChange(zoomLevel: number) {
     chrome.runtime.sendMessage({signal: "changeOptionsPageZoomLevel", zoomLevel: zoomLevel}, (newZoomLevel: number) => {
       setZoomLevel(newZoomLevel)
+    })
+  }
+
+  function onCardsColumnsChange(incOrDec: "inc" | "dec") {
+    chrome.runtime.sendMessage({signal: "changeOptionsPageCardsColumns", incOrDec: incOrDec}, (newCardsColumns: number | "auto") => {
+      setCardsColumns(newCardsColumns)
     })
   }
 
@@ -368,7 +380,7 @@ const Options = () => {
 
   if (theme === null || layout === null || currentSort === null || 
     tabGroupsHiddenForCards === null || tabGroupsHiddenForTable === null || 
-    coloredTabGroups === null || zoomLevel === null
+    coloredTabGroups === null || zoomLevel === null || cardsColumns === null
   ) {
 
     return (
@@ -442,10 +454,12 @@ const Options = () => {
                 hideTabGroupsTable={tabGroupsHiddenForTable}
                 coloredTabGroups={coloredTabGroups}
                 zoomLevel={zoomLevel}
+                cardsColumns={cardsColumns}
                 onChangeThemeButtonClicked={onChangeThemeButtonClicked}
                 onToggleTabGroupsButtonClicked={onToggleTabGroupsButtonClicked}
                 onToggleColoredTabGroupsButtonClicked={onToggleColoredTabGroupsButtonClicked}
                 onZoomLevelChange={onZoomLevelChange}
+                onCardsColumnsChange={onCardsColumnsChange}
               
               />
             </div>
@@ -581,6 +595,7 @@ const Options = () => {
             onWindowNameChange={onWindowNameChange}
             tabGroupsHiddenForCards={tabGroupsHiddenForCards}
             coloredTabGroups={coloredTabGroups}
+            cardsColumns={cardsColumns}
           />
 
         ) : (
