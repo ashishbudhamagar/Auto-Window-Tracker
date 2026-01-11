@@ -38,6 +38,7 @@ const Options = () => {
 
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
+  const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null)
   const [savedWindowIsOpening, setSavedWindowIsOpening] = useState<boolean>(false)
 
 
@@ -273,11 +274,6 @@ const Options = () => {
   }
 
 
-  function determinIfDraggable() {
-    const isDraggableSort = currentSort === OptionsPageSort.draggable1 || currentSort === OptionsPageSort.draggable2 || currentSort === OptionsPageSort.draggable3
-    return isDraggableSort && searchQuery === ""
-  }
-
 
 
   async function onWindowNameChange(newWindowName: string, oldWindowName: string) {
@@ -309,19 +305,78 @@ const Options = () => {
   }
 
 
-  function handleDragAndDrop(fromIndex: number, toIndex: number) {
 
-    if (fromIndex === toIndex) return
-    if (fromIndex < 0 || toIndex < 0) return
-    if (fromIndex >= arrayOfTrackedWindowValues.length || toIndex >= arrayOfTrackedWindowValues.length) return
 
-    chrome.runtime.sendMessage({
-      signal: "handleDraggableOptionsPageSort",
-      arrayOfTrackedWindowValues: arrayOfTrackedWindowValues,
-      fromIndex: fromIndex,
-      toIndex: toIndex
-    })
+
+
+  // ============ Drag and Drop related start =================
+
+  function determinIfDraggable() {
+    const isDraggableSort = currentSort === OptionsPageSort.draggable1 || currentSort === OptionsPageSort.draggable2 || currentSort === OptionsPageSort.draggable3
+    return isDraggableSort && searchQuery === ""
   }
+
+
+
+
+  function handleDragStart(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
+
+    setIsDragging(true)
+    setDraggedItemIndex(index)
+
+    const target = e.currentTarget as HTMLElement;
+    e.dataTransfer.setDragImage(target, 0, 0);
+
+    e.currentTarget.classList.add("draggin-element")
+    e.currentTarget.setAttribute("data-card-index", String(index))
+    e.dataTransfer.setData("cardIndex", String(index))
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  function handleDragEnd(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>) {
+    e.preventDefault()
+
+    setIsDragging(false)
+    setDraggedItemIndex(null)
+
+    e.currentTarget.removeAttribute("data-card-index")
+    e.dataTransfer.clearData()
+    
+    e.currentTarget.classList.remove("draggin-element")
+
+    const divs = document.querySelectorAll(".drag-over-target")
+    divs.forEach(i => i.classList.remove("drag-over-target"))
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
+    e.preventDefault()
+    
+    if (e.currentTarget.getAttribute("data-card-index") === String(index)) return
+
+    const element = e.currentTarget
+    
+    const closeByElements = Array.from((element.parentElement || document).children)
+    
+    closeByElements.forEach(s => {
+      if(s !== element) {
+        s.classList.remove("drag-over-target")
+      }
+    })
+
+    if (!element.classList.contains("drag-over-target")) {
+      element.classList.add("drag-over-target")
+    }
+  }
+
+
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>) {
+    e.preventDefault()
+    e.currentTarget.classList.remove("drag-over-target")
+  }
+
+
+
+
 
   function handleDragStart(e: React.DragEvent<HTMLDivElement | HTMLButtonElement>, index: number) {
     setIsDragging(true)
@@ -361,16 +416,30 @@ const Options = () => {
     e.preventDefault()
 
     const element = e.currentTarget
-    setTimeout(() => {
-      element.style.removeProperty("transform")
-    }, 60)
+    element.style.removeProperty("transform")
+
 
     const from = Number(e.dataTransfer.getData("cardIndex"))
     e.currentTarget.removeAttribute("data-card-index")
     e.dataTransfer.clearData()
 
-    handleDragAndDrop(from, index)
+
+    if (from === index) return
+    if (from < 0 || index < 0) return
+    if (from >= arrayOfTrackedWindowValues.length || index >= arrayOfTrackedWindowValues.length) return
+
+    chrome.runtime.sendMessage({
+      signal: "handleDraggableOptionsPageSort",
+      arrayOfTrackedWindowValues: arrayOfTrackedWindowValues,
+      fromIndex: from,
+      toIndex: index
+    })
   }
+
+  // ============ Drag and Drop related end =================
+
+
+
 
 
   const activeWindowCount = arrayOfTrackedWindowValues.filter(trackedWindow => trackedWindow.isOpen).length
@@ -590,6 +659,7 @@ const Options = () => {
             handleDragLeave={handleDragLeave}
             handleDrop={handleDrop}
             isDragging={isDragging}
+            draggedItemIndex={draggedItemIndex}
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
             savedWindowIsOpening={savedWindowIsOpening}
             onWindowNameChange={onWindowNameChange}
@@ -613,6 +683,7 @@ const Options = () => {
             handleDragLeave={handleDragLeave}
             handleDrop={handleDrop}
             isDragging={isDragging}
+            draggedItemIndex={draggedItemIndex}
             preventLinkClickIfChromeSpeicalLink={preventLinkClickIfChromeSpeicalLink}
             savedWindowIsOpening={savedWindowIsOpening}
             onWindowNameChange={onWindowNameChange}

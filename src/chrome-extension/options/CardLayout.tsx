@@ -27,6 +27,7 @@ export default function CardLayout({
   handleDragLeave,
   handleDrop,
   isDragging,
+  draggedItemIndex,
   preventLinkClickIfChromeSpeicalLink,
   savedWindowIsOpening,
   onWindowNameChange,
@@ -62,6 +63,11 @@ export default function CardLayout({
           className={`
             ${isDragging ? "dragging" : ""} 
             backdrop-blur-lg h-auto w-full rounded-2xl px-5 sm:px-6 py-5 sm:py-6 flex flex-col justify-between gap-2
+            
+            transition-all ease-out will-change-transform
+            ${isDragging ? "duration-500" : "duration-[1000ms]"}
+            ${isDragging && draggedItemIndex !== index ? 'opacity-40' : 'opacity-100'}
+            
             hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
             transition-[opacity,transform,box-shadow] ease-out duration-500 overflow-hidden 
             border border-white/20 dark:border-gray-700/30 border-l-4
@@ -120,6 +126,7 @@ export default function CardLayout({
                     <div className="flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-md overflow-hidden
                      dark:border-gray-600/50">
                       <img
+                      draggable={false}
                         src={tab.favIconUrl || noImageImage}
                         onError={(e) => {
                           e.currentTarget.onerror = null;

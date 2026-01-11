@@ -88,3 +88,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .dragging * {
   pointer-events: none !important;
 }
+
+
+
+.draggin-element {
+  border-left-style: dashed !important;
+}
+
+.drag-over-target {
+  transform: scale(1.05) !important;
+}

@@ -18,6 +18,7 @@ export default function TableLayout({
   handleDragLeave, 
   handleDrop,
   isDragging,
+  draggedItemIndex,
   preventLinkClickIfChromeSpeicalLink,
   savedWindowIsOpening,
   onWindowNameChange,
@@ -77,9 +78,14 @@ export default function TableLayout({
               onDrop={(e) => handleDrop(e, index)}
               onClick={() => setActiveWindowIndex(index)}
               className={`
-                ${isDragging ? "dragging" : ""} 
-                w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl transition-all duration-300
-                flex flex-col items-start gap-1 md:gap-2 relative overflow-hidden shadow-md border-l-4  
+                  w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl 
+                  
+                  transition-all ease-in-out
+
+                  ${isDragging ? "duration-200" : "duration-300"}
+                  ${isDragging && draggedItemIndex !== index ? "opacity-50" : "opacity-100"}
+                  
+                  flex flex-col items-start gap-1 md:gap-2 relative overflow-hidden shadow-md border-l-4 
                 ${trackedWindow.isOpen
                   ? "border-green-400 dark:border-green-700/70 "
                   : "border-blue-400 dark:border-blue-700/70"
@@ -98,8 +104,8 @@ export default function TableLayout({
                   className={`
                     w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0 transition-all duration-300
                     ${trackedWindow.isOpen 
-                      ? 'bg-green-500 animate-pulse shadow-lg shadow-green-500/50' 
-                      : 'bg-blue-500 shadow-lg shadow-blue-500/50'
+                      ? "bg-green-500 animate-pulse shadow-lg shadow-green-500/50" 
+                      : "bg-blue-500 shadow-lg shadow-blue-500/50"
                     }
                   `}
                 />
@@ -139,14 +145,14 @@ export default function TableLayout({
          mb-4
          ">
           
-          <div className={`flex items-center space-x-4 border-l-4 pl-4 w-full md:w-auto min-w-0 ${activeWindow.isOpen ? 'border-green-500' : 'border-blue-500'}`}>
+          <div className={`flex items-center space-x-4 border-l-4 pl-4 w-full md:w-auto min-w-0 ${activeWindow.isOpen ? "border-green-500" : "border-blue-500"}`}>
             <div className="min-w-0 flex-1">
 
               <EditableHeader windowName={activeWindow.windowName} onWindowNameChange={onWindowNameChange}/>
               
               <div className="flex items-center text-xs md:text-sm space-x-3">
-                <span className={`font-semibold ${activeWindow.isOpen ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
-                  {activeWindow.isOpen ? 'Active Window' : 'Saved Window'}
+                <span className={`font-semibold ${activeWindow.isOpen ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"}`}>
+                  {activeWindow.isOpen ? "Active Window" : "Saved Window"}
                 </span>
                 <span className="text-gray-400 dark:text-gray-500">•</span>
                 <span className="text-gray-600 dark:text-gray-400 font-medium">

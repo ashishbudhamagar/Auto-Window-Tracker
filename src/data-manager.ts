@@ -4,7 +4,7 @@ export function saveExtensionData(dataToSave: ExtensionData) {
 
     chrome.storage.local.set({extensionData: dataToSave}, ()=>{
         if (chrome.runtime.lastError) {
-            console.warn(chrome.runtime.lastError)
+            console.debug(chrome.runtime.lastError)
         }
         else {
             // console.log("=========== DataSavedToLocal ===========")

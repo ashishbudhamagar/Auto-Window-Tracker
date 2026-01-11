@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Settings as SettingsIcon, ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 import { Theme } from "../../types"

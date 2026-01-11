@@ -1,5 +1,3 @@
-
-// @ts-ignore
 const groupColorMap: Record<string, string> = {
   grey: "bg-gray-300",
   blue: "bg-blue-300",
