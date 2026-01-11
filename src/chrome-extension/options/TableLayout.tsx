@@ -54,8 +54,8 @@ export default function TableLayout({
     from-indigo-50 to-white bg-gradient-to-tr dark:from-gray-900/60 dark:to-gray-800/60
      dark:bg-gray-800/70 rounded-2xl shadow-xl">
 
-      <div className="h-[400px] md:h-[500px] md:w-[280px] flex-shrink-0 bg-white
-      dark:bg-gray-700/40 flex flex-col backdrop-blur-sm pt-5 pb-3 rounded-xl shadow-md
+      <div className="h-[400px] md:h-[480px] md:w-[280px] flex-shrink-0 bg-white
+      dark:bg-gray-700/50 flex flex-col backdrop-blur-sm pt-5 pb-3 rounded-xl shadow-md
       ">
 
         <div className="px-6">
@@ -80,7 +80,7 @@ export default function TableLayout({
               className={`
                   w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl 
                   
-                  transition-all ease-in-out
+                  transition-all ease-in-out dark:bg-gray-800/70 dark:shadow-md
 
                   ${isDragging ? "duration-200" : "duration-300"}
                   ${isDragging && draggedItemIndex !== index ? "opacity-50" : "opacity-100"}
@@ -88,7 +88,7 @@ export default function TableLayout({
                   flex flex-col items-start gap-1 md:gap-2 relative overflow-hidden shadow-md border-l-4 
                 ${trackedWindow.isOpen
                   ? "border-green-400 dark:border-green-700/70 "
-                  : "border-blue-400 dark:border-blue-700/70"
+                  : "border-blue-400 dark:border-blue-600/70"
                 }
                 ${index === activeWindowIndex ? "scale-[1.02] md:scale-105 bg-gray-300/40 dark:bg-gray-700/90 border-b-4" : " hover:bg-gray-200 dark:hover:bg-gray-700/70 bg-white/60 dark:bg-gray-800/10"}
               `}
@@ -127,7 +127,7 @@ export default function TableLayout({
 
 
       <div className="shadow-xl h-full min-h-[500px] rounded-xl 
-      flex flex-col flex-grow bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm 
+      flex flex-col flex-grow bg-white/80 dark:bg-gray-700/50 backdrop-blur-sm 
       overflow-hidden
       
       border border-gray-200/30 dark:border-gray-700/30
@@ -140,9 +140,8 @@ export default function TableLayout({
 
         <div className="px-4 py-6 flex flex-col
         md:flex-row justify-between items-center border-b-2 border-gray-300
-         dark:border-gray-600/50 dark:bg-gray-700/80
+         dark:border-gray-600/50 dark:bg-[#26313f]
          backdrop-blur-sm sticky gap-4 overflow-hidden min-h-[80px]
-         mb-4
          ">
           
           <div className={`flex items-center space-x-4 border-l-4 pl-4 w-full md:w-auto min-w-0 ${activeWindow.isOpen ? "border-green-500" : "border-blue-500"}`}>
@@ -199,13 +198,11 @@ export default function TableLayout({
         </div>
         
         
-        <div className="mb-4">
-          <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} tabGroupsHidden={tabGroupsHiddenForTable} coloredTabGroups={coloredTabGroups} />
-        </div>
+        <GroupedTabs trackedWindow={activeWindow} isCardsLayout={false} tabGroupsHidden={tabGroupsHiddenForTable} coloredTabGroups={coloredTabGroups} />
        
 
 
-        <div className="flex-1 overflow-y-auto space-y-1 px-4 mb-4 " key={activeWindowIndex}>
+        <div className="flex-1 overflow-y-auto space-y-1 px-4 my-4 " key={activeWindowIndex}>
 
           {activeWindow.tabs.map((tab: Tab, index: number) => (
               <a
@@ -240,7 +237,7 @@ export default function TableLayout({
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-base md:text-lg mb-1 text-gray-700 dark:text-gray-100 truncate transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  <p className="font-semibold text-base md:text-lg mb-1 text-gray-700 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     {tab.title}
                   </p>
                   <p className="group-hover:underline underline-offset-2 decoration-blue-600 dark:decoration-blue-400 group-hover:text-blue-600 dark:group-hover:text-blue-400

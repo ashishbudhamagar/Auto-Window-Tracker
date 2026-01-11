@@ -94,7 +94,9 @@ export default function EditableHeader({ windowName, onWindowNameChange }: any) 
   return (
     <div className="group flex items-center gap-2 w-full ">
 
-      <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-100 flex-1 line-clamp-2 break-all">
+      <h2
+      title={windowName}
+      className="text-2xl font-bold text-gray-700 dark:text-gray-100 flex-1 line-clamp-2 break-all">
         {windowName}
       </h2>
 

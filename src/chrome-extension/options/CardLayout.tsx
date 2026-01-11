@@ -38,6 +38,9 @@ export default function CardLayout({
   
 
 
+  if (arrayOfTrackedWindowValues)
+
+
 
 
   return (
@@ -49,6 +52,7 @@ export default function CardLayout({
       gap-6 sm:gap-8 mb-16
     
     `}>
+
     
       {arrayOfTrackedWindowValues.map((trackedWindow: TrackedWindow, index: number) => (
         
@@ -65,7 +69,7 @@ export default function CardLayout({
             backdrop-blur-lg h-auto w-full rounded-2xl px-5 sm:px-6 py-5 sm:py-6 flex flex-col justify-between gap-2
             
             transition-all ease-out will-change-transform
-            ${isDragging ? "duration-500" : "duration-[1000ms]"}
+            ${isDragging ? "duration-500" : "duration-[800ms]"}
             ${isDragging && draggedItemIndex !== index ? 'opacity-40' : 'opacity-100'}
             
             hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
@@ -115,6 +119,7 @@ export default function CardLayout({
                   <a 
                     key={tab.id}
                     href={tab.url}
+                    title={tab.title}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e)=>preventLinkClickIfChromeSpeicalLink(e, tab)}
@@ -153,9 +158,10 @@ export default function CardLayout({
                       <a
                         key={tab.id}
                         href={tab.url} 
-                        target="_blank" 
+                        target="_blank"
                         rel="noopener noreferrer"
                         draggable={false}
+                        title={tab.url}
                         className="relative"
                       >
                         <div className={`w-7 h-7 rounded-lg overflow-hidden
@@ -164,7 +170,7 @@ export default function CardLayout({
                          hover:border-blue-400 dark:hover:border-blue-500 dark:bg-gray-500 
                           ${tab?.url.includes("github") ? "bg-gray-500" : "bg-white dark:bg-gray-800"}
                          `}>
-                          <img 
+                          <img
                             src={tab.favIconUrl || noImageImage}
                             onError={(e) => {
                               e.currentTarget.onerror = null;

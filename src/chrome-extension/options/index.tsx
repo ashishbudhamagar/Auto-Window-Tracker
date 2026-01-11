@@ -123,15 +123,6 @@ const Options = () => {
 
   function onSearch(text: string) {
     setSearchQuery(text)
-    const searched = text.trim()
-
-    if (searched === "") {
-      applyOptionsPageSort()
-      return
-    }
-    setArrayOfTrackedWindowValues(
-      originalArrayOfTrackedWindowValues.filter(trackedWindow => trackedWindow.windowName.toLowerCase().startsWith(searched.toLowerCase()))
-    )
   }
 
 
@@ -242,11 +233,18 @@ const Options = () => {
     }
 
 
-    if (searchQuery.trim() !== "") {
-      sorted = sorted.filter(trackedWindow => trackedWindow.windowName.toLowerCase().startsWith(searchQuery.toLowerCase()))
-    }
+    const trimmedSearchQuery = searchQuery.trim()
 
-    
+    if (trimmedSearchQuery !== "") {
+
+      if (trimmedSearchQuery.startsWith("url:")) {
+        const urlToSearch = trimmedSearchQuery.replace("url:", "").trim()
+        sorted = sorted.filter(trackedWindow => trackedWindow.tabs.some(tab => tab.url.includes(urlToSearch)))
+      }
+      else {
+        sorted = sorted.filter(trackedWindow => trackedWindow.windowName.toLowerCase().startsWith(trimmedSearchQuery.toLowerCase()))
+      }
+    }
 
     setArrayOfTrackedWindowValues(sorted)
   }
@@ -521,6 +519,9 @@ const Options = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
+              
+
+
               <input 
                 type="text"
                 placeholder="Search windows by name..."
@@ -528,9 +529,9 @@ const Options = () => {
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-gray-700 
                 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-gray-100 
-                dark:bg-gray-700/80 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500/50 
-                dark:focus:ring-blue-400/50 duration-300 focus:outline-none shadow-sm
-                focus:shadow-lg text-base sm:text-lg font-medium border border-gray-200 
+                dark:bg-gray-700/80 backdrop-blur-sm rounded-xl outline-none ring-0 focus:ring-2 
+                focus:ring-blue-500/50 dark:focus:ring-blue-400/50 transition-shadow duration-300 
+                shadow-sm focus:shadow-lg text-base sm:text-lg font-medium border border-gray-200 
                 dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
               />
               {searchQuery && (
