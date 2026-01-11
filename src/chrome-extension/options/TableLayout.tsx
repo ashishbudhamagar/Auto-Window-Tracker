@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from "react"
 import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
@@ -116,8 +115,8 @@ export default function TableLayout({
                   className={`
                     w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0 transition-all duration-300
                     ${trackedWindow.isOpen 
-                      ? "bg-green-500 animate-pulse shadow-lg shadow-green-500/50" 
-                      : "bg-blue-500 shadow-lg shadow-blue-500/50"
+                      ? "bg-green-500 dark:bg-green-600 animate-pulse shadow-lg shadow-green-500/50" 
+                      : "bg-blue-500 dark:bg-blue-600 shadow-lg shadow-blue-500/50"
                     }
                   `}
                 />
@@ -156,13 +155,13 @@ export default function TableLayout({
          backdrop-blur-sm sticky gap-4 overflow-hidden min-h-[80px]
          ">
           
-          <div className={`flex items-center space-x-4 border-l-4 pl-4 w-full md:w-auto min-w-0 ${activeWindow.isOpen ? "border-green-500" : "border-blue-500"}`}>
+          <div className={`flex items-center space-x-4 border-l-4 pl-4 w-full md:w-auto min-w-0 ${activeWindow.isOpen ? "border-green-600" : "border-blue-500"}`}>
             <div className="min-w-0 flex-1">
 
               <EditableHeader windowName={activeWindow.windowName} onWindowNameChange={onWindowNameChange}/>
               
               <div className="flex items-center text-xs md:text-sm space-x-3">
-                <span className={`font-semibold ${activeWindow.isOpen ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400"}`}>
+                <span className={`font-semibold ${activeWindow.isOpen ? "text-green-600 " : "text-blue-600 dark:text-blue-400"}`}>
                   {activeWindow.isOpen ? "Active Window" : "Saved Window"}
                 </span>
                 <span className="text-gray-400 dark:text-gray-500">•</span>
@@ -194,7 +193,7 @@ export default function TableLayout({
                 transition-all duration-300 font-semibold  hover:shadow-md
                 transform hover:scale-105 flex-1 md:flex-none justify-center group
                 ${activeWindow.isOpen
-                  ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border-2 border-gray-200 dark:border-gray-700 bg-green-50 dark:bg-gray-800" 
+                  ? "text-gray-400 dark:text-gray-500 cursor-not-allowed border-2 border-gray-200 dark:border-gray-700 bg-green-50 dark:bg-green-400/10" 
                   : "text-blue-600 dark:text-blue-400 bg-indigo-100 dark:bg-blue-900/30 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/40 dark:hover:to-blue-800/40 border-2 border-blue-200 dark:border-blue-700/50 hover:border-blue-300 dark:hover:border-blue-600"
                 }
               `}

@@ -192,7 +192,7 @@ export default function Settings({
             <div className="flex flex-row items-center justify-between w-full
             bg-gray-200 rounded-md px-3 py-2 dark:bg-gray-700
             ">
-                <p className="text-sm">Columns # (Cards)</p>
+                <p className="text-sm">Columns # (cards)</p>
 
                 <div className="flex items-center gap-2">
 

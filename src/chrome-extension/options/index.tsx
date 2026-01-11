@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ExtensionData, OptionsPageSort, OptionsPageLayout, Theme, TrackedWindow, Tab } from "../../types"
 import { IconBookmark, IconX, IconExternal, IconLayout } from "../../icons"
 import { useEffect, useState } from "react"
@@ -579,6 +578,7 @@ const Options = () => {
             <button 
               onClick={onChangeLayoutButtonClicked}
               disabled={spinLayoutIcon}
+              title="Change betwen Cards and Table layout"
               className={`
                 hover:cursor-pointer
                 relative flex items-center justify-center p-2 rounded-xl transition-all

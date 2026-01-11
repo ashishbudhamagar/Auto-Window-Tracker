@@ -90,7 +90,7 @@ export default function CardLayout({
               <span className={`
                 flex items-center px-3 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold
                 ${trackedWindow.isOpen
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 border border-green-200 dark:border-green-700" 
+                  ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-600 border border-green-200 dark:border-green-700" 
                   : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
                 }
               `}>
@@ -219,7 +219,7 @@ export default function CardLayout({
                   hover:scale-105
                   ${trackedWindow.isOpen
                     ? `text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200
-                     dark:border-gray-700 bg-green-100/80 dark:bg-gray-800/50`
+                     dark:border-gray-700 bg-green-100/80 dark:bg-green-400/10`
                     : `text-blue-600 dark:text-blue-500 bg-indigo-50/80 hover:bg-blue-200 
                      dark:hover:bg-blue-900/80 border dark:bg-blue-900/50 border-blue-200/50 
                      dark:border-blue-700/50 hover:border-blue-600 dark:hover:border-blue-600 `}`

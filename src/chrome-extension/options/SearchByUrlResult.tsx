@@ -42,8 +42,8 @@ export default function SearchByUrlResult({
 
             <div className="px-6 py-4 rounded-lg bg-white/70 dark:bg-gray-800/60 border border-white/20 dark:border-gray-700/30 shadow-sm">
                 <p className="text-lg text-gray-700 dark:text-gray-200">
-                    Found <strong className="font-semibold">{numberOfTabWithUrl}</strong> tab{numberOfTabWithUrl === 1 ? "" : "s"} for URL search
-                    <p className="ml-2 inline-block font-medium text-gray-800 dark:text-gray-100">"{searchTerm}"</p>
+                    Found <strong className="font-bold">{numberOfTabWithUrl}</strong> tab{numberOfTabWithUrl === 1 ? "" : "s"} for URL search
+                    <p className="ml-2 inline-block font-bold text-gray-800 dark:text-gray-100">"{searchTerm}"</p>
                 </p>
             </div>
 
@@ -134,9 +134,9 @@ export default function SearchByUrlResult({
                                         hover:scale-105
                                         ${trackedWindow.isOpen
                                             ? `text-gray-400 dark:text-gray-500 cursor-not-allowed border border-gray-200
-                                            dark:border-gray-700 bg-green-50 dark:bg-gray-800/50`
+                                            dark:border-gray-700 bg-green-50 dark:bg-green-400/10`
                                             : `text-blue-600 dark:text-blue-500 bg-indigo-50/80 hover:bg-blue-200 
-                                            dark:hover:bg-blue-900/80 border dark:bg-blue-600/60 border-blue-200/20 
+                                            dark:hover:bg-blue-900/50 border dark:bg-blue-600/10 border-blue-200/20 
                                             dark:border-blue-700/50 hover:border-blue-600/80 dark:hover:border-blue-600 `}`
                                         }
 
