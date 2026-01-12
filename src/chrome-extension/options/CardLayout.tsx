@@ -2,6 +2,7 @@ import noImageImage from '../public/no-image.png'
 import { TrackedWindow, Tab } from "../../types"
 import GroupedTabs from './GroupedTabs'
 import EditableHeader from './EditableHeader'
+import { useState } from 'react'
 
 
   
@@ -38,7 +39,8 @@ export default function CardLayout({
   
 
 
-  if (arrayOfTrackedWindowValues)
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [hoverEnabled, setHoverEnabled] = useState(false);
 
 
 
@@ -64,16 +66,30 @@ export default function CardLayout({
           onDragOver={(e) => handleDragOver(e, index)}
           onDragLeave={(e) => handleDragLeave(e)}
           onDrop={(e) => handleDrop(e, index)}
+
+          style={!hasAnimated ? { animationDelay: `${index * 80}ms` } : undefined}
+          onAnimationEnd={() => {
+            setHasAnimated(true)
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                setHoverEnabled(true)
+              })
+            })
+          }}
+
           className={`
+
+            ${!hasAnimated ? "animate-[cardAppear_1100ms_cubic-bezier(.2,.9,.2,.9)_both]" : ""}
+             ${hoverEnabled ? 'hover:-translate-y-2' : ''}
+            
             ${isDragging ? "dragging" : ""} 
+            ${isDragging && draggedItemIndex !== index ? "opacity-40" : "opacity-100"}
+            
+            
+            shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl duration-500
             backdrop-blur-lg h-auto w-full rounded-2xl px-5 sm:px-6 py-5 sm:py-6 flex flex-col justify-between gap-2
-            
-            transition-all ease-out will-change-transform
-            ${isDragging ? "duration-500" : "duration-[700ms]"}
-            ${isDragging && draggedItemIndex !== index ? 'opacity-40' : 'opacity-100'}
-            
-            hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
-            transition-[opacity,transform,box-shadow] ease-out overflow-hidden 
+            ease-out will-change-transform
+            transition-[opacity,transform,box-shadow] overflow-hidden 
             border border-white/20 dark:border-gray-700/30 border-l-4
             bg-white dark:bg-gray-800
             ${trackedWindow.isOpen ? "border-l-green-500 dark:border-l-green-600" : "border-l-blue-500 dark:border-l-blue-600"}

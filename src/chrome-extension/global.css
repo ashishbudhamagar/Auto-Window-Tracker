@@ -98,3 +98,20 @@ html::-webkit-scrollbar, body::-webkit-scrollbar {
 .drag-over-target {
   transform: scale(1.05) !important;
 }
+
+@keyframes cardAppear {
+  0% { opacity: 0; transform: translateY(18px) scale(.995); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+
+@keyframes listItemAppear {
+  0% { opacity: 0; transform: translateX(-12px) scale(.95); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes panelAppear {
+  0% { opacity: 0; transform: translateY(8px) scale(.998); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}

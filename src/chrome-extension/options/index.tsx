@@ -277,15 +277,7 @@ const Options = () => {
 
   async function onWindowNameChange(newWindowName: string, oldWindowName: string) {
 
-    const response: ExtensionData = await chrome.runtime.sendMessage({signal: "getExtensionData"})
-
-    let uniqueName = true
-    for (let trackedWindow of Object.values(response.trackedWindows)) {
-      if (trackedWindow.windowName === newWindowName) {
-        uniqueName = false
-        break
-      }
-    }
+    const uniqueName: ExtensionData = await chrome.runtime.sendMessage({signal: "checkIfWindowNameUnique", newWindowName: newWindowName })
 
     if (!uniqueName) {
       return false
@@ -312,7 +304,7 @@ const Options = () => {
 
   function determinIfDraggable() {
     const isDraggableSort = currentSort === OptionsPageSort.draggable1 || currentSort === OptionsPageSort.draggable2 || currentSort === OptionsPageSort.draggable3
-    return isDraggableSort && searchQuery === ""
+    return isDraggableSort && searchQuery.trim() === ""
   }
 
 
@@ -453,6 +445,9 @@ const Options = () => {
               <h1 className="font-bold text-xl sm:text-2xl text-gray-600 dark:text-gray-300 ">
                 Auto Window Tracker
               </h1>
+              <p className="text-base text-gray-500 dark:text-gray-400 font-medium">
+                Manage and organize windows
+              </p>
             </div>
           </div>
 
@@ -525,7 +520,7 @@ const Options = () => {
 
               <input 
                 type="text"
-                placeholder='Search by window name or by URL: "url:google"...'
+                placeholder='Search by window name or url "url:youtube"...'
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-gray-700 
@@ -551,7 +546,11 @@ const Options = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 
+          <div
+
+          title="Draggable sort allows to drag and drop cards"
+          
+          className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 
           sm:space-x-4 px-4 sm:px-6 w-full lg:w-auto">
 
             <div className="flex items-center space-x-3 bg-white/80 dark:bg-transparent 
@@ -676,7 +675,6 @@ const Options = () => {
             onWindowNameChange={onWindowNameChange}
             tabGroupsHiddenForTable={tabGroupsHiddenForTable}
             coloredTabGroups={coloredTabGroups}
-            searchQuery={searchQuery}
           />
 
         )}

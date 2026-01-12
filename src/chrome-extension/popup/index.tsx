@@ -163,8 +163,8 @@ export const Popup = () => {
                   <h1 className="text-[15px] font-bold text-gray-800 dark:text-gray-200">
                     Auto Window Tracker
                   </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                    Manage browser sessions
+                  <p className="text-[10px] tracking-tighter text-gray-500 dark:text-gray-400 font-medium">
+                    Manage and organize windows
                   </p>
               </div>
           </div>

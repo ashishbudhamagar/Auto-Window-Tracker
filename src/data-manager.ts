@@ -7,11 +7,6 @@ export function saveExtensionData(dataToSave: ExtensionData) {
             console.debug(chrome.runtime.lastError)
         }
         else {
-            // console.log("=========== DataSavedToLocal ===========")
-            // console.log("=========== DataSavedToLocal ===========")
-            // console.log(dataToSave.trackedWindows)
-            // console.log("=========== DataSavedToLocal ===========")
-            // console.log("=========== DataSavedToLocal ===========")
         }
     })
 }

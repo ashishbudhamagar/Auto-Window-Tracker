@@ -24,21 +24,24 @@ export default function TableLayout({
   onWindowNameChange,
   tabGroupsHiddenForTable,
   coloredTabGroups,
-  //@ts-ignore
-  searchQuery
 }: any) {
 
   const [activeWindowIndex, setActiveWindowIndex] = useState<number>(0)
   const [activeWindow, setActiveWindow] = useState<TrackedWindow>(arrayOfTrackedWindowValues[activeWindowIndex])
-  console.log(activeWindowIndex)
-
+  
+  const [hasAnimated, setHasAnimated] = useState(false)
+  const [scaleEnabled, setHoverEnabled] = useState(false)
 
 
   useEffect(() => {
-
+    
     if (activeWindowIndex >= arrayOfTrackedWindowValues.length) {
+      console.log('inside')
       setActiveWindowIndex(arrayOfTrackedWindowValues.length-1)
       setActiveWindow(arrayOfTrackedWindowValues[arrayOfTrackedWindowValues.length-1])
+    }
+    else {
+      setActiveWindow(arrayOfTrackedWindowValues[activeWindowIndex])
     }
   }, [arrayOfTrackedWindowValues])
 
@@ -65,7 +68,7 @@ export default function TableLayout({
     from-indigo-50 to-white bg-gradient-to-tr dark:from-gray-900/60 dark:to-gray-800/60
      dark:bg-gray-800/70 rounded-2xl shadow-xl">
 
-      <div className="h-[400px] md:h-[480px] md:w-[280px] flex-shrink-0 bg-white
+      <div className="h-full md:w-[280px] flex-shrink-0 bg-white
       dark:bg-gray-700/50 flex flex-col backdrop-blur-sm pt-5 pb-3 rounded-xl shadow-md
       ">
 
@@ -88,7 +91,19 @@ export default function TableLayout({
               onDragLeave={(e) => handleDragLeave(e)}
               onDrop={(e) => handleDrop(e, index)}
               onClick={() => onTableTackedWindowClicked(index)}
+
+              style={!hasAnimated ? { animation: `listItemAppear 600ms cubic-bezier(.2,.9,.2,1) ${index * 80}ms both` } : undefined}
+
+              onAnimationEnd={() => {
+                setHasAnimated(true)
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    setHoverEnabled(true)
+                  })
+                })
+              }}
               className={`
+                  
                   w-[95%] md:w-[85%] mx-auto cursor-pointer p-4 text-left break-words rounded-xl 
                   
                   transition-all ease-in-out dark:bg-gray-800/70 dark:shadow-md
@@ -101,7 +116,7 @@ export default function TableLayout({
                   ? "border-green-400 dark:border-green-700/70 "
                   : "border-blue-400 dark:border-blue-600/70"
                 }
-                ${index === activeWindowIndex ? "scale-[1.02] md:scale-105 bg-gray-300/40 dark:bg-gray-700/90 border-b-4" : " hover:bg-gray-200 dark:hover:bg-gray-700/70 bg-white/60 dark:bg-gray-800/10"}
+                ${index === activeWindowIndex && scaleEnabled ? "scale-[1.02] md:scale-105 bg-gray-300/40 dark:bg-gray-700/90 border-b-4" : " hover:bg-gray-200 dark:hover:bg-gray-700/70 bg-white/60 dark:bg-gray-800/10"}
               `}
             >
               <div className="flex items-center justify-between w-full">
@@ -111,15 +126,6 @@ export default function TableLayout({
                 >
                   {trackedWindow.windowName}
                 </p>
-                <span
-                  className={`
-                    w-2 h-2 md:w-3 md:h-3 rounded-full flex-shrink-0 transition-all duration-300
-                    ${trackedWindow.isOpen 
-                      ? "bg-green-500 dark:bg-green-600 animate-pulse shadow-lg shadow-green-500/50" 
-                      : "bg-blue-500 dark:bg-blue-600 shadow-lg shadow-blue-500/50"
-                    }
-                  `}
-                />
               </div>
               
               <div className="flex items-center space-x-2">
@@ -137,7 +143,12 @@ export default function TableLayout({
 
 
 
-      <div className="shadow-xl h-full min-h-[500px] rounded-xl 
+      <div className={`
+
+      animate-[panelAppear_600ms_ease-out_120ms_both]
+      
+      
+      shadow-xl h-full min-h-[500px] rounded-xl 
       flex flex-col flex-grow bg-white/80 dark:bg-gray-700/50 backdrop-blur-sm 
       overflow-hidden
       
@@ -145,7 +156,7 @@ export default function TableLayout({
       from-indigo-100/60 to-gray-100 via-gray-100/50 bg-gradient-to-bl
       dark:from-gray-800/60 dark:to-gray-900/60 dark:via-gray-800/50
       
-      ">
+      `}>
 
 
 
@@ -241,8 +252,8 @@ export default function TableLayout({
                     src={tab.favIconUrl || noImageImage}
                     className="w-full h-full object-contain rounded-xl" 
                     onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = noImageImage;
+                      e.currentTarget.onerror = null
+                      e.currentTarget.src = noImageImage
                     }}
                   />
                 </div>

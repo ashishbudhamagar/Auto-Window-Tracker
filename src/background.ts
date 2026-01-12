@@ -5,7 +5,7 @@ import {ExtensionData, OptionsPageLayout, OptionsPageSort, Theme, TrackedWindow,
 
 
 let extensionData: ExtensionData | null = null
-const debounceSaveExtensionData = debounce(saveExtensionData, 10000)
+const debounceSaveExtensionData = debounce(saveExtensionData, 5000)
 
 let extensionDataLoadingPromise: Promise<void> | null = null
 
@@ -15,10 +15,11 @@ async function waitForExtensionDataToBeSet(): Promise<void> {
    if (extensionDataLoadingPromise) return extensionDataLoadingPromise
    
    extensionDataLoadingPromise = new Promise((resolve) => {
-      chrome.storage.local.get("extensionData", (result) => {
+      chrome.storage.local.get("extensionData", async (result) => {
          extensionData = result.extensionData
-         extensionDataLoadingPromise = null
+         await cleanUpGhostWindows()
          resolve()
+         extensionDataLoadingPromise = null
       })
    })
    return extensionDataLoadingPromise
@@ -49,23 +50,14 @@ chrome.runtime.onInstalled.addListener((details) => {
       chrome.action.setBadgeTextColor({color: "white"})
       chrome.action.setBadgeBackgroundColor({color: "green"})
       
-   } 
-
-
-
-   // since I use a debounc for saving data, when a user makes tab chanages on a tracked window
-   // if I update the extension, hence the user extension will also be updated,
-   // if the debounce doesnt get to save the data, the changes made to the tabs will not reflect
-   // if it somehow later
+   }
    else if (details.reason === "update") {
       
       chrome.action.setBadgeTextColor({color: "white"})
       chrome.action.setBadgeBackgroundColor({color: "green"})
-      
       chrome.storage.local.get("extensionData", (result) => {
          extensionData = result.extensionData
       })
-
    }
 })
 
@@ -97,6 +89,21 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
       
       if (message.signal === "getExtensionData") {
          sendResponse(extensionData)
+         return false
+      }
+
+      else if (message.signal === "checkIfWindowNameUnique") {
+
+         let uniqueName = true
+
+         for (let trackedWindow of Object.values(extensionData.trackedWindows)) {
+            if (trackedWindow.windowName === message.newWindowName) {
+               uniqueName = false
+               break
+            }
+         }
+
+         sendResponse(uniqueName)
          return false
       }
       
@@ -187,31 +194,24 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
             
             if (!extensionData) return
             
-            
             const createdWindow = await chrome.windows.create({url: trackedWindowToOpen.tabs.map((ele:Tab) => ele.url), focused: true})
             const createdWindowId: number = createdWindow.id!
             const createdWindowTabs: any[] = createdWindow.tabs!
-            
             
             extensionData.trackedWindows[trackedWindowToOpen.windowName].windowId = createdWindowId
             extensionData.openedTrackedWindowIds.push(createdWindowId)
             extensionData.trackedWindows[trackedWindowToOpen.windowName].isOpen = true
             
-            
-            
-            let groupedTabsId: any[][] = []
+            let groupedTabsId: number[][] = []
             let groupIndex = -1
             let lastGroupId = -1
-
             let orderedGroupedInfo = []
-            
             
             // refused to use forEach as a regualr for loop is slightly quicker
             for (let i = 0; i < trackedWindowToOpen.tabs.length; i++) {
                
                const oldTab = trackedWindowToOpen.tabs[i]
                const newTabId = createdWindowTabs[i].id
-               
                
                if (oldTab.pinned) {
                   await chrome.tabs.update(newTabId, {pinned: true})
@@ -226,8 +226,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                }
                
                
-               
-               
                if (oldTab.groupId !== -1) {
                   if (oldTab.groupId !== lastGroupId) {
                      groupIndex++
@@ -239,8 +237,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                   lastGroupId = oldTab.groupId
                }
             }
-            
-            
+
 
             for (let i = 0; i < groupedTabsId.length; i++) {
                
@@ -256,13 +253,9 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                }
             }
             
-            
             const newGroupedTabsInfo = await chrome.tabGroups.query({windowId: createdWindowId})
             const updatedTabs: chrome.tabs.Tab[] = await chrome.tabs.query({windowId: createdWindowId})
 
-
-
-            
             const usefulTabsData: Tab[] = updatedTabs.map((tab, index)=>{
                return {
                   "id": tab.id!,
@@ -274,6 +267,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
                   "muted": trackedWindowToOpen.tabs[index].muted ?? false
                }
             })
+
             
             extensionData.trackedWindows[trackedWindowToOpen.windowName].tabs = usefulTabsData
             extensionData.trackedWindows[trackedWindowToOpen.windowName].groupedTabsInfo = newGroupedTabsInfo
@@ -462,10 +456,13 @@ chrome.windows.onFocusChanged.addListener(async (windowId: number) => {
 chrome.windows.onRemoved.addListener(async (windowId: number) => {
    
    await waitForExtensionDataToBeSet()
-   
-   
    if (!extensionData) return
-   if (!extensionData.openedTrackedWindowIds.includes(windowId)) return
+
+   if (!extensionData.openedTrackedWindowIds.includes(windowId)) {
+      cleanUpGhostWindows()
+      return
+   }
+
    
    for (let trackedWindow of Object.values(extensionData?.trackedWindows)) {
       
@@ -473,7 +470,8 @@ chrome.windows.onRemoved.addListener(async (windowId: number) => {
          
          trackedWindow.isOpen = false
          extensionData.openedTrackedWindowIds = extensionData.openedTrackedWindowIds.filter(ele => ele !== windowId)
-         
+
+         cleanUpGhostWindows()
          saveExtensionData(extensionData)
          updateOptionsPage()
          return null
@@ -535,7 +533,7 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
    await waitForExtensionDataToBeSet()
    
    
-   if (updateInfo.status === "complete" || "pinned" in updateInfo || "groupId" in updateInfo || "mutedInfo" in updateInfo) {
+   if (updateInfo.status === "complete" || "pinned" in updateInfo || "groupId" in updateInfo || "mutedInfo" in updateInfo || "title" in updateInfo) {
       
       if (!extensionData) return
       if (!extensionData.openedTrackedWindowIds.includes(tab.windowId)) return
@@ -559,6 +557,9 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
          if ("mutedInfo" in updateInfo) {
             updateTab.muted = updateInfo.mutedInfo!.muted!
          }
+         if ("title" in updateInfo) {
+            updateTab.title = tab.title!
+         }
          
          
          if ("groupId" in updateInfo) {
@@ -570,8 +571,7 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
                   updateTab.groupId = updateInfo.groupId
                   
                } catch (error) {
-                  // error means a tracked window with groups is closing
-                  // so do nothing
+                  // error means a tracked window with groups is closing, so do nothing
                   return null
                }
             }
@@ -765,3 +765,37 @@ chrome.tabGroups.onRemoved.addListener(async (group) => {
 })
 
 
+
+
+
+
+async function cleanUpGhostWindows() {
+
+   await waitForExtensionDataToBeSet()
+
+   if (!extensionData) return
+
+   const openWindows = await chrome.windows.getAll()
+   const openWindowIds = new Set(openWindows.map(w => w.id))
+
+   let dataChanged = false
+
+   extensionData.openedTrackedWindowIds = extensionData.openedTrackedWindowIds.filter(id => {
+
+      if (!openWindowIds.has(id)) {
+         const trackedWindow = getTrackedWindowByWindowId(id)
+
+         if (trackedWindow) {
+            trackedWindow.isOpen = false
+            dataChanged = true
+         }
+         return false
+      }
+      return true
+   })
+
+   if (dataChanged) {
+      saveExtensionData(extensionData)
+      updateOptionsPage()
+   }
+}

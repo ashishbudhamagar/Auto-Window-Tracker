@@ -62,8 +62,8 @@ export default function SearchByUrlResult({
                             <div key={trackedWindow.windowName} className="backdrop-blur-lg p-4 rounded-2xl
                              bg-white/70 dark:bg-gray-800/60 border border-white/20
                               dark:border-gray-700/30 max-h-[400px] flex flex-col
-                              hover:-translate-y-1 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
-                              duration-300
+                              hover:-translate-y-2 shadow-lg hover:shadow-2xl dark:shadow-xl dark:hover:shadow-2xl
+                              duration-500
                               ">
                                 <div className="flex items-center justify-between mb-3">
                                     <h3
