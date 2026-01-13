@@ -243,7 +243,7 @@ const Options = () => {
         sorted = sorted.filter(trackedWindow => trackedWindow.tabs.some(tab => tab.url.includes(urlToSearch)))
       }
       else {
-        sorted = sorted.filter(trackedWindow => trackedWindow.windowName.toLowerCase().startsWith(trimmedSearchQuery.toLowerCase()))
+        sorted = sorted.filter(trackedWindow => trackedWindow.windowName.toLowerCase().includes(trimmedSearchQuery.toLowerCase()))
       }
     }
 

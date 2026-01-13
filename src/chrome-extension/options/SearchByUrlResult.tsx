@@ -99,7 +99,7 @@ export default function SearchByUrlResult({
                                                         e.currentTarget.onerror = null;
                                                         e.currentTarget.src = noImageImage;
                                                     }}
-                                                    className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700 p-[5px] rounded-xl"
+                                                    className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700 p-[5px] rounded-lg"
                                                 />
                                             </div>
                                             <div className="min-w-0">

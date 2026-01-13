@@ -189,6 +189,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse)=>{
          handleOpenSavedWindow(message.trackedWindowToOpen, sendResponse)
          return true
          
+               
          
          async function handleOpenSavedWindow(trackedWindowToOpen: TrackedWindow, sendResponse: (response: any)=>void) {
             
@@ -533,7 +534,7 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
    await waitForExtensionDataToBeSet()
    
    
-   if (updateInfo.status === "complete" || "pinned" in updateInfo || "groupId" in updateInfo || "mutedInfo" in updateInfo || "title" in updateInfo) {
+   if (updateInfo.status === "complete" || "pinned" in updateInfo || "groupId" in updateInfo || "mutedInfo" in updateInfo || "title" in updateInfo || "favIconUrl" in updateInfo) {
       
       if (!extensionData) return
       if (!extensionData.openedTrackedWindowIds.includes(tab.windowId)) return
@@ -559,6 +560,9 @@ chrome.tabs.onUpdated.addListener(async (_, updateInfo, tab) => {
          }
          if ("title" in updateInfo) {
             updateTab.title = tab.title!
+         }
+         if ("favIconUrl" in updateInfo) {
+            updateTab.favIconUrl = tab.favIconUrl
          }
          
          
