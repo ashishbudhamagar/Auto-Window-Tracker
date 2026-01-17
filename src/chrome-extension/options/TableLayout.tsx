@@ -36,7 +36,6 @@ export default function TableLayout({
   useEffect(() => {
     
     if (activeWindowIndex >= arrayOfTrackedWindowValues.length) {
-      console.log('inside')
       setActiveWindowIndex(arrayOfTrackedWindowValues.length-1)
       setActiveWindow(arrayOfTrackedWindowValues[arrayOfTrackedWindowValues.length-1])
     }

@@ -455,8 +455,9 @@ chrome.windows.onFocusChanged.addListener(async (windowId: number) => {
 
 
 chrome.windows.onRemoved.addListener(async (windowId: number) => {
-   
+
    await waitForExtensionDataToBeSet()
+   
    if (!extensionData) return
 
    if (!extensionData.openedTrackedWindowIds.includes(windowId)) {
@@ -464,20 +465,24 @@ chrome.windows.onRemoved.addListener(async (windowId: number) => {
       return
    }
 
-   
-   for (let trackedWindow of Object.values(extensionData?.trackedWindows)) {
-      
-      if (trackedWindow.isOpen && trackedWindow.windowId === windowId) {
-         
-         trackedWindow.isOpen = false
-         extensionData.openedTrackedWindowIds = extensionData.openedTrackedWindowIds.filter(ele => ele !== windowId)
 
-         cleanUpGhostWindows()
-         saveExtensionData(extensionData)
-         updateOptionsPage()
-         return null
-      }
+   const trackedWindow = getTrackedWindowByWindowId(windowId)
+
+   if (!trackedWindow) return
+
+   if (trackedWindow.tabs.length === 0) {
+      delete extensionData.trackedWindows[trackedWindow.windowName]
    }
+   else {
+      trackedWindow.isOpen = false
+   }
+
+
+   extensionData.openedTrackedWindowIds = extensionData.openedTrackedWindowIds.filter(ele => ele !== windowId)
+
+   cleanUpGhostWindows()
+   saveExtensionData(extensionData)
+   updateOptionsPage()
 })
 
 

@@ -82,7 +82,7 @@ export default function SearchByUrlResult({
                                         <a
                                             key={tab.id}
                                             href={tab.url}
-                                            title={tab.title}
+                                            title={tab.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             onClick={(e)=>preventLinkClickIfChromeSpeicalLink(e, tab)}

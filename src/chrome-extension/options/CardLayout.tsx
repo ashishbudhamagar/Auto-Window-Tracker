@@ -135,14 +135,15 @@ export default function CardLayout({
                   <a 
                     key={tab.id}
                     href={tab.url}
-                    title={tab.title}
+                    title={tab.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e)=>preventLinkClickIfChromeSpeicalLink(e, tab)}
                     draggable={false}
                     className="flex hover:underline underline-offset-4 items-center mb-1 text-gray-700
                      dark:text-gray-200 rounded-md space-x-3 hover:text-blue-600 dark:hover:text-blue-400
-                      py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:decoration-gray-200 w-full"
+                      py-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-700 dark:decoration-gray-200 w-full
+                      "
                   >
                     <div className="flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-md overflow-hidden
                      dark:border-gray-600/50">
@@ -153,7 +154,11 @@ export default function CardLayout({
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = noImageImage;
                         }}
-                        className="w-full h-full object-contain bg-gray-200 dark:bg-gray-700 p-[5px] rounded-lg"
+                        className={`w-full h-full object-contain dark:bg-gray-700 p-[5px] rounded-lg
+
+                          ${(tab?.url.includes("github") || tab?.url.includes("chatgpt")) ? "bg-gray-300" : "bg-gray-200"}
+                          
+                        `}
                       />
                     </div>
                     <p 
@@ -183,8 +188,8 @@ export default function CardLayout({
                         <div className={`w-7 h-7 rounded-lg overflow-hidden
                          border-[4px] border-transparent  
                          shadow-sm hover:scale-125 hover:shadow-md transition-transform duration-300
-                         hover:border-blue-400 dark:hover:border-blue-500 dark:bg-gray-500 
-                          ${tab?.url.includes("github") ? "bg-gray-500" : "bg-white dark:bg-gray-800"}
+                         hover:border-blue-400 dark:hover:border-blue-500 dark:bg-gray-800
+                          ${(tab?.url.includes("github") || tab?.url.includes("chatgpt")) ? "bg-gray-300" : "bg-white"}
                          `}>
                           <img
                             src={tab.favIconUrl || noImageImage}
