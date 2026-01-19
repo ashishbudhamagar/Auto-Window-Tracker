@@ -246,7 +246,14 @@ export default function TableLayout({
                   maxHeight: 0,
                 }}
               >
-                <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 mr-3 md:mr-4 p-2 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className={`w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-xl overflow-hidden border-2
+
+                 border-gray-200 dark:border-gray-600 dark:bg-gray-700
+
+                  ${(tab.url.includes("github") || tab?.url.includes("chatgpt")) ? "bg-gray-300" : "bg-white"}
+
+                 
+                 mr-3 md:mr-4 p-2 shadow-sm hover:shadow-md transition-shadow duration-300`}>
                   <img 
                     src={tab.favIconUrl || noImageImage}
                     className="w-full h-full object-contain rounded-xl" 

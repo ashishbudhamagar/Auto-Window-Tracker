@@ -189,7 +189,7 @@ export default function CardLayout({
                          border-[4px] border-transparent  
                          shadow-sm hover:scale-125 hover:shadow-md transition-transform duration-300
                          hover:border-blue-400 dark:hover:border-blue-500 dark:bg-gray-800
-                          ${(tab?.url.includes("github") || tab?.url.includes("chatgpt")) ? "bg-gray-300" : "bg-white"}
+                          ${(tab.url.includes("github") || tab?.url.includes("chatgpt")) ? "bg-gray-300" : "bg-white"}
                          `}>
                           <img
                             src={tab.favIconUrl || noImageImage}
