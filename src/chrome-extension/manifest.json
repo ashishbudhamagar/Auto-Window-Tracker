@@ -10,7 +10,7 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "description": "Track and organize browser windows and tabs automatically with a click of a button",
+  "description": "Track, organize, and restore browser windows and tabs information easily.",
   "icons": {
     "16": "public/16.png",
     "32": "public/32.png",
