@@ -3,7 +3,7 @@ import noImageImage from '../public/no-image.png'
 
 import NoSearchQuery from "./NoSearchQuery"
 
-export default function SearchByUrlResult({
+export default function SearchByUrlOrTopicResult({
     arrayOfTrackedWindowValues,
     searchQuery,
     savedWindowIsOpening,
@@ -27,9 +27,12 @@ export default function SearchByUrlResult({
             trackedWindow.tabs.some((tab: Tab) => tab.url.includes(searchTerm))
         )
 
-        numberOfTabsWithUrlOrTitle = trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) => {
-            return (trackedWindow.tabs.map((tab: Tab) => tab.url.includes(searchTerm))).length
-        }).reduce((a: number, b: number) => a + b, 0)
+        numberOfTabsWithUrlOrTitle = trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) =>
+
+            trackedWindow.tabs.filter((tab: Tab) => tab.url.includes(searchTerm)).length
+
+        ).reduce((a: number, b: number) => a + b, 0)
+
 
     }
     else if (trimmedSearchQuery.includes("t:")) {
@@ -39,9 +42,13 @@ export default function SearchByUrlResult({
             trackedWindow.tabs.some((tab: Tab) => tab.title.toLowerCase().includes(searchTerm.toLowerCase()))
         )
 
-        numberOfTabsWithUrlOrTitle = trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) => {
-            return (trackedWindow.tabs.map((tab: Tab) => tab.title.includes(searchTerm))).length
-        }).reduce((a: number, b: number) => a + b, 0)
+
+        numberOfTabsWithUrlOrTitle = trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) =>
+
+            trackedWindow.tabs.filter((tab: Tab) => tab.title.toLowerCase().includes(searchTerm.toLowerCase())).length
+            
+        ).reduce((a: number, b: number) => a + b, 0)
+
     }
 
 
@@ -60,7 +67,7 @@ export default function SearchByUrlResult({
 
             <div className="px-6 py-4 rounded-lg bg-white/70 dark:bg-gray-800/60 border border-white/20 dark:border-gray-700/30 shadow-sm">
                 <p className="text-lg text-gray-700 dark:text-gray-200">
-                    Found <strong className="font-bold">{numberOfTabsWithUrlOrTitle}</strong> tab{numberOfTabsWithUrlOrTitle === 1 ? "" : "s"} for ${trimmedSearchQuery.startsWith("u:") ? "URL" : "TITLE"} search
+                    Found <strong className="font-bold">{numberOfTabsWithUrlOrTitle}</strong> tab{numberOfTabsWithUrlOrTitle === 1 ? "" : "s"} for {trimmedSearchQuery.startsWith("u:") ? "URL" : "TITLE"} search
                     <p className="ml-2 inline-block font-bold text-gray-800 dark:text-gray-100">"{searchTerm}"</p>
                 </p>
             </div>

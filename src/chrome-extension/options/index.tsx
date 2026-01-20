@@ -7,7 +7,7 @@ import "../global.css"
 import CardLayout from "./CardLayout"
 import TableLayout from "./TableLayout"
 import Settings from "./Settings"
-import SearchByUrlResult from "./SearchByUrlResult"
+import SearchByUrlOrTopicResult from "./SearchByUrlOrTopicResult"
 import NoSearchQuery from "./NoSearchQuery"
 
 const DEAFULT_ZOOM_LEVEL: number = 75
@@ -43,7 +43,7 @@ const Options = () => {
   const [zoomLevel, setZoomLevel] = useState<number | null>(null)
   const [cardsColumns, setCardsColumns] = useState<number | "auto" | null>(null)
 
-  
+
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null)
@@ -618,7 +618,7 @@ const Options = () => {
 
         (searchQuery.trim().includes("u:") || searchQuery.trim().includes("t:")) ?
 
-          <SearchByUrlResult
+          <SearchByUrlOrTopicResult
           arrayOfTrackedWindowValues={arrayOfTrackedWindowValues}
           searchQuery={searchQuery}
           savedWindowIsOpening={savedWindowIsOpening}
