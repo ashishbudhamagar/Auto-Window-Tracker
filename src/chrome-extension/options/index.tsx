@@ -11,6 +11,12 @@ import SearchByUrlResult from "./SearchByUrlResult"
 import NoSearchQuery from "./NoSearchQuery"
 
 const DEAFULT_ZOOM_LEVEL: number = 75
+const INPUT_PLACE_HOLDER_TEXT: string[] = [
+  "Search by window name",
+  'Search by tab url "u:youtube"',
+  'Search by tab title "t:organic"'
+]
+const randomInputPlaceHolder = INPUT_PLACE_HOLDER_TEXT[Math.floor(Math.random() * INPUT_PLACE_HOLDER_TEXT.length)]
 
 
 const Options = () => {
@@ -37,6 +43,7 @@ const Options = () => {
   const [zoomLevel, setZoomLevel] = useState<number | null>(null)
   const [cardsColumns, setCardsColumns] = useState<number | "auto" | null>(null)
 
+  
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isDragging, setIsDragging] = useState(false)
   const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null)
@@ -187,6 +194,13 @@ const Options = () => {
         
     if (!currentSort) return
 
+    if (searchQuery.trim().startsWith("u:") || searchQuery.trim().startsWith("t:")) {
+      if (searchQuery.trim().replace("u:", "") === "" || searchQuery.trim().replace("t:", "") === "") {
+        setArrayOfTrackedWindowValues([])
+        return
+      }
+    }
+
     const cloned = structuredClone(originalArrayOfTrackedWindowValues)
     let sorted = cloned
     
@@ -238,9 +252,13 @@ const Options = () => {
 
     if (trimmedSearchQuery !== "") {
 
-      if (trimmedSearchQuery.startsWith("url:")) {
-        const urlToSearch = trimmedSearchQuery.replace("url:", "").trim()
+      if (trimmedSearchQuery.startsWith("u:")) {
+        const urlToSearch = trimmedSearchQuery.replace("u:", "").trim()
         sorted = sorted.filter(trackedWindow => trackedWindow.tabs.some(tab => tab.url.includes(urlToSearch)))
+      }
+      else if (trimmedSearchQuery.startsWith("t:")) {
+        const titleToSearch = trimmedSearchQuery.replace("t:", "").trim()
+        sorted = sorted.filter(trackedWindow => trackedWindow.tabs.some(tab => tab.title.toLowerCase().includes(titleToSearch.toLowerCase())))
       }
       else {
         sorted = sorted.filter(trackedWindow => trackedWindow.windowName.toLowerCase().includes(trimmedSearchQuery.toLowerCase()))
@@ -520,14 +538,14 @@ const Options = () => {
 
               <input 
                 type="text"
-                placeholder='Search by window name or url "url:youtube"...'
+                placeholder={randomInputPlaceHolder}
                 value={searchQuery}
                 onChange={(e) => onSearch(e.target.value)}
                 className="block w-full pl-10 sm:pl-12 pr-12 py-3 sm:py-4 text-gray-700 
                 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-gray-100 
                 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl outline-none ring-0 focus:ring-2 
                 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 transition-shadow duration-300 
-                shadow-sm focus:shadow-lg text-base sm:text-lg font-medium border border-gray-200 
+                shadow-sm focus:shadow-lg text-lg font-medium border border-gray-200 
                 dark:border-gray-600/50 focus:border-blue-300 dark:focus:border-blue-500"
               />
               {searchQuery && (
@@ -594,11 +612,11 @@ const Options = () => {
         </div>
 
 
-        {searchQuery.trim() !== "" && !searchQuery.trim().includes("url:") && arrayOfTrackedWindowValues.length === 0 ?
+        {searchQuery.trim() !== "" && ( !searchQuery.trim().includes("u:") || !searchQuery.trim().includes("t:") ) && arrayOfTrackedWindowValues.length === 0 ?
           <NoSearchQuery />
         :
 
-        searchQuery.trim().includes("url:") ?
+        (searchQuery.trim().includes("u:") || searchQuery.trim().includes("t:")) ?
 
           <SearchByUrlResult
           arrayOfTrackedWindowValues={arrayOfTrackedWindowValues}

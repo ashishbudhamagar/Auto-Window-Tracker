@@ -15,25 +15,43 @@ export default function SearchByUrlResult({
 }: any) {
 
 
-    const searchTerm = searchQuery.replace("url:", "").trim()
-    const trackedWindowWithTheUrl = arrayOfTrackedWindowValues.filter((trackedWindow: TrackedWindow) =>
-        trackedWindow.tabs.some((tab: Tab) => tab.url.includes(searchTerm))
-    )
+    const trimmedSearchQuery = searchQuery.trim()
+    let searchTerm = ""
+    let trackedWindowWithTheUrlOrTitle = []
+    let numberOfTabsWithUrlOrTitle = 0
 
-    const numberOfTabWithUrl = trackedWindowWithTheUrl.map((trackedWindow: TrackedWindow) => {
-        return trackedWindow.tabs.filter((tab: Tab) => tab.url.includes(searchTerm)).length
-    }).reduce((a: number, b: number) => a + b, 0)
+    if (trimmedSearchQuery.includes("u:")) {
+
+        searchTerm = trimmedSearchQuery.replace("u:", "").trim()
+        trackedWindowWithTheUrlOrTitle = arrayOfTrackedWindowValues.filter((trackedWindow: TrackedWindow) =>
+            trackedWindow.tabs.some((tab: Tab) => tab.url.includes(searchTerm))
+        )
+
+        numberOfTabsWithUrlOrTitle = trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) => {
+            return (trackedWindow.tabs.map((tab: Tab) => tab.url.includes(searchTerm))).length
+        }).reduce((a: number, b: number) => a + b, 0)
+
+    }
+    else if (trimmedSearchQuery.includes("t:")) {
+
+        searchTerm = trimmedSearchQuery.replace("t:", "").trim()
+        trackedWindowWithTheUrlOrTitle = arrayOfTrackedWindowValues.filter((trackedWindow: TrackedWindow) =>
+            trackedWindow.tabs.some((tab: Tab) => tab.title.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+
+        numberOfTabsWithUrlOrTitle = trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) => {
+            return (trackedWindow.tabs.map((tab: Tab) => tab.title.includes(searchTerm))).length
+        }).reduce((a: number, b: number) => a + b, 0)
+    }
 
 
 
-    if (searchQuery.trim().length <= 4 || trackedWindowWithTheUrl.length === 0) {
+    if (trackedWindowWithTheUrlOrTitle.length === 0) {
         return (
             <NoSearchQuery />
         )
     }
 
-
-    
 
     return (
 
@@ -42,7 +60,7 @@ export default function SearchByUrlResult({
 
             <div className="px-6 py-4 rounded-lg bg-white/70 dark:bg-gray-800/60 border border-white/20 dark:border-gray-700/30 shadow-sm">
                 <p className="text-lg text-gray-700 dark:text-gray-200">
-                    Found <strong className="font-bold">{numberOfTabWithUrl}</strong> tab{numberOfTabWithUrl === 1 ? "" : "s"} for URL search
+                    Found <strong className="font-bold">{numberOfTabsWithUrlOrTitle}</strong> tab{numberOfTabsWithUrlOrTitle === 1 ? "" : "s"} for ${trimmedSearchQuery.startsWith("u:") ? "URL" : "TITLE"} search
                     <p className="ml-2 inline-block font-bold text-gray-800 dark:text-gray-100">"{searchTerm}"</p>
                 </p>
             </div>
@@ -52,10 +70,17 @@ export default function SearchByUrlResult({
 
 
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                    {trackedWindowWithTheUrl.map((trackedWindow: TrackedWindow) => {
+                    {trackedWindowWithTheUrlOrTitle.map((trackedWindow: TrackedWindow) => {
 
-                        const matches = trackedWindow.tabs.filter((tab: Tab) => tab.url.includes(searchTerm))
-                        if (matches.length === 0) return null
+                        let matchedTabs: Tab[] = []
+                        if (trimmedSearchQuery.includes("u:")) {
+                            matchedTabs = trackedWindow.tabs.filter((tab: Tab) => tab.url.includes(searchTerm))
+                        } else if (trimmedSearchQuery.includes("t:")) {
+                            matchedTabs = trackedWindow.tabs.filter((tab: Tab) => tab.title.toLowerCase().includes(searchTerm.toLowerCase()))
+                        }
+
+
+                        if (matchedTabs.length === 0) return null
 
 
                         return (
@@ -78,7 +103,7 @@ export default function SearchByUrlResult({
                                 </div>
 
                                 <div className="space-y-1 max-h-[330px] overflow-y-auto flex-1">
-                                    {matches.map((tab: Tab) => (
+                                    {matchedTabs.map((tab: Tab) => (
                                         <a
                                             key={tab.id}
                                             href={tab.url}
